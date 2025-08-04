@@ -1,0 +1,197 @@
+import Quickshell
+import Quickshell.Wayland
+import QtQuick
+import QtQuick.Shapes
+
+PanelWindow {
+    id: toplevel
+    anchors {
+        bottom: true
+        left: true
+        right: true
+    }
+    implicitHeight: 30
+    color: "transparent"
+    WlrLayershell.layer: WlrLayer.Overlay
+    exclusionMode: ExclusionMode.Normal
+    
+    // Hover trigger area in the panel
+    Rectangle {
+        id: hoverTrigger
+        width: 120
+        height: 25
+        anchors.centerIn: parent
+        color: hoverArea.containsMouse ? "#4CAF50" : "#3c3c3c"
+        radius: 4
+        
+        Text {
+            anchors.centerIn: parent
+            text: "Hover Me"
+            color: "white"
+            font.pixelSize: 12
+        }
+        
+        // Mouse area for hover detection
+        MouseArea {
+            id: hoverArea
+            anchors.fill: parent
+            hoverEnabled: true
+            
+            onEntered: popup.showPopup()
+            onExited: hideTimer.restart()
+        }
+        
+        Behavior on color {
+            ColorAnimation {
+                duration: 200
+                easing.type: Easing.OutQuart
+            }
+        }
+    }
+    
+    // Timer to prevent flickering
+    Timer {
+        id: hideTimer
+        interval: 100
+        onTriggered: {
+            if (!hoverArea.containsMouse && !popupHoverArea.containsMouse) {
+                popup.hidePopup()
+            }
+        }
+    }
+    
+    PopupWindow {
+        id: popup
+        anchor.window: toplevel
+        color: "transparent"
+        implicitWidth: 150
+        implicitHeight: 100
+        visible: false
+        
+        // Animation properties
+        property real animScale: 0.8
+        property real animOpacity: 0.0
+        
+        // Show/hide functions
+        function showPopup() {
+            visible = true
+            showAnimation.start()
+        }
+        
+        function hidePopup() {
+            hideAnimation.start()
+        }
+        
+        anchor {
+            rect.x: parentWindow.width / 2 - width / 2
+            gravity: Edges.Top | Edges.Right
+        }
+        
+        // Show animation
+        ParallelAnimation {
+            id: showAnimation
+            NumberAnimation {
+                target: popup
+                property: "animScale"
+                to: 1.0
+                duration: 250
+                easing.type: Easing.OutBack
+            }
+            NumberAnimation {
+                target: popup
+                property: "animOpacity"
+                to: 1.0
+                duration: 200
+                easing.type: Easing.OutQuart
+            }
+        }
+        
+        // Hide animation
+        ParallelAnimation {
+            id: hideAnimation
+            NumberAnimation {
+                target: popup
+                property: "animScale"
+                to: 0.8
+                duration: 150
+                easing.type: Easing.InQuart
+            }
+            NumberAnimation {
+                target: popup
+                property: "animOpacity"
+                to: 0.0
+                duration: 150
+                easing.type: Easing.InQuart
+            }
+            onFinished: popup.visible = false
+        }
+        
+        // Animated container
+        Item {
+            anchors.fill: parent
+            scale: popup.animScale
+            opacity: popup.animOpacity
+            transformOrigin: Item.Bottom
+            
+            Rectangle {
+                implicitWidth: 130
+                implicitHeight: 80
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.topMargin: 30
+                color: "white"
+                topLeftRadius: 10
+                topRightRadius: 10
+            }
+            
+            Shape {
+                ShapePath {
+                    //fillColor: "white"
+                    strokeWidth: 0
+                    //strokeColor: "black"
+                    // Start from bottom left
+                    startX: 0
+                    startY: 100
+                    
+                    PathArc {
+                        relativeX: 10
+                        relativeY: -10
+                        radiusX: 10
+                        radiusY: 10
+                        direction: PathArc.Counterclockwise
+                    }
+                    
+                    /*PathLine {
+                        relativeX: 130  
+                        relativeY: 0
+                    }
+                    
+                    PathArc {
+                        relativeX: 10
+                        relativeY: 10
+                        radiusX: 10
+                        radiusY: 10
+                        direction: PathArc.Counterclockwise
+                    }
+                    
+                    // Close the path back to start (using relative coordinates)
+                    PathLine {
+                        relativeX: -140  // Go back 140 pixels to the left
+                        relativeY: 0     // Same Y level
+                    }
+                    */
+                }
+            }
+        }
+        
+        // Mouse area for popup to prevent hiding when hovering over it
+        MouseArea {
+            id: popupHoverArea
+            anchors.fill: parent
+            hoverEnabled: true
+            
+            onEntered: hideTimer.stop()
+            onExited: hideTimer.restart()
+        }
+    }
+}
