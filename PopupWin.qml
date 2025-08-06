@@ -2,244 +2,266 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 
-Item {
-    property bool isHovered: false
-    property var dockRect: null  // Reference to the main dock rectangle
-    property int iconIndex: -1   // Which icon is being hovered
-    property string windowAddress: ""  // Window address for capturing
-    
-    // Expose the popup timer for external access
-    property alias hideTimer_popup: hideTimer_popup
 
-    // Timer to prevent flickering
-    Timer {
-        id: hideTimer_popup
-        interval: 400
-        onTriggered: {
-            popupWindow.hidePopup()
-            previewRefreshTimer.stop()  // Stop refresh timer when hiding
+Item{
+    id: root
+    property var dockRect: null
+    property var iconIndex: -1
+    property var windowData: null 
+    readonly property int windowWidth: 140
+    readonly property int windowHeight: 120
+    property bool popupVisible: false
+    
+    property int calculatedWidth: 160
+    
+    onWindowDataChanged: {
+        if (windowData && windowData.windows) {
+            calculatedWidth = Math.max(160, windowData.windows.length * (windowWidth + 10) + 10)
+        } else {
+            calculatedWidth = 160
         }
     }
 
+    property alias popup_hideTimer: popupHideTimer
+
+    Timer{
+        id: popupHideTimer
+        interval: 400
+        onTriggered:{
+            popupVisible = false
+        }
+    }
+
+
     // Timer for refreshing window preview
-    Timer {
+    Timer{
         id: previewRefreshTimer
-        interval: 1000  // Refresh every second when popup is visible
+        interval: 5000
         running: false
         repeat: true
-        
+
         onTriggered: {
-            if (windowAddress && popupWindow.visible) {
+            if(windowData && popupWindow.visible){
                 captureWindow()
             }
         }
     }
 
-    // Process for focusing window when clicked
-    Process {
-        id: focusProcess
-        running: false
-    }
+    property int currentCaptureIndex: 0
+    property var captureQueue: []
 
-    // Process for capturing window screenshots
-    Process { 
+    Process{
         id: captureProcess
         running: false
-        
-        stdout: StdioCollector {
-            onStreamFinished: {
-                // Add timestamp to force image reload
-                previewImage.source = "file:///tmp/preview-" + windowAddress + ".png?" + Date.now()
+
+        onRunningChanged: {
+            if(!running && captureQueue.length > 0){
+                processNextCapture()
             }
         }
-        
-        stderr: StdioCollector {
+
+        stdout: StdioCollector{
             onStreamFinished: {
-                if (this.text.length > 0) {
-                    console.log("Capture error:", this.text)
-                }
+                // Force refresh of the image that was just captured
+                refreshImageSources()
             }
+        }
+            stderr: StdioCollector{
+                onStreamFinished: {
+                    if(this.text.length > 0){
+                        console.log("Capture error: ", this.text)
+                    }
+            } 
         }
     }
 
-    // Function to capture window screenshot
-    function captureWindow() {
-        //console.log(windowAddress)
-        if (!windowAddress) return
-        
-        // Use grim-hyprland if available, fallback to regular grim
-        captureProcess.command = ["grim", "-w", windowAddress, "/tmp/preview-" + windowAddress + ".png"]
+    function refreshImageSources(){
+        // Trigger a refresh by updating a timestamp property
+        imageRefreshTimestamp = Date.now()
+    }
+
+    property var imageRefreshTimestamp: Date.now()
+
+    function captureWindow(){
+        if(!windowData || !windowData.windows) return
+
+        captureQueue = []
+        for(let i = 0; i < windowData.windows.length; i++){
+            captureQueue.push(windowData.windows[i].address)
+        }
+        currentCaptureIndex = 0
+        processNextCapture()
+    }
+
+    function processNextCapture(){
+        if(currentCaptureIndex >= captureQueue.length) return
+
+        let address = captureQueue[currentCaptureIndex]
+        captureProcess.command = ["grim", "-w", address, "/tmp/preview-" + address + ".png"]
         captureProcess.running = true
+        currentCaptureIndex++
     }
 
-    // Watch isHovered to trigger animations
-    onIsHoveredChanged: {
-        if (isHovered && dockRect !== null) {
-            hideTimer.stop()
-            popupWindow.showPopup()
-            // Start preview refresh timer
-            previewRefreshTimer.start()
-            // Capture initial screenshot
-            captureWindow()
-        } else {
-            hideTimer.restart()
-        }
-    }
-
-    PopupWindow {
+    PopupWindow{
         id: popupWindow
         anchor.window: dock
         color: "transparent"
-        implicitWidth: 200
-        implicitHeight: 160
-        visible: false
-
-        // Animation properties
-        property real animScale: 0.8
-        property real animOpacity: 0.0
-
-        // Show/hide functions
-        function showPopup() {
-            visible = true
-            showAnimation.start()
+        implicitWidth: calculatedWidth
+        implicitHeight: 180
+        visible: popupVisible
+        
+        onVisibleChanged: {
+            if(visible && windowData){
+                captureWindow()
+                previewRefreshTimer.start()
+            } else {
+                previewRefreshTimer.stop()
+            }
         }
 
-        function hidePopup() {
-            hideAnimation.start()
-        }
-
-        anchor {
-            // Calculate position based on icon index and prevent overflow
+        anchor{
             rect.x: {
                 if (!dockRect || iconIndex < 0) return 0
-
-                var iconWidth = 50
-                var actualX = dockRect.x + width / 2 - iconWidth
+                    
+                var iconWidth = 60
+                var actualX = (dockRect.x + width / 2) - iconWidth
                 actualX = actualX + (iconWidth * iconIndex)
-                
 
                 return actualX
             }
-            rect.y: 0  // Position above the dock
-            gravity: Edges.Top
+            rect.y: 0
+            gravity: Edges.Top 
         }
+        
+        Rectangle{
+            implicitWidth: parent.width
+            implicitHeight: 160
+            color: "#06070e"
+            radius: 10
 
-        // Show animation
-        ParallelAnimation {
-            id: showAnimation
-            NumberAnimation {
-                target: popupWindow
-                property: "animScale"
-                to: 1.0
-                duration: 250
-                easing.type: Easing.OutBack
+            anchors{
+                centerIn: parent
             }
-            NumberAnimation {
-                target: popupWindow
-                property: "animOpacity"
-                to: 1.0
-                duration: 200
-                easing.type: Easing.OutQuart
-            }
-        }
-
-        // Hide animation
-        ParallelAnimation {
-            id: hideAnimation
-            NumberAnimation {
-                target: popupWindow
-                property: "animScale"
-                to: 0.8
-                duration: 150
-                easing.type: Easing.InQuart
-            }
-            NumberAnimation {
-                target: popupWindow
-                property: "animOpacity"
-                to: 0.0
-                duration: 150
-                easing.type: Easing.InQuart
-            }
-            onFinished: {
-                popupWindow.visible = false
-                dockRect.topLeftRadius = 10
-                dockRect.topRightRadius = 10
-            }
-        }
-
-        // Animated container
-        Item {
-            anchors.fill: parent
-            scale: popupWindow.animScale
-            opacity: popupWindow.animOpacity
-            transformOrigin: Item.Bottom
-
-            Rectangle {
-                id: popupBackground
-                implicitWidth: parent.width
-                implicitHeight: parent.height - 20
-                //anchors.fill: parent
-                //anchors.bottom: parent.bottom
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                color: "#06070e"
-                radius: 10
-                //border.color: "#333"
-                //border.width: 1
-
-                // Window preview image
-                Image {
-                    id: previewImage
-                    anchors.fill: parent
-                    anchors.margins: 8
-                    fillMode: Image.PreserveAspectFit
-                    smooth: true
-                    cache: false  // Disable caching to ensure fresh images
-                    
-                    // Placeholder or loading state
-                    Rectangle {
-                        anchors.fill: parent
-                        color: "#1a1a1a"
-                        radius: 6
-                        visible: previewImage.status !== Image.Ready
-                        
-                        Text {
-                            anchors.centerIn: parent
-                            text: previewImage.status === Image.Loading ? "Loading..." : "No Preview"
-                            color: "#666"
-                            font.pixelSize: 12
-                        }
-                    }
-                    
-                    // Error handling
-                    onStatusChanged: {
-                        if (status === Image.Error) {
-                            console.log("Failed to load preview image for window:", windowAddress)
-                        }
-                    }
+            
+            Text{
+                anchors{
+                    horizontalCenter: parent.horizontalCenter
                 }
 
-                MouseArea {
-                    id: popupArea
-                    anchors.fill: parent
-                    hoverEnabled: true
+                text: windowData && windowData.className ? windowData.className : ""
+                color: "white"
 
-                    onEntered: {
-                        hideTimer.stop()
-                        hideTimer_popup.stop()
-                    }
+            }
 
-                    onExited: {
-                        hideTimer.start()
-                        hideTimer_popup.start();
-                    }
-                    
-                    // Optional: Click to focus window
-                    onClicked: {
-                        if (windowAddress) {
-                            // Focus the window using hyprctl
-                            focusProcess.command = ["hyprctl", "dispatch", "focuswindow", "address:" + windowAddress]
-                            focusProcess.running = true
+            Row{
+                spacing: 10
+                anchors{
+                    horizontalCenter: parent.horizontalCenter
+                    bottom: parent.bottom
+                    bottomMargin: 10
+                }
+                
+                Repeater{
+                    model: windowData && windowData.windows ? windowData.windows : []
+
+                    delegate: Rectangle{
+                        width: root.windowWidth
+                        height: root.windowHeight
+                        color: "#4E6688"
+                        radius: 10
+
+                        Rectangle{
+                            anchors{
+                                top: parent.top
+                                left: parent.left
+                                right: parent.right
+                                margins: 5
+                            }
+                            height: 20
+                            color: "transparent"
+                            clip: true
+                            
+                            Text{
+                                id: titleText
+                                text: modelData.windowTitle
+                                color: "white"
+                                font.pixelSize: 12
+                                
+                                anchors.verticalCenter: parent.verticalCenter
+                                
+                                property bool needsScrolling: titleText.contentWidth > parent.width
+                                
+                                SequentialAnimation {
+                                    running: titleText.needsScrolling
+                                    loops: Animation.Infinite
+                                    
+                                    PauseAnimation { duration: 1000 }
+                                    NumberAnimation {
+                                        target: titleText
+                                        property: "x"
+                                        from: 0
+                                        to: -(titleText.contentWidth - titleText.parent.width)
+                                        duration: 3000
+                                        easing.type: Easing.Linear
+                                    }
+                                    PauseAnimation { duration: 1000 }
+                                    NumberAnimation {
+                                        target: titleText
+                                        property: "x"
+                                        from: -(titleText.contentWidth - titleText.parent.width)
+                                        to: 0
+                                        duration: 1500
+                                        easing.type: Easing.Linear
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle{
+                            implicitWidth: parent.width - 10
+                            implicitHeight: 90
+                            radius: 10
+                            anchors{
+                                bottom: parent.bottom
+                                horizontalCenter: parent.horizontalCenter
+                                bottomMargin: 5
+                            }
+
+                            color: "#06070e"
+
+                            Image{
+                                id: previewImage
+                                anchors.fill: parent
+                                anchors.margins: 8
+                                fillMode: Image.PreserveAspectFit
+                                smooth: true
+                                cache: false
+                                source: "file:///tmp/preview-" + modelData.address + ".png?" + root.imageRefreshTimestamp
+
+                                onStatusChanged: {
+                                    if(status === Image.Error){
+                                        console.log("Failed to load preview image for:", modelData.address)
+                                    }
+                                }
+
+                                Rectangle{
+                                    anchors.fill: parent
+                                    color: "#1a1a1a"
+                                    radius: 6
+                                    visible: previewImage.status !== Image.Ready
+
+                                    Text{
+                                        anchors.centerIn: parent
+                                        text: {
+                                            if(previewImage.status === Image.Loading) return "Loading..."
+                                            if(previewImage.status === Image.Error) return "Capture Failed"
+                                            return "No Preview"
+                                        }
+                                        color: "#666"
+                                        font.pixelSize: 12
+                                    }
+                                }
+                            }
                         }
                     }
                 }
