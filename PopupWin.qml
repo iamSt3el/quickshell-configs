@@ -1,6 +1,7 @@
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import Quickshell.Hyprland
 
 
 Item{
@@ -33,16 +34,20 @@ Item{
     }
 
 
-    // Timer for refreshing window preview
+    // Timer for refreshing window preview (only when needed)
     Timer{
         id: previewRefreshTimer
-        interval: 5000
+        interval: 10000  // Reduced frequency: 10 seconds instead of 5
         running: false
         repeat: true
 
         onTriggered: {
-            if(windowData && popupWindow.visible){
+            // Only refresh if popup is actually visible and hovered
+            if(windowData && popupWindow.visible && popupWindow.opacity > 0.8){
                 captureWindow()
+            } else {
+                // Stop timer if popup isn't being used
+                running = false
             }
         }
     }
@@ -55,7 +60,7 @@ Item{
         running: false
 
         onRunningChanged: {
-            if(!running && captureQueue.length > 0){
+            if(!running && currentCaptureIndex < captureQueue.length){
                 processNextCapture()
             }
         }
@@ -78,9 +83,14 @@ Item{
     function refreshImageSources(){
         // Trigger a refresh by updating a timestamp property
         imageRefreshTimestamp = Date.now()
+        // Limit update frequency to reduce CPU usage
+        if(imageRefreshTimestamp % 2 === 0){
+            return; // Skip every other refresh
+        }
     }
 
     property var imageRefreshTimestamp: Date.now()
+    property var lastHoverTime: 0
 
     function captureWindow(){
         if(!windowData || !windowData.windows) return
@@ -112,8 +122,14 @@ Item{
         
         onVisibleChanged: {
             if(visible && windowData){
-                captureWindow()
-                previewRefreshTimer.start()
+                let currentTime = Date.now()
+                // Only capture if it's been more than 5 seconds since last hover
+                if(currentTime - lastHoverTime > 5000){
+                    captureWindow()
+                    lastHoverTime = currentTime
+                }
+                // Disabled auto-refresh for performance - only capture once
+                // previewRefreshTimer.start()
             } else {
                 previewRefreshTimer.stop()
             }
@@ -138,7 +154,8 @@ Item{
             implicitHeight: 160
             color: "#06070e"
             radius: 10
-
+            border.color: "#343131"
+            border.width: 2
             anchors{
                 centerIn: parent
             }
@@ -167,7 +184,7 @@ Item{
                     delegate: Rectangle{
                         width: root.windowWidth
                         height: root.windowHeight
-                        color: "#4E6688"
+                        color: "#222222"
                         radius: 10
 
                         Rectangle{
@@ -217,6 +234,33 @@ Item{
                             }
                         }
 
+                        MouseArea{
+                            id: windowArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+
+                            onEntered:{
+                                popupHideTimer.stop();
+                                dockHideTimer.stop();
+                            }
+
+                            onExited: {
+                                popupHideTimer.start();
+                                dockHideTimer.start();
+                            }
+                            
+                            onClicked: {
+                                if(modelData.address){
+                                    let addr = modelData.address
+                                    if(!addr.startsWith("0x")){
+                                        addr = "0x" + addr;
+                                    }
+                                    Hyprland.dispatch("focuswindow address:" + addr)
+                                }
+                            }
+
+                        }
+
                         Rectangle{
                             implicitWidth: parent.width - 10
                             implicitHeight: 90
@@ -232,10 +276,12 @@ Item{
                             Image{
                                 id: previewImage
                                 anchors.fill: parent
-                                anchors.margins: 8
+                                anchors.margins: 4
                                 fillMode: Image.PreserveAspectFit
-                                smooth: true
+                                smooth: false  // Disable smoothing for performance
                                 cache: false
+                                asynchronous: true  // Enable async loading
+                                mipmap: false  // Disable mipmapping for performance
                                 source: "file:///tmp/preview-" + modelData.address + ".png?" + root.imageRefreshTimestamp
 
                                 onStatusChanged: {

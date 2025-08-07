@@ -26,7 +26,7 @@ Scope{
             WlrLayershell.layer: WlrLayer.Overlay
             exclusionMode: ExclusionMode.Normal
             implicitHeight: isVisible ? 60 : 20
-            implicitWidth: Math.max(60, openWindows.length * 60 + 35)
+            implicitWidth: Math.max(60, (openWindows.length * 60) + 35)
             color: "transparent"
             visible: true
 
@@ -286,7 +286,7 @@ Scope{
                                 onExited:{
                                     popupShowTimer.stop()
                                     if(popupWin && popupWin.popup_hideTimer){
-                                        popupWin.popup_hideTimer.start();
+                                            popupWin.popup_hideTimer.start();
                                     }
                                 }
 
@@ -323,12 +323,12 @@ Scope{
                     }
 
                     PathLine{
-                        relativeX: dock.width - 36
+                        relativeX: dock.width - 35
                         relativeY: 0
                     }
 
                     PathArc{
-                        relativeX: 21
+                        relativeX: 20
                         relativeY: 10
                         radiusX: 20
                         radiusY: 15
