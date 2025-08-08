@@ -2,7 +2,11 @@ import Quickshell
 import QtQuick
 
 
-ShellRoot{
+ShellRoot{    
     
     Dock{}
+    
+    PowerPanel{}
+
+    TopBar{}
 }

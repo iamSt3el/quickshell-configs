@@ -277,6 +277,7 @@ Scope{
                                 id: iconMouseArea
                                 anchors.fill: parent
                                 hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
 
                                 onEntered: {
                                     popupShowTimer.targetIndex = index

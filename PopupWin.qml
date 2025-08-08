@@ -154,7 +154,7 @@ Item{
             implicitHeight: 160
             color: "#06070e"
             radius: 10
-            border.color: "#343131"
+            border.color: "#48CFCB"
             border.width: 2
             anchors{
                 centerIn: parent
@@ -184,7 +184,7 @@ Item{
                     delegate: Rectangle{
                         width: root.windowWidth
                         height: root.windowHeight
-                        color: "#222222"
+                        color: "#229799"
                         radius: 10
 
                         Rectangle{
@@ -238,6 +238,7 @@ Item{
                             id: windowArea
                             anchors.fill: parent
                             hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
 
                             onEntered:{
                                 popupHideTimer.stop();
