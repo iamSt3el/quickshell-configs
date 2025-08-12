@@ -108,11 +108,13 @@ Item{
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onEntered:{
-                            utilityPopupWrapper.isUtilityPopUpVisible = true
+                            utilityPopupWrapper.open()
+                            //utilityPopupWrapper.isUtilityPopUpVisible = true
                             utilityPopupWrapper.utility = wifi
                         }
                         onExited:{
-                            utilityPopupWrapper.isUtilityPopUpVisible = false
+                            utilityPopupWrapper.utilityCloseTimer.start()
+                            //utilityPopupWrapper.isUtilityPopUpVisible = false
                         }
                         onClicked:{
                             console.log("Pressed")
@@ -152,11 +154,13 @@ Item{
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onEntered: {
-                            utilityPopupWrapper.isUtilityPopUpVisible = true
+                            utilityPopupWrapper.open()
+                            //utilityPopupWrapper.isUtilityPopUpVisible = true
                             utilityPopupWrapper.utility = bt
                         }
                         onExited: {
-                            utilityPopupWrapper.isUtilityPopUpVisible = false
+                            utilityPopupWrapper.utilityCloseTimer.start()
+                            //utilityPopupWrapper.isUtilityPopUpVisible = false
                         }
                         onClicked:{
                             console.log("Pressed")

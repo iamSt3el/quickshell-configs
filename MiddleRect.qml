@@ -86,7 +86,7 @@ Item{
 
             SystemClock{
                 id: clock
-                precision: SystemClock.precision
+                precision: SystemClock.Seconds
             }
 
             Text{

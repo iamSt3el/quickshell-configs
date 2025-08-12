@@ -53,7 +53,7 @@ Item{
             // Calendar implementation
             SystemClock {
                 id: systemClock
-                precision: SystemClock.Milliseconds
+                precision: SystemClock.Seconds
             }
             
             property date currentDate: systemClock.date
