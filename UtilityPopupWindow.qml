@@ -38,9 +38,6 @@ Item{
             rect.y: utilityRect.height 
         }
 
-        Behavior on anchor.rect.x{
-            NumberAnimation{duration: 100; easing.type: Easing.OutCubic}
-        }
         Rectangle{
             id: animationRect
             anchors.fill: parent
