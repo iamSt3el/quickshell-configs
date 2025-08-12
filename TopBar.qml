@@ -27,7 +27,7 @@ Scope{
             WorkspaceRect{}
             UtilityRect{}
             
-            MiddleRect{} 
+            MiddleRect{}
         }
     }
 }

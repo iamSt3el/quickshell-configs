@@ -7,7 +7,7 @@ import Quickshell.Hyprland
 Item{
     Rectangle{
         id: topBarWrapper
-        implicitWidth: 260
+        implicitWidth: 390
         implicitHeight: 50
         color: "transparent"
         anchors{
@@ -70,7 +70,7 @@ Item{
                     delegate: Rectangle{
                         width: modelData.focused ? 50 : 30 
                         height: 30
-                        color: workspaceArea.containsMouse || modelData.focused ? "#48CFCB" : "#229799"
+                        color: workspaceArea.containsMouse || modelData.focused ? "#48CFCB" : "#343131"
                         radius: workspaceArea.containsMouse ? 8 : 5
 
                         Behavior on color{
@@ -78,22 +78,23 @@ Item{
                         }
 
                         Behavior on radius{
-                            NumberAnimation {duration: 200; easing.type:Easing.OutBack}
+                            NumberAnimation {duration: 200; easing.type:Easing.Bezier}
                         }
 
                         Behavior on width{
-                            NumberAnimation {duration: 200; easing.type:Easing.InCurve}
+                            NumberAnimation {duration: 200; easing.type:Easing.Bezier}
                         }
 
                         border{
                             width: 1
-                            color: "#3C3D37"
+                            color: "#686D76"
                         } 
                         Text{
                             anchors{
                                 centerIn: parent
                             }
                             text: modelData.id
+                            color: "#FAF7F0"
                         }
 
                         MouseArea{
