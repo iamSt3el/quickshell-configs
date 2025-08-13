@@ -48,10 +48,10 @@ Scope {
                 hoverEnabled: true
                // visible: !isPowerPanelVisible
                 onEntered: {
-                    console.log("Entered")
+                    //console.log("Entered")
                     //powerPanelTimer.start();
-                    powerPanel.isPowerPanelVisible = true
-                    openAnimation.start()
+                    //powerPanel.isPowerPanelVisible = true
+                    //openAnimation.start()
                 }
             }
 

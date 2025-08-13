@@ -4,15 +4,18 @@ import Quickshell.Io
 import QtQuick.Shapes
 import Quickshell.Hyprland
 import Qt5Compat.GraphicalEffects
+import Quickshell.Services.UPower
 
 Item{
     id: utilityRectItem
+    //implicitWidth: utilityRectWrapper.width
     anchors{
         right: parent.right
     }
     Rectangle{
         id: utilityRectWrapper
         implicitWidth: utilityRect.width + 10
+        //implicitWidth: 310
         implicitHeight: 50
         color: "transparent"
         anchors{
@@ -63,10 +66,12 @@ Item{
 
         Rectangle{
             id: utilityRect
-            implicitWidth: utilityRowWrapper.width + 100
+            implicitWidth: utilityRowWrapper.width + 30
+            //implicitWidth: 300
             implicitHeight: 40
             color: "#06070e"
-            bottomLeftRadius: 20
+            bottomLeftRadius: utilityPopupWrapper.isUtilityPopUpVisible ? 0 : 20
+          
             anchors{
                 right: parent.right
             }
@@ -76,7 +81,7 @@ Item{
                 anchors{
                     right: parent.right
                     verticalCenter: parent.verticalCenter
-                    rightMargin: 10
+                    //rightMargin: 10
                 }
                 spacing: 10
                 Rectangle{
@@ -85,6 +90,7 @@ Item{
                     implicitWidth: 35
                     color: "#393E46"
                     radius: 10
+                    objectName: "wifi"
 
                     Image{
                         id: wifiIcon
@@ -107,18 +113,13 @@ Item{
                         }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onEntered:{
-                            utilityPopupWrapper.open()
-                            //utilityPopupWrapper.isUtilityPopUpVisible = true
-                            utilityPopupWrapper.utility = wifi
-                        }
-                        onExited:{
-                            utilityPopupWrapper.utilityCloseTimer.start()
-                            //utilityPopupWrapper.isUtilityPopUpVisible = false
-                        }
                         onClicked:{
-                            console.log("Pressed")
-                            Quickshell.execDetached(["kitty", "--class", "nmtui-popup", "-e", "nmtui"])
+                            if(utilityPopupWrapper.isUtilityPopUpVisible){
+                                utilityPopupWrapper.close()
+                            }else{
+                                 utilityPopupWrapper.open()
+                            }
+                           // Quickshell.execDetached(["kitty", "--class", "nmtui-popup", "-e", "nmtui"])
                         }
                     }
                 }
@@ -129,6 +130,7 @@ Item{
                     implicitHeight: 30
                     color: "#393E46"
                     radius: 10
+                    objectName: "bt"
 
                     Image{
                         anchors{
@@ -153,18 +155,15 @@ Item{
                         }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onEntered: {
-                            utilityPopupWrapper.open()
-                            //utilityPopupWrapper.isUtilityPopUpVisible = true
-                            utilityPopupWrapper.utility = bt
-                        }
-                        onExited: {
-                            utilityPopupWrapper.utilityCloseTimer.start()
-                            //utilityPopupWrapper.isUtilityPopUpVisible = false
-                        }
                         onClicked:{
-                            console.log("Pressed")
-                            Quickshell.execDetached(["blueman-manager"])
+                            if(utilityPopupWrapper.isUtilityPopUpVisible){
+                                utilityPopupWrapper.close()
+                            }else{
+                                 utilityPopupWrapper.utility = bt
+                                 utilityPopupWrapper.open()
+                            }
+
+                            //Quickshell.execDetached(["blueman-manager"])
                         }
                     }
 
@@ -174,7 +173,11 @@ Item{
                     id: battery
                     implicitWidth: batteryChild.implicitWidth + 10
                     implicitHeight: batteryChild.implicitHeight + 5
-                    color: "#393E46"
+                    color: {
+                        if (UPower.displayDevice.state === UPowerDeviceState.Charging) return "#08CB00"
+                        if (UPower.displayDevice.state === UPowerDeviceState.Discharging) return "#FFB22C"
+                        return "#393E46"
+                    }
                     radius: 10
                     
                     Row{
@@ -188,7 +191,18 @@ Item{
                             height: 25
                             sourceSize: Qt.size(width, height)
 
-                            source: "./assets/battery.svg"
+                            source: {
+                                if(UPower.displayDevice.state === UPowerDeviceState.Charging){
+                                    return "./assets/battery-charging.svg"
+                                }
+                                if(UPower.displayDevice.percentage < 0.70){
+                                    return "./assets/battery-medium.svg"
+                                }
+                                if(UPower.displayDevice.percentage < 0.30){
+                                    return "./assets/battery-low.svg"
+                                }
+                                return "./assets/battery.svg"
+                            }
                     
                             layer.enabled: true
                             layer.effect: ColorOverlay{
@@ -201,7 +215,7 @@ Item{
                             
                             }
                             color: "#FFFFFF"
-                            text: "90%"
+                            text: (UPower.displayDevice.percentage * 100) + "%"
                             font.pixelSize: 17
                             
                         }
