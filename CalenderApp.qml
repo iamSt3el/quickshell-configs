@@ -6,18 +6,9 @@ import Quickshell.Hyprland
 Item{
     id: calanderItem
     property bool calenderVisible: false 
-    property alias calenderHideTimer: calenderAppHideTimer
     property var clockRect: null
     property real scaleProgress: scaleTransform.yScale
-    
-    Timer{
-        id: calenderAppHideTimer
-        interval: 400
-        onTriggered:{
-            //console.log("Close")
-            //calenderApp.close()
-        }
-    }
+
     
     PopupWindow{
         id: calenderApp

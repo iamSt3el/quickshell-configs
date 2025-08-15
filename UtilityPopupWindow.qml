@@ -22,18 +22,18 @@ Item {
     PopupWindow {
         id: utilityPopupWrapper
         anchor.window: topBar
-        implicitWidth: utilityRect.width + 1
-        implicitHeight: 600
+        implicitWidth: utilityRowWrapper.width + 30
+        implicitHeight: 460
         color: "transparent"
         visible: isUtilityPopUpVisible
 
         anchor {
             rect.x: utilityRectItem.x
             rect.y: utilityRect.height
-            gravity: Edges.Left | Edges.Bottom
+            //gravity: Edges.Bottom
             adjustment: PopupAdjustment.FlipX
-            margins.left: 0
-            margins.right: 0
+            //margins.left: 0
+            //margins.right: 0
         }
 
         Rectangle {
@@ -50,11 +50,11 @@ Item {
 
             Shape {
                 ShapePath {
-                    fillColor: "#06070e"
+                    fillColor: "#11111b"
                     //strokeColor: "blue"
                     strokeWidth: 0
-                    startX: animationRect.x + animationRect.width - 20 || 0
-                    startY: animationRect.height - 20
+                    startX: utilityPopupWrapper.x || 0
+                    startY: utilityPopupWrapper.y || 0
 
                     PathArc {
                         relativeX: 20
@@ -63,12 +63,22 @@ Item {
                         radiusY: 15
                     }
                     PathLine {
-                        relativeX: 0
-                        relativeY: -20
+                        relativeX: utilityPopupWrapper.width - 40
+                        relativeY: 0
                     }
                     PathLine {
-                        relativeX: -19
-                        relativeY: 0
+                        relativeX: 0
+                        relativeY: utilityPopupWrapper.height - 40
+                    }
+                    PathArc{
+                        relativeY: 20
+                        relativeX: 20
+                        radiusX: 20
+                        radiusY: 15
+                    }
+                    PathLine{
+                        relativeY: - utilityPopupWrapper.height
+                        relativeX: 0
                     }
                 }
             }
@@ -76,20 +86,24 @@ Item {
             Rectangle {
                 id: utilityPopup
                 implicitHeight: parent.height - 20
-                implicitWidth: parent.width
-                anchors.horizontalCenter: parent.horizontalCenter
+                implicitWidth: parent.width - 20
+                anchors.right: parent.right
+                //anchors.horizontalCenter: parent.horizontalCenter
+                //visible: false
 
-                color: "#06070e"
-                bottomLeftRadius: 10
+                color: "#11111b"
+                bottomLeftRadius: 20
                 //bottomRightRadius: 10
 
                 Rectangle {
                     implicitHeight: parent.height - 20
                     implicitWidth: parent.width - 20
-                    color: "#393E46"
+                    color: "#1E1E2E"
+                    clip: true
 
                     radius: 10
                     anchors {
+                        bottom: parent.bottom
                         centerIn: parent
                     }
 
@@ -121,14 +135,14 @@ Item {
                                 color: "transparent"
                                 Text {
                                     text: "Bluetooth"
-                                    color: "#799EFF"
+                                    color: "#89b4fa"
                                     font.pixelSize: 18
                                 }
 
                                 Rectangle {
                                     implicitWidth: 50
                                     implicitHeight: 20
-                                    color: "#1E1E1E"
+                                    color: "#11111b"
                                     radius: 10
 
                                     anchors {
@@ -140,7 +154,7 @@ Item {
                                         id: toggleButton
                                         implicitWidth: 25
                                         implicitHeight: 20
-                                        color: "#799EFF"
+                                        color: "#89b4fa"
                                         radius: 20
                                         x: isToggleOn ? 25 : 0
 
@@ -180,7 +194,7 @@ Item {
                                 visible: Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.state === 1 ? true : false
                                 width: parent.width
                                 height: 50
-                                color: modelData.state === 1 ? "#06D001" : "#4A4947"
+                                color: modelData.state === 1 ? "#a6e3a1" : "#45475a"
                                 radius: 10
 
                                 Row {
@@ -265,7 +279,7 @@ Item {
                             implicitWidth: parent.width - 10
 
                             radius: 10
-                            color: "blue"
+                            color: "#89b4fa"
 
                             anchors{
                                 centerIn: parent
@@ -276,7 +290,7 @@ Item {
                                 anchors{
                                     centerIn: parent
                                 }
-                                color:"white"
+                                color:"#E4E4E4"
                             }
 
                             MouseArea{

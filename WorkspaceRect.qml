@@ -31,7 +31,7 @@ Item{
                 }
 
                 PathLine{
-                    relativeX: topBarWrapper.width - 30 
+                    relativeX: topBarWrapper.width - 20 
                     relativeY: -(topBarWrapper.height) + 20
                 }
 
@@ -44,17 +44,16 @@ Item{
                 }
                 
                 PathLine{
-                    relativeX: -(topBarWrapper.width + 10)
+                    relativeX: -(topBarWrapper.width + 20)
                     relativeY: 0
-
                 }
             }
         }
 
         Rectangle{
-            implicitWidth: {console.log(7); return topBarWrapper.width}
+            implicitWidth: topBarWrapper.width
             implicitHeight: 40
-            color: "#06070e"
+            color: "#11111b"
             bottomRightRadius: 20
             anchors{
             }
@@ -70,7 +69,7 @@ Item{
                     delegate: Rectangle{
                         width: modelData.focused ? 50 : 30 
                         height: 30
-                        color: workspaceArea.containsMouse || modelData.focused ? "#48CFCB" : "#343131"
+                        color: workspaceArea.containsMouse || modelData.focused ? "#74c7ec" : "#1E1E2E"
                         radius: workspaceArea.containsMouse ? 8 : 5
 
                         Behavior on color{
@@ -87,14 +86,14 @@ Item{
 
                         border{
                             width: 1
-                            color: "#686D76"
+                            color: "#45475A"
                         } 
                         Text{
                             anchors{
                                 centerIn: parent
                             }
                             text: modelData.id
-                            color: "#FAF7F0"
+                            color: "#cdd6f4"
                         }
 
                         MouseArea{

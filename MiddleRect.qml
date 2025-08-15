@@ -106,9 +106,6 @@ Item{
                     fill: parent
                 }    
 
-                onExited: {
-                    calenderApp.calenderHideTimer.start()
-                }
 
                 onClicked:{
                     if(!calenderApp.calenderVisible){

@@ -24,7 +24,7 @@ Item{
 
          Shape{
             ShapePath{
-                fillColor: "#06070e"
+                fillColor: "#11111b"
                 //strokeColor: "blue"
                 strokeWidth: 0
                 startX: utilityRectWrapper.width
@@ -59,18 +59,18 @@ Item{
                 }
             }
         }
-
         UtilityPopupWindow{
-              id: utilityPopupWrapper
+              id: utilityPopupWrapper 
         }
-
+    
         Rectangle{
             id: utilityRect
-            implicitWidth: utilityRowWrapper.width + 30
+            implicitWidth: utilityRowWrapper.width + 80
             //implicitWidth: 300
             implicitHeight: 40
-            color: "#06070e"
-            bottomLeftRadius: utilityPopupWrapper.isUtilityPopUpVisible ? 0 : 20
+            color: "#11111b"
+            bottomLeftRadius: 20
+
           
             anchors{
                 right: parent.right
@@ -81,16 +81,17 @@ Item{
                 anchors{
                     right: parent.right
                     verticalCenter: parent.verticalCenter
-                    //rightMargin: 10
+                    rightMargin: 10
                 }
                 spacing: 10
                 Rectangle{
                     id: wifi
                     implicitHeight: 30
-                    implicitWidth: 35
-                    color: "#393E46"
+                    implicitWidth: 40
+                    color: "#1E1E2E"
                     radius: 10
                     objectName: "wifi"
+                    border.color: "#45475A"
 
                     Image{
                         id: wifiIcon
@@ -114,23 +115,26 @@ Item{
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked:{
-                            if(utilityPopupWrapper.isUtilityPopUpVisible){
+                            /*if(utilityPopupWrapper.isUtilityPopUpVisible){
                                 utilityPopupWrapper.close()
                             }else{
                                  utilityPopupWrapper.open()
-                            }
-                           // Quickshell.execDetached(["kitty", "--class", "nmtui-popup", "-e", "nmtui"])
+                             }*/
+                           Quickshell.execDetached(["kitty", "--class", "nmtui-popup", "-e", "nmtui"])
                         }
                     }
                 }
 
                 Rectangle{
                     id: bt
-                    implicitWidth: 35
+                    implicitWidth: 40
                     implicitHeight: 30
-                    color: "#393E46"
+                    color: "#1E1E2E"
                     radius: 10
                     objectName: "bt"
+
+                    border.color: "#45475A"
+                    border.width: 1
 
                     Image{
                         anchors{
@@ -171,12 +175,13 @@ Item{
 
                  Rectangle{
                     id: battery
-                    implicitWidth: batteryChild.implicitWidth + 10
+                    implicitWidth: batteryChild.implicitWidth + 15
                     implicitHeight: batteryChild.implicitHeight + 5
+                    border.color: "#45475A"
                     color: {
                         if (UPower.displayDevice.state === UPowerDeviceState.Charging) return "#08CB00"
                         if (UPower.displayDevice.state === UPowerDeviceState.Discharging) return "#FFB22C"
-                        return "#393E46"
+                        return "#1E1E2E"
                     }
                     radius: 10
                     
@@ -215,7 +220,7 @@ Item{
                             
                             }
                             color: "#FFFFFF"
-                            text: (UPower.displayDevice.percentage * 100) + "%"
+                            text: Math.round(UPower.displayDevice.percentage * 100) + "%"
                             font.pixelSize: 17
                             
                         }
@@ -224,10 +229,11 @@ Item{
 
                  Rectangle{
                     id: notification
-                    implicitWidth: 35
+                    implicitWidth: 40
                     implicitHeight: 30
-                    color: "#393E46"
+                    color: "#1E1E2E"
                     radius: 10
+                    border.color: "#45475A"
 
                     Image{
                         anchors{
@@ -246,10 +252,11 @@ Item{
                }
                  Rectangle{
                     id: power
-                    implicitWidth: 35
+                    implicitWidth: 40
                     implicitHeight: 30
-                    color: "#393E46"
+                    color: "#1E1E2E"
                     radius: 10
+                    border.color: "#45475A"
 
                     Image{
                         anchors{
@@ -265,29 +272,8 @@ Item{
                            color: "#F5F5F5"
                        }
                    }
-               }
-
-
-                 Rectangle{
-                    id: logo
-                    implicitWidth: 30
-                    implicitHeight: 30
-                    color: "transparent"
-
-                    Image{
-                        anchors{
-                            fill: parent
-                        }
-                        width: 30
-                        height: 30
-                        sourceSize: Qt.size(width, height)
-                        source: "./assets/arch.svg"
-                    }
-                }
+               }  
             }
-
-
-        }
-    
+        }    
     }
 }
