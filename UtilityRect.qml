@@ -8,15 +8,31 @@ import Quickshell.Services.UPower
 
 Item{
     id: utilityRectItem
+    
+    // Size configuration
+    readonly property int componentHeight: 30
+    readonly property int componentWidth: 40
+    readonly property int cpuUsageWidth: 135
+    readonly property int wrapperHeight: 50
+    readonly property int iconSize: 20
+    
     //implicitWidth: utilityRectWrapper.width
     anchors{
         right: parent.right
     }
+
+    CPUUsage{
+        id: cpuMonitor
+    }
+    
+    RAMUsage{
+        id: ramMonitor
+    } 
     Rectangle{
         id: utilityRectWrapper
         implicitWidth: utilityRect.width + 10
         //implicitWidth: 310
-        implicitHeight: 50
+        implicitHeight: wrapperHeight
         color: "transparent"
         anchors{
             right: parent.right
@@ -65,7 +81,7 @@ Item{
     
         Rectangle{
             id: utilityRect
-            implicitWidth: utilityRowWrapper.width + 80
+            implicitWidth: utilityRowWrapper.width + 20
             //implicitWidth: 300
             implicitHeight: 40
             color: "#11111b"
@@ -84,10 +100,131 @@ Item{
                     rightMargin: 10
                 }
                 spacing: 10
+
+                 Rectangle{
+                    id: ramUsage
+                    implicitHeight: componentHeight
+                    implicitWidth: cpuUsageWidth
+                    color: "#1E1E2E"
+                    radius: 10
+                    border.color: "#45475A"
+                    Row{
+                        spacing: 8
+                        anchors{
+                            centerIn: parent
+                        }
+                        Image{
+                            id: ramIcon
+                            source: "./assets/ram.svg"
+                            width: iconSize
+                            height: iconSize
+                            sourceSize: Qt.size(width, height)
+                            layer.enabled: true
+                            layer.effect: ColorOverlay{
+                                color: "#F5F5F5"
+                            }
+                        }
+
+                        Text{
+                            anchors{
+                                verticalCenter: parent.verticalCenter
+                            }
+                            text: Math.floor(ramMonitor.ramUsage) + "%"
+                            color: "#CDD6F4"
+                            font.pixelSize: 14
+                        }
+
+                        Rectangle{
+                            id: ramBar
+                            implicitWidth: 50
+                            implicitHeight: 8
+                            radius: 5
+                            color: "#ccd0da"
+                            anchors{
+                                verticalCenter: parent.verticalCenter
+                            }
+                            clip: true
+
+                            Rectangle{
+                                implicitHeight: parent.height
+                                implicitWidth: Math.floor(ramMonitor.ramUsage * parent.width / 100) + 5
+                                radius: 5
+                                color: "#A6E3A1"
+                                anchors{
+                                    verticalCenter: parent.verticalCenter 
+                                }
+
+                                Behavior on implicitWidth{
+                                    NumberAnimation{duration: 100; easing.type: Easing.InCubic}
+                                }
+                            }
+                        }
+                    }
+                }
+                Rectangle{
+                    id: cpuUsage
+                    implicitHeight: componentHeight
+                    implicitWidth: cpuUsageWidth
+                    color: "#1E1E2E"
+                    radius: 10
+                    border.color: "#45475A"
+                    Row{
+                        spacing: 8
+                        anchors{
+                            centerIn: parent
+                        }
+                        Image{
+                            id: cpuIcon
+                            source: "./assets/cpu.svg"
+                            width: iconSize
+                            height: iconSize
+                            sourceSize: Qt.size(width, height)
+                            layer.enabled: true
+                            layer.effect: ColorOverlay{
+                                color: "#F5F5F5"
+                            }
+                        }
+
+                        Text{
+                            anchors{
+                                verticalCenter: parent.verticalCenter
+                            }
+                            text: Math.floor(cpuMonitor.cpuUsage) + "%"
+                            color: "#CDD6F4"
+                            font.pixelSize: 14
+                        }
+
+                        Rectangle{
+                            id: cpuBar
+                            implicitWidth: 50
+                            implicitHeight: 8
+                            radius: 5
+                            color: "#ccd0da"
+                            anchors{
+                                verticalCenter: parent.verticalCenter
+                            }
+                            clip: true
+
+                            Rectangle{
+                                implicitHeight: parent.height
+                                implicitWidth: Math.floor(cpuMonitor.cpuUsage * parent.width / 100) + 5
+                                radius: 5
+                                color: "#EBA0AC"
+                                anchors{
+                                    verticalCenter: parent.verticalCenter 
+                                }
+
+                                Behavior on implicitWidth{
+                                    NumberAnimation{duration: 100; easing.type: Easing.InCubic}
+                                }
+                            }
+                        }
+                    }
+                }
                 Rectangle{
                     id: wifi
-                    implicitHeight: 30
-                    implicitWidth: 40
+                    implicitHeight: componentHeight
+                    implicitWidth: componentWidth
                     color: "#1E1E2E"
                     radius: 10
                     objectName: "wifi"
@@ -96,8 +233,8 @@ Item{
                     Image{
                         id: wifiIcon
                         anchors.centerIn: parent
-                        width: 25
-                        height: 25
+                        width: iconSize
+                        height: iconSize
                         sourceSize: Qt.size(width, height)
                         source: "./assets/wifi.svg"
 
@@ -127,22 +264,27 @@ Item{
 
                 Rectangle{
                     id: bt
-                    implicitWidth: 40
-                    implicitHeight: 30
-                    color: "#1E1E2E"
+                    property bool isActive: false
+                    implicitWidth: componentWidth
+                    implicitHeight: componentHeight
+                    color: isActive ? "#fab387" : "#1E1E2E"
                     radius: 10
                     objectName: "bt"
-
                     border.color: "#45475A"
                     border.width: 1
+
+                    Behavior on color{
+                        ColorAnimation{duration: 200}
+                    }
+
 
                     Image{
                         anchors{
                             //fill: parent
                             centerIn: parent
                         }
-                        width: 25
-                        height: 25
+                        width: iconSize
+                        height: iconSize
                         sourceSize: Qt.size(width, height)
 
                         source: "./assets/bluetooth.svg"
@@ -161,10 +303,12 @@ Item{
                         cursorShape: Qt.PointingHandCursor
                         onClicked:{
                             if(utilityPopupWrapper.isUtilityPopUpVisible){
+                                bt.isActive = false
                                 utilityPopupWrapper.close()
                             }else{
-                                 utilityPopupWrapper.utility = bt
-                                 utilityPopupWrapper.open()
+                                utilityPopupWrapper.utility = bt
+                                bt.isActive = true
+                                utilityPopupWrapper.open()
                             }
 
                             //Quickshell.execDetached(["blueman-manager"])
@@ -229,8 +373,8 @@ Item{
 
                  Rectangle{
                     id: notification
-                    implicitWidth: 40
-                    implicitHeight: 30
+                    implicitWidth: componentWidth
+                    implicitHeight: componentHeight
                     color: "#1E1E2E"
                     radius: 10
                     border.color: "#45475A"
@@ -239,8 +383,8 @@ Item{
                         anchors{
                             centerIn: parent
                         }
-                        width: 25
-                        height: 25
+                        width: iconSize
+                        height: iconSize
                         sourceSize: Qt.size(width, height)
                         source: "./assets/notification.svg"
                     
@@ -252,8 +396,8 @@ Item{
                }
                  Rectangle{
                     id: power
-                    implicitWidth: 40
-                    implicitHeight: 30
+                    implicitWidth: componentWidth
+                    implicitHeight: componentHeight
                     color: "#1E1E2E"
                     radius: 10
                     border.color: "#45475A"
@@ -262,8 +406,8 @@ Item{
                         anchors{
                             centerIn: parent
                         }
-                        width: 25
-                        height: 25
+                        width: iconSize
+                        height: iconSize
                         sourceSize: Qt.size(width, height)
                         source: "./assets/shutdown.svg"
                     
