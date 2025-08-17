@@ -14,7 +14,7 @@ ShellRoot {
         inlineReplySupported: true
         onNotification: function(notification) {
             // Log notification details
-            console.log(`Notification from ${notification.appName}: ${notification.summary}`);   
+            console.log(`Notification from ${notification.appName}: ${notification.body}`);   
             
             // Show in your custom notification popup
             addNotification(notification)
@@ -28,7 +28,8 @@ ShellRoot {
             summary: notification.summary || "notification",
             inlineReplyPlaceholder: notification.inlineReplyPlaceholder || "nothing",
             image: notification.image,
-            appName: notification.appName
+            appName: notification.appName,
+            body: notification.body
         }
 
         notificationQueue.unshift(notificationObj)

@@ -22,7 +22,7 @@ Scope{
                 top: true
                 right: true
             }
-            margins.top: 80
+            //margins.top: 80
             
             Connections {
                 target: notificationScope
@@ -133,26 +133,51 @@ Scope{
                                         centerIn: parent
                                     }
 
-                                    Row{
-                                        spacing: 10
+                                    Column{
+                                        anchors.fill: parent
+                                        Row{
+                                            spacing: 10
 
-                                        width: parent.width
-                                        height: 20
-                                        anchors{
-                                            leftMargin: 10
-                                        }
-                                        Image{
-                                            anchors{
-                                                //verticalCenter: parent.verticalCenter
-                                            }
-                                            width: 20
+                                            width: parent.width
                                             height: 20
-                                            source: modelData.image
+                                            anchors{
+                                                leftMargin: 10
+                                            }
+                                            Image{
+                                                anchors{
+                                                    //verticalCenter: parent.verticalCenter
+                                                }
+                                                width: 20
+                                                height: 20
+                                                source: modelData.image
+                                            }
+                                            Text{
+                                                text: modelData.appName
+                                                color: "#FFFFFF"
+                                                font.pixelSize: 12
+                                            }
                                         }
-                                        Text{
-                                            text: modelData.appName
-                                            color: "#FFFFFF"
-                                            font.pixelSize: 12
+
+                                        Rectangle{
+                                            width: parent.width
+                                            height: 20
+                                            color: "transparent"
+                                            Text{
+                                                text: modelData.summary
+                                                color: "#FFFFFF"
+                                                font.pixelSize: 16
+                                            }
+                                        }
+
+                                        Rectangle{
+                                            width: parent.width
+                                            height: 40
+                                            color: "transparent"
+                                            Text{
+                                                text: modelData.body
+                                                color: "#FFFFFF"
+                                                font.pixelSize: 14
+                                            }
                                         }
                                     }
                                 }

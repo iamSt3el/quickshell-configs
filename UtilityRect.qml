@@ -5,6 +5,7 @@ import QtQuick.Shapes
 import Quickshell.Hyprland
 import Qt5Compat.GraphicalEffects
 import Quickshell.Services.UPower
+import Quickshell.Services.Pipewire
 
 Item{
     id: utilityRectItem
@@ -19,6 +20,10 @@ Item{
     //implicitWidth: utilityRectWrapper.width
     anchors{
         right: parent.right
+    }
+
+    Pipewire{
+        id: pipewire
     }
 
     CPUUsage{
@@ -100,6 +105,18 @@ Item{
                     rightMargin: 10
                 }
                 spacing: 10
+
+                Rectangle{
+                    id: musicPlayer
+                    implicitHeight: componentHeight
+                    implicitWidth: 135
+                    color: "#1E1E2E"
+                    radius: 10
+
+                    Text{
+                        text: Pipewire.PwNode.description
+                    }
+                }
 
                  Rectangle{
                     id: ramUsage
