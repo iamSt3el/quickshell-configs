@@ -103,11 +103,28 @@ Scope{
                             delegate: Rectangle{
                                 implicitHeight: 80;
                                 implicitWidth: 240;
-                                color: "#1E1E2E"
+                                color: "#1E1E2E" 
                                 radius: 10
                                 anchors{
                                     horizontalCenter: parent.horizontalCenter
+                                } 
+                                transform: Scale {
+                                    id: itemScaleTransform
+                                    origin.x: parent.width
+                                    origin.y: parent.height / 2
+                                    xScale: index === 0 ? 0 : 1
                                 }
+                                
+                                NumberAnimation {
+                                    running: index === 0
+                                    target: itemScaleTransform
+                                    property: "xScale"
+                                    from: 0
+                                    to: 1
+                                    duration: 200
+                                    easing.type: Easing.OutCubic
+                                }
+
                                 Rectangle{
                                     color: "transparent"
                                     implicitHeight: parent.height - 6
@@ -115,6 +132,7 @@ Scope{
                                     anchors{
                                         centerIn: parent
                                     }
+
                                     Row{
                                         spacing: 10
 

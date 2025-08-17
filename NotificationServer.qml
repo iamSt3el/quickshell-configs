@@ -31,7 +31,7 @@ ShellRoot {
             appName: notification.appName
         }
 
-        notificationQueue.push(notificationObj)
+        notificationQueue.unshift(notificationObj)
 
         notificationQueue = notificationQueue
     }
