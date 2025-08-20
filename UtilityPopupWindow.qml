@@ -24,7 +24,7 @@ Item {
     PopupWindow {
         id: utilityPopupWrapper
         anchor.window: topBar
-        implicitWidth: utilityRowWrapper.width - 260
+        implicitWidth: utilityRowWrapper.width - 40
         implicitHeight: 460
         color: "transparent"
         visible: isUtilityPopUpVisible

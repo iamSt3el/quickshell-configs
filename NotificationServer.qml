@@ -38,9 +38,9 @@ ShellRoot {
     }
 
 
-    NotificationPanel{
+    /*NotificationPanel{
         id: notificationPanel
         notifList: notificationQueue
-    }
+    }*/
     
 }

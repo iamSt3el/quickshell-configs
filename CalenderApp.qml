@@ -27,7 +27,7 @@ Item{
             id: calenderContent
             implicitHeight: parent.height
             implicitWidth: parent.width
-            color: "#09070e"
+            color: "#11111B"
             bottomLeftRadius: 20
             bottomRightRadius: 20
             
@@ -134,7 +134,7 @@ Item{
                             font.pixelSize: 16
                             font.family: nothingFonts.name
                             font.weight: Font.Medium
-                            color: "white"
+                            color: "#cdd6f4"
                         }
                     }
                     
@@ -306,7 +306,7 @@ Item{
                                     if (!modelData.isCurrentMonth) {
                                         return Qt.rgba(1, 1, 1, 0.2);
                                     }
-                                    return "white";
+                                    return "#cdd6f4";
                                 }
                             }
                             

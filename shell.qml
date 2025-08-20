@@ -5,10 +5,10 @@ import QtQuick
 ShellRoot{    
 
     // Dock related code
-    Dock{}
+    //Dock{}
 
     // Power panel code
-    PowerPanel{}
+    //PowerPanel{}
 
     // Top bar code 
     TopBar{}

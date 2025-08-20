@@ -22,10 +22,6 @@ Item{
         right: parent.right
     }
 
-    Pipewire{
-        id: pipewire
-    }
-
     CPUUsage{
         id: cpuMonitor
     }
@@ -83,7 +79,11 @@ Item{
         UtilityPopupWindow{
               id: utilityPopupWrapper 
         }
-    
+
+        MonitorPopup{
+            id: monitorPopupWrapper
+        }
+
         Rectangle{
             id: utilityRect
             implicitWidth: utilityRowWrapper.width + 20
@@ -106,7 +106,7 @@ Item{
                 }
                 spacing: 10
 
-                Rectangle{
+                /*Rectangle{
                     id: musicPlayer
                     implicitHeight: componentHeight
                     implicitWidth: 135
@@ -116,137 +116,63 @@ Item{
                     Text{
                         text: Pipewire.PwNode.description
                     }
-                }
+                }*/
 
-                 Rectangle{
-                    id: ramUsage
+             
+
+                Rectangle{
+                    id: monitor
                     implicitHeight: componentHeight
-                    implicitWidth: cpuUsageWidth
-                    color: "#1E1E2E"
+                    implicitWidth: componentWidth
+                    //color: monitorArea.containsMouse ? "#a6da95" : "#1E1E2E"
+                    color:"transparent"
                     radius: 10
-                    border.color: "#45475A"
-                    Row{
-                        spacing: 8
-                        anchors{
-                            centerIn: parent
-                        }
-                        Image{
-                            id: ramIcon
-                            source: "./assets/ram.svg"
-                            width: iconSize
-                            height: iconSize
-                            sourceSize: Qt.size(width, height)
-                            layer.enabled: true
-                            layer.effect: ColorOverlay{
-                                color: "#F5F5F5"
-                            }
-                        }
+                    //border.color: "#45475A"
 
-                        Text{
-                            anchors{
-                                verticalCenter: parent.verticalCenter
-                            }
-                            text: Math.floor(ramMonitor.ramUsage) + "%"
-                            color: "#CDD6F4"
-                            font.pixelSize: 14
-                        }
+                    Behavior on color{
+                        ColorAnimation{duration: 200}
+                    }
 
-                        Rectangle{
-                            id: ramBar
-                            implicitWidth: 50
-                            implicitHeight: 8
-                            radius: 5
-                            color: "#ccd0da"
-                            anchors{
-                                verticalCenter: parent.verticalCenter
-                            }
-                            clip: true
+                    Image{
+                        id: monitorIcon
+                        anchors.centerIn: parent
+                        width: iconSize
+                        height: iconSize
+                        sourceSize: Qt.size(width, height)
+                        source: "./assets/monitor.svg"
 
-                            Rectangle{
-                                implicitHeight: parent.height
-                                implicitWidth: Math.floor(ramMonitor.ramUsage * parent.width / 100) + 5
-                                radius: 5
-                                color: "#A6E3A1"
-                                anchors{
-                                    verticalCenter: parent.verticalCenter 
-                                }
-
-                                Behavior on implicitWidth{
-                                    NumberAnimation{duration: 100; easing.type: Easing.InCubic}
-                                }
-                            }
+                        layer.enabled: true
+                        layer.effect: ColorOverlay{
+                            //color: "#F5F5F5"
+                            color: "#94e2d5"
                         }
                     }
-                }
-                Rectangle{
-                    id: cpuUsage
-                    implicitHeight: componentHeight
-                    implicitWidth: cpuUsageWidth
-                    color: "#1E1E2E"
-                    radius: 10
-                    border.color: "#45475A"
-                    Row{
-                        spacing: 8
-                        anchors{
-                            centerIn: parent
-                        }
-                        Image{
-                            id: cpuIcon
-                            source: "./assets/cpu.svg"
-                            width: iconSize
-                            height: iconSize
-                            sourceSize: Qt.size(width, height)
-                            layer.enabled: true
-                            layer.effect: ColorOverlay{
-                                color: "#F5F5F5"
-                            }
+
+                    MouseArea{
+                        id: monitorArea
+                        hoverEnabled: true
+                        anchors.fill: parent
+                        onEntered: {
+                            monitorPopupWrapper.timer.stop()
+                            monitorPopupWrapper.isMonitorVisible= true
                         }
 
-                        Text{
-                            anchors{
-                                verticalCenter: parent.verticalCenter
-                            }
-                            text: Math.floor(cpuMonitor.cpuUsage) + "%"
-                            color: "#CDD6F4"
-                            font.pixelSize: 14
+                        onExited:{
+                            monitorPopupWrapper.timer.start()
                         }
 
-                        Rectangle{
-                            id: cpuBar
-                            implicitWidth: 50
-                            implicitHeight: 8
-                            radius: 5
-                            color: "#ccd0da"
-                            anchors{
-                                verticalCenter: parent.verticalCenter
-                            }
-                            clip: true
-
-                            Rectangle{
-                                implicitHeight: parent.height
-                                implicitWidth: Math.floor(cpuMonitor.cpuUsage * parent.width / 100) + 5
-                                radius: 5
-                                color: "#EBA0AC"
-                                anchors{
-                                    verticalCenter: parent.verticalCenter 
-                                }
-
-                                Behavior on implicitWidth{
-                                    NumberAnimation{duration: 100; easing.type: Easing.InCubic}
-                                }
-                            }
-                        }
                     }
                 }
                 Rectangle{
                     id: wifi
                     implicitHeight: componentHeight
                     implicitWidth: componentWidth
-                    color: "#1E1E2E"
-                    radius: 10
-                    objectName: "wifi"
-                    border.color: "#45475A"
-
+                    //color: "#1E1E2E"
+                    //radius: 10
+                    //objectName: "wifi"
+                    //border.color: "#45475A"
+                    color: "transparent"
+                    
                     Image{
                         id: wifiIcon
                         anchors.centerIn: parent
@@ -284,11 +210,12 @@ Item{
                     property bool isActive: false
                     implicitWidth: componentWidth
                     implicitHeight: componentHeight
-                    color: isActive ? "#fab387" : "#1E1E2E"
-                    radius: 10
-                    objectName: "bt"
-                    border.color: "#45475A"
-                    border.width: 1
+                    //color: isActive ? "#fab387" : "#1E1E2E"
+                    //radius: 10
+                    //objectName: "bt"
+                    //border.color: "#45475A"
+                    //border.width: 1
+                    color: "transparent"
 
                     Behavior on color{
                         ColorAnimation{duration: 200}
@@ -345,6 +272,7 @@ Item{
                         return "#1E1E2E"
                     }
                     radius: 10
+                    //color: "transparent"
                     
                     Row{
                         id: batteryChild
@@ -375,7 +303,7 @@ Item{
                                 color: "#F5F5F5"
                             }
                         }
-                        Text{
+                        /*Text{
                             anchors{
                                 //centerIn: parent
                             
@@ -385,6 +313,7 @@ Item{
                             font.pixelSize: 17
                             
                         }
+                        */
                     }
                 }
 
@@ -392,10 +321,10 @@ Item{
                     id: notification
                     implicitWidth: componentWidth
                     implicitHeight: componentHeight
-                    color: "#1E1E2E"
-                    radius: 10
-                    border.color: "#45475A"
-
+                    //color: "#1E1E2E"
+                    //radius: 10
+                    //border.color: "#45475A"
+                    color: "transparent"
                     Image{
                         anchors{
                             centerIn: parent
@@ -415,10 +344,10 @@ Item{
                     id: power
                     implicitWidth: componentWidth
                     implicitHeight: componentHeight
-                    color: "#1E1E2E"
-                    radius: 10
-                    border.color: "#45475A"
-
+                    //color: "#1E1E2E"
+                    //radius: 10
+                    //border.color: "#45475A"
+                    color: "transparent"
                     Image{
                         anchors{
                             centerIn: parent

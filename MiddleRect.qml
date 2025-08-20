@@ -23,7 +23,7 @@ Item{
         
         Shape{
             ShapePath{
-                fillColor: "#06070e"
+                fillColor: "#11111B"
                 //strokeColor: "blue"
                 strokeWidth: 0
 
@@ -62,7 +62,7 @@ Item{
             id: clockWrapper
             implicitWidth: parent.width - 20 
             implicitHeight: 40
-            color: "#09070e"
+            color: "#11111B"
            
             bottomRightRadius: calenderApp.calenderVisible ? 0 : 20
             bottomLeftRadius: calenderApp.calenderVisible ? 0 : 20
@@ -93,7 +93,7 @@ Item{
                 anchors{
                     centerIn: parent
                 }
-                color: "white"
+                color: "#cdd6f4"
                 text: Qt.formatDateTime(clock.date, "hh : mm AP  ddd dd")
                 font.family: nothingFonts.name
                 font.pixelSize: 22
