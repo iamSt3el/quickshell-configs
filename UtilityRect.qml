@@ -84,6 +84,10 @@ Item{
             id: monitorPopupWrapper
         }
 
+        UserPanel{
+            id: userPanelWrapper
+        }
+
         Rectangle{
             id: utilityRect
             implicitWidth: utilityRowWrapper.width + 20
@@ -118,16 +122,60 @@ Item{
                     }
                 }*/
 
-             
+                Rectangle{
+                    id: user
+                    implicitWidth: componentWidth
+                    implicitHeight: componentHeight
 
+                    color: "#313244"
+                    radius: 10
+                    Image{
+                        anchors.centerIn: parent
+                        width: iconSize
+                        height: iconSize
+                        sourceSize: Qt.size(width, height)
+                        source: "./assets/user.svg"
+
+                        layer.enabled: true
+                        layer.effect: ColorOverlay{
+                            color: "#74c7ec"
+                        }
+                    }
+
+                    MouseArea{
+                        id: userArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked:{
+                            if(userPanelWrapper.userPanelVisible){
+                                userPanelWrapper.userPanelVisible = false
+                            }else{
+                                userPanelWrapper.userPanelVisible = true
+                            }
+                        }
+                    }
+                }
+
+             
+            Rectangle{
+                implicitWidth: monitor.width + bt.width + wifi.width + notification.width + power.width
+                implicitHeight: componentHeight
+                color: "#313244"
+                radius: 10
+                Row{
+                    anchors{
+                        fill: parent
+                    }
                 Rectangle{
                     id: monitor
                     implicitHeight: componentHeight
                     implicitWidth: componentWidth
                     //color: monitorArea.containsMouse ? "#a6da95" : "#1E1E2E"
                     color:"transparent"
-                    radius: 10
-                    //border.color: "#45475A"
+                    //radius: 10
+                    //border.color: monitorArea.containsMouse ? "#1E1E2E" : "transparent"
 
                     Behavior on color{
                         ColorAnimation{duration: 200}
@@ -169,7 +217,7 @@ Item{
                     implicitWidth: componentWidth
                     //color: "#1E1E2E"
                     //radius: 10
-                    //objectName: "wifi"
+                    objectName: "wifi"
                     //border.color: "#45475A"
                     color: "transparent"
                     
@@ -234,7 +282,7 @@ Item{
                         source: "./assets/bluetooth.svg"
                         layer.enabled: true
                         layer.effect: ColorOverlay{
-                            color: "#F5F5F5"
+                            color: bt.isActive ? "#fab387" : "#F5F5F5"
                         }
                     }
 
@@ -261,62 +309,7 @@ Item{
 
                 }
 
-                 Rectangle{
-                    id: battery
-                    implicitWidth: batteryChild.implicitWidth + 15
-                    implicitHeight: batteryChild.implicitHeight + 5
-                    border.color: "#45475A"
-                    color: {
-                        if (UPower.displayDevice.state === UPowerDeviceState.Charging) return "#08CB00"
-                        if (UPower.displayDevice.state === UPowerDeviceState.Discharging) return "#FFB22C"
-                        return "#1E1E2E"
-                    }
-                    radius: 10
-                    //color: "transparent"
-                    
-                    Row{
-                        id: batteryChild
-                        spacing: 5
-                        anchors{
-                            centerIn: parent
-                        }
-                        Image{
-                            width: 25
-                            height: 25
-                            sourceSize: Qt.size(width, height)
-
-                            source: {
-                                if(UPower.displayDevice.state === UPowerDeviceState.Charging){
-                                    return "./assets/battery-charging.svg"
-                                }
-                                if(UPower.displayDevice.percentage < 0.70){
-                                    return "./assets/battery-medium.svg"
-                                }
-                                if(UPower.displayDevice.percentage < 0.30){
-                                    return "./assets/battery-low.svg"
-                                }
-                                return "./assets/battery.svg"
-                            }
-                    
-                            layer.enabled: true
-                            layer.effect: ColorOverlay{
-                                color: "#F5F5F5"
-                            }
-                        }
-                        /*Text{
-                            anchors{
-                                //centerIn: parent
-                            
-                            }
-                            color: "#FFFFFF"
-                            text: Math.round(UPower.displayDevice.percentage * 100) + "%"
-                            font.pixelSize: 17
-                            
-                        }
-                        */
-                    }
-                }
-
+               
                  Rectangle{
                     id: notification
                     implicitWidth: componentWidth
@@ -362,7 +355,78 @@ Item{
                            color: "#F5F5F5"
                        }
                    }
-               }  
+               }
+           }
+       }
+
+                 Rectangle{
+                    id: battery
+                    //implicitWidth: batteryChild.implicitWidth + 15
+                    //implicitHeight: batteryChild.implicitHeight + 5
+                    implicitWidth: componentWidth + 4
+                    implicitHeight: componentHeight 
+                    //border.color: "#45475A"
+                    /*color: {
+                        //if (UPower.displayDevice.state === UPowerDeviceState.Charging) return "#08CB00"
+                        //if (UPower.displayDevice.state === UPowerDeviceState.Discharging) return "#FFB22C"
+                        //return "#45475A"
+                    }*/
+                    radius: 10
+                    color: "transparent"
+                    
+                    Rectangle{
+                        id: wrapper
+                        implicitWidth: parent.width - 10
+                        implicitHeight: parent.height - 10
+                        color: "#45475A"
+                        radius: 5
+                        anchors{
+                            left: parent.left
+                            verticalCenter: parent.verticalCenter
+
+                        }
+                            Rectangle{
+                                implicitHeight: parent.height
+                                implicitWidth: (parent.width * UPower.displayDevice.percentage)
+                                color: {
+                                    if (UPower.displayDevice.state === UPowerDeviceState.Charging) return "#A6E3A1"
+                                    if (UPower.displayDevice.state === UPowerDeviceState.Discharging) return "#FFB22C"
+                                    return "#A6E3A1"
+                                }
+                                radius: 5
+                                
+
+                                anchors{
+                                    //leftMargin: 5
+                                    //verticalCenter: parent.verticalCenter
+                                    left: parent.left 
+                                }
+                            }
+
+                            Text{ 
+                                anchors{
+                                    centerIn: parent
+                                }
+                                color: "#FFFFFF"
+                                text: Math.round(UPower.displayDevice.percentage * 100)
+                                font.pixelSize: 16
+                        }
+                    }
+                
+
+                    Rectangle{
+                        implicitHeight: 10
+                        implicitWidth: 6
+                        color: "#45475A"
+                        topRightRadius: 5
+                        bottomRightRadius: 5
+                        anchors{
+                            right: parent.right
+                            verticalCenter: parent.verticalCenter
+                        }
+                    }
+                }
+
             }
         }    
     }
