@@ -7,7 +7,8 @@ import Quickshell.Hyprland
 Item{
     Rectangle{
         id: topBarWrapper
-        implicitWidth: 390
+        //implicitWidth: 390
+        implicitWidth: rect.width
         implicitHeight: 50
         color: "transparent"
         anchors{
@@ -51,13 +52,16 @@ Item{
         }
 
         Rectangle{
-            implicitWidth: topBarWrapper.width
+            id: rect
+            //implicitWidth: topBarWrapper.width
+            implicitWidth: row.width + 20
             implicitHeight: 40
             color: "#11111b"
             bottomRightRadius: 20
             anchors{
             }
             Row{
+                id: row
                 spacing: 5
                 anchors{
                     //horizontalCenter: parent.horizontalCenter

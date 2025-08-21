@@ -36,7 +36,7 @@ Item{
         visible: isMonitorVisible
 
         anchor{
-            rect.x: utilityRectItem.x-utilityRect.width + 20
+            rect.x: utilityRectItem.x-utilityRect.width + 220
             rect.y: utilityRect.height + 5
 
             gravity: Edges.Bottom
