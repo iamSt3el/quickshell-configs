@@ -1,51 +1,90 @@
 # Quickshell Desktop Environment
 
-A modern, customizable desktop environment built with Quickshell for Arch Linux + Hyprland. Features a clean, minimal interface with system monitoring, notifications, and media controls.
+A sophisticated, feature-rich desktop environment built with Quickshell for Arch Linux + Hyprland. Combines elegant design with powerful functionality including real-time system monitoring, music visualization, and comprehensive system controls.
 
-## 🚀 Features
+## ✨ Features
 
-### ✅ Implemented
-- **Top Bar**: Elegant top panel with workspace indicators
-- **System Monitoring**: Real-time CPU, RAM, disk usage, and temperature monitoring with visual indicators
-- **System Monitor Popup**: Detailed system metrics with animated progress bars
-- **Notification System**: Complete notification server and panel infrastructure  
-- **Media Controls**: Custom music player with visualizer
-- **Power Management**: System power controls (shutdown, reboot, suspend)
-- **User Panel**: User information and session management
-- **Bluetooth Panel**: Bluetooth device management interface
-- **Calendar Integration**: Built-in calendar application
-- **Custom Components**: Reusable sliders, utility windows, and animated elements
-- **Asset Management**: Complete icon set with SVG assets
-- **Custom Fonts**: Nothing Font 5x7 integration
+### 🏗️ Architecture
+- **Modular Design**: Self-contained components with clear separation of concerns
+- **Deep Hyprland Integration**: Native workspace management and window positioning
+- **Service-Oriented**: Dedicated monitoring services with efficient polling
+- **Responsive UI**: Multi-monitor support with proper anchoring system
 
-### 🎨 Design
-- **Catppuccin Theme**: Modern dark color scheme
-- **Smooth Animations**: Fluid transitions and interactive feedback
-- **Responsive Layout**: Adapts to different screen configurations
-- **SVG Icons**: Crisp, scalable vector graphics
+### 🖥️ Top Bar System
+- **WorkspaceRect**: Interactive Hyprland workspace switcher with dynamic sizing
+- **MiddleRect**: Nothing Font clock with full-featured calendar popup
+- **UtilityRect**: System tray with music visualizer, monitoring, and controls
 
-## 📋 Todo / Planned Features
+### 📊 System Monitoring
+- **Real-time Metrics**: CPU, RAM, disk usage, and temperature tracking
+- **Visual Indicators**: Animated progress bars with Catppuccin color coding
+- **Smart Polling**: 1-second intervals with cross-platform sensor fallbacks
+- **Hover Popups**: Detailed system information on demand
 
-### 🔧 Core Functionality
-- [ ] **Dock/Taskbar**: Application launcher and running app indicators
-- [ ] **Window Management**: Workspace switching and window controls
-- [ ] **Audio Controls**: Volume mixer and audio device switching
-- [ ] **Network Panel**: WiFi management and connection status
-- [ ] **Battery Widget**: Power level and charging status for laptops
+### 🎵 Media Integration
+- **CAVA Visualizer**: 16-bar real-time audio visualization with custom colors
+- **MPRIS Support**: Full media player controls with progress tracking
+- **Album Art Display**: Embedded artwork with fallback designs
+- **Multi-Player Support**: Handles multiple audio sources intelligently
 
-### 🎯 Enhancements
-- [ ] **Customization Settings**: Theme switching and layout options
-- [ ] **Plugin System**: Extensible widget architecture
-- [ ] **Multi-Monitor Support**: Enhanced multi-screen layout management
-- [ ] **Weather Widget**: Local weather information display
-- [ ] **Quick Actions**: Frequently used system shortcuts
-- [ ] **System Tray**: Traditional system tray implementation
+### 🔧 System Controls
+- **Bluetooth Management**: Device discovery, connection, and power control
+- **Battery Widget**: UPower integration with charging status and percentage
+- **Network Controls**: WiFi management via nmtui integration
+- **Power Actions**: System shutdown, reboot, and suspend controls
 
-### 🐛 Improvements
-- [ ] **Performance Optimization**: Reduce resource usage
-- [ ] **Error Handling**: Robust error management and recovery
-- [ ] **Configuration Management**: User-friendly config system
-- [ ] **Documentation**: Comprehensive setup and customization guide
+### 🔔 Notification System
+- **FreeDesktop Compliance**: Full notification spec with actions, images, markup
+- **Queue Management**: FIFO notification handling with proper data structures
+- **Visual Feedback**: Slide animations with scale transforms
+- **Rich Content**: App icons, summaries, and body text rendering
+
+### 🎨 Advanced UI
+- **Custom Shapes**: SVG-style backgrounds with path-based rendering
+- **Smooth Animations**: Extensive use of Behavior animations and easing curves
+- **Nothing Font Integration**: Custom typography for consistent branding
+- **Interactive Calendar**: Full month view with navigation and date selection
+
+## 📂 Project Structure
+
+```
+shell.qml                 # Main entry point - loads TopBar + NotificationServer
+├── TopBar.qml           # Main panel container
+│   ├── WorkspaceRect    # Hyprland workspace indicators (left)
+│   ├── MiddleRect       # Clock + calendar popup (center)  
+│   └── UtilityRect      # System controls + visualizer (right)
+├── SystemMonitor.qml    # Unified monitoring service
+├── MonitorPopup.qml     # Hover-triggered metrics display
+├── UserPanel.qml        # Media player + user controls
+├── NotificationServer   # FreeDesktop notification handling
+├── CalenderApp.qml      # Interactive calendar component
+└── BluetoothPanel.qml   # Device management interface
+```
+
+## 🎯 Implementation Status
+
+### ✅ Fully Implemented
+- **TopBar System**: Complete with workspace switching, clock, and utilities
+- **System Monitoring**: CPU, RAM, disk, temperature with visual feedback  
+- **Music Visualization**: Real-time CAVA integration with 16 animated bars
+- **Battery Management**: UPower integration with charge status display
+- **Notification Infrastructure**: Complete server with queue management
+- **Calendar Application**: Interactive month view with date selection
+- **User Dashboard**: Media controls, sliders, and profile information
+- **Bluetooth Controls**: Device discovery, connection, and power management
+- **Custom UI Components**: Shapes, animations, and responsive layouts
+
+### ⏸️ Disabled (Ready to Enable)
+- **PowerPanel**: System power controls (commented in shell.qml:11)
+- **NotificationPanel**: Visual notification display (commented in shell.qml:17)
+- **Dock**: Application launcher (commented in shell.qml:8)
+
+### 🔧 Enhancement Opportunities
+- **Network Panel**: Expand WiFi management beyond nmtui
+- **Audio Controls**: Volume mixer integration
+- **System Tray**: Traditional application tray implementation
+- **Configuration UI**: Runtime customization interface
+- **Plugin Architecture**: Extensible widget system
 
 ## 🛠️ Prerequisites
 
