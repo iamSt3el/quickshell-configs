@@ -1,202 +1,337 @@
 import Quickshell
 import QtQuick
-import Quickshell.Wayland
+import Quickshell.Io
 import QtQuick.Shapes
+import Quickshell.Wayland
 
-Scope{
-    id: notificationScope
-    property var notifList: []
-    
-    Variants{
-        model: Quickshell.screens
-        PanelWindow{
-            required property var modelData
-            screen: modelData
-            color: "transparent"
-            implicitWidth: 250
-            implicitHeight: Math.max(120, (notifList.length * 85) + 30)
-            id: notificationPanel
-            WlrLayershell.layer: WlrLayer.Overlay
-            exclusionMode: ExclusionMode.Normal
-            anchors{
-                top: true
-                right: true
+Item{
+
+    readonly property var notifications: NotificationManager.popups
+    property bool isNotifVisible: false
+    property int displayedCount: notifications.length
+    property int contentHeight: Math.max(90, displayedCount * 90 + 15)
+
+    Timer {
+        id: openTimer
+        interval: 10
+        onTriggered: open()
+    }
+
+    Timer {
+        id: closeCheckTimer
+        interval: 300  // After remove animation completes
+        onTriggered: {
+            if (notifications.length === 0 && isNotifVisible) {
+                close()
             }
-            //margins.top: 80
+        }
+    }
+
+    Timer {
+        id: removeCompleteTimer
+        interval: 350  // Slightly longer than remove animation (300ms)
+        onTriggered: {
+            displayedCount = notifications.length
+        }
+    }
+
+    onNotificationsChanged: {
+        console.log("length: " + displayedCount)
+        if (notifications.length < displayedCount) {
+            removeCompleteTimer.restart()
+            if (notifications.length === 0) {
+                closeCheckTimer.restart()
+            }
+        } else {
+            displayedCount = notifications.length
+            if (notifications.length > 0) {
+                openTimer.start()
+            }
+        }
+    }
+
+    PopupWindow{
+        id: notificationPanel
+        anchor{
+            window: topBar
+            rect.x: utilityRectItem.x
+            rect.y: utilityRect.height
+            adjustment: PopupAdjustment.FlipX
+        }
+
+        implicitWidth: 280
+        implicitHeight: 1200  // Fixed height - large enough for max notifications
+        
+        visible: isNotifVisible
+
+        color: "transparent"
+        
+        mask: Region {
+            x: 0
+            y: 0
+            width: 280
+            height: contentHeight
+        }
+
+        Item{
+            id: outerWrapper
             
-            Connections {
-                target: notificationScope
-                function onNotifListChanged() {
-                    if (notificationScope.notifList.length === 1) {
-                        openAnimation.start()
+            // Use contentHeight instead of parent height for smooth animations
+            implicitHeight: contentHeight
+            implicitWidth: 280
+            
+            // Animate the content height smoothly
+            Behavior on implicitHeight {
+                NumberAnimation { 
+                    duration: 300
+                    easing.type: Easing.OutCubic 
+                }
+            }
+            
+
+            transform: Scale{
+                id: scaleTransform
+                origin.x: outerWrapper.width / 2
+                origin.y: 0
+                yScale: 0
+            }
+            
+            Shape{
+                preferredRendererType: Shape.CurveRenderer
+                width: outerWrapper.width
+                height: outerWrapper.height
+
+                ShapePath{
+                    fillColor: "#11111b"
+                    strokeWidth: 0
+                    startX: 0
+                    startY: 0
+
+                    PathArc{
+                        relativeX: 20
+                        relativeY: 20
+                        radiusX: 20
+                        radiusY: 15
+                    }
+
+                    PathLine{
+                        relativeY: 0
+                        relativeX: outerWrapper.width - 40
+                    }
+
+                    PathLine{
+                        relativeX: 0
+                        relativeY: outerWrapper.height - 40
+                    }
+
+                    PathArc{
+                        relativeX: 20
+                        relativeY: 20
+                        radiusX: 20
+                        radiusY: 15
+                    }
+                    PathLine{
+                        relativeX: 0
+                        relativeY: -outerWrapper.height
                     }
                 }
             }
             
             Rectangle{
-                color: "transparent"
+                id: innerWrapper
                 anchors{
-                    fill: parent
+                    top: parent.top
+                    right: parent.right
                 }
- 
-                transform: Scale{
-                    id: scaleTransform
-                    origin.x: notificationPanel.width
-                    origin.y: notificationPanel.height / 2
-                    xScale: 0
-                }
-                Shape{
+                implicitWidth: parent.width - 20
+                implicitHeight: parent.height - 20
+                color: "#11111b"
+                bottomLeftRadius: 20
+                clip: true  // Ensure content doesn't overflow
+                
+               ListView{
+                    id: list
+
+                    model: ScriptModel{
+                        values: [...notifications].reverse()
+                    }
+
                     anchors.fill: parent
-                    ShapePath{
-                        fillColor: "#06070e"
-                        //strokeColor: "blue"
-                        strokeWidth: 0
-                        startX: notificationPanel.width - 20
-                        startY: 10
-                        PathArc{
-                            relativeX: 20
-                            relativeY: -10
-                            radiusX: 20
-                            radiusY: 15
-                            direction: PathArc.Counterclockwise
-                        }
-                        PathLine{
-                            relativeX: 0
-                            relativeY: notificationPanel.height
-                        }
-                        PathArc{
-                            relativeX: -20
-                            relativeY: -10
-                            radiusY: 15
-                            radiusX: 20
-                            direction: PathArc.Counterclockwise
-                        }
-                        PathLine{
-                            relativeX: 0
-                            relativeY: - (notificationPanel.height - 20)
-                        }
-                    }
-                }
-                Rectangle{
-                    id: notificationRect
-                    implicitWidth: parent.width
-                    implicitHeight: parent.height - 20
-                    color: "black"
-                    //visible: false
-                    topLeftRadius: 10
-                    bottomLeftRadius: 10
+                    orientation: Qt.Vertical
+                    spacing: 10
 
-                    /*Behavior on implicitWidth{
-                        NumberAnimation{duration: 100; easing.type: Easing.OutCubic}
-                    }*/
-                    anchors{
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
+                    add: Transition {
+                        NumberAnimation { 
+                            property: "x"
+                            from: parent ? parent.width : 280
+                            to: 0
+                            duration: 300
+                            easing.type: Easing.OutCubic
+                        }
                     }
-                    Column{
-                        id: notificationWrapper
-                        anchors.fill: parent
-                        anchors.topMargin: 10
-                        spacing: 5
-                        Repeater{
-                            model: notificationScope.notifList
-                            delegate: Rectangle{
-                                implicitHeight: 80;
-                                implicitWidth: 240;
-                                color: "#1E1E2E" 
+
+                    remove: Transition{
+                        PropertyAction { target: wrapper ; property: "ListView.delayRemove"; value: true }
+                        PropertyAction {target: wrapper; property: "enabled"; value: false}
+                        NumberAnimation{
+                            property: "x"
+                            from: 0
+                            to: parent ? parent.width : 280
+                            duration: 300
+                            easing.type: Easing.InCubic
+                        }
+                        PropertyAction { target: wrapper; property: "ListView.delayRemove"; value: false}
+                    }
+
+                    addDisplaced: Transition{
+                        NumberAnimation{
+                            property: "y"
+                            duration: 300
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+
+                  
+
+                    delegate: Item {
+                            id: wrapper
+                            width: list.width
+                            height: 80
+
+                        
+    
+                            Rectangle{
+                                id: notificationRect
+                                width: parent.width - 10
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                height: parent.height
                                 radius: 10
-                                anchors{
-                                    horizontalCenter: parent.horizontalCenter
-                                } 
-                                transform: Scale {
-                                    id: itemScaleTransform
-                                    origin.x: parent.width
-                                    origin.y: parent.height / 2
-                                    xScale: index === 0 ? 0 : 1
-                                }
+                                color: "#585b70"
                                 
-                                NumberAnimation {
-                                    running: index === 0
-                                    target: itemScaleTransform
-                                    property: "xScale"
-                                    from: 0
-                                    to: 1
-                                    duration: 200
-                                    easing.type: Easing.OutCubic
-                                }
+                                Column{
+                                    anchors.fill: parent
+                                    Row{
+                                        width: parent.width
+                                        height: parent.height / 2
+                                    
+                                        Item{
+                                            implicitWidth: parent.width / 4
+                                            implicitHeight: parent.height
 
-                                Rectangle{
-                                    color: "transparent"
-                                    implicitHeight: parent.height - 6
-                                    implicitWidth: parent.width - 6
-                                    anchors{
-                                        centerIn: parent
-                                    }
-
-                                    Column{
-                                        anchors.fill: parent
-                                        Row{
-                                            spacing: 10
-
-                                            width: parent.width
-                                            height: 20
-                                            anchors{
-                                                leftMargin: 10
-                                            }
                                             Image{
-                                                anchors{
-                                                    //verticalCenter: parent.verticalCenter
-                                                }
-                                                width: 20
-                                                height: 20
-                                                source: modelData.image
-                                            }
-                                            Text{
-                                                text: modelData.appName
-                                                color: "#FFFFFF"
-                                                font.pixelSize: 12
+                                                anchors.left: parent.left
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                //anchors.centerIn: parent
+                                                anchors.leftMargin: 10
+                                                width: 30
+                                                height: 30
+                                                sourceSize: Qt.size(width, height)
+                                                source: Quickshell.iconPath(modelData.appIcon) || modelData.image
                                             }
                                         }
+                                        Item{
+                                            implicitHeight: parent.height
+                                            implicitWidth: parent.width - parent.width / 3
 
-                                        Rectangle{
-                                            width: parent.width
-                                            height: 20
-                                            color: "transparent"
                                             Text{
-                                                text: modelData.summary
-                                                color: "#FFFFFF"
+                                                anchors.left: parent.left
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                                text: modelData.appName
+                                                color: "white"
                                                 font.pixelSize: 16
                                             }
+
                                         }
 
-                                        Rectangle{
-                                            width: parent.width
-                                            height: 40
-                                            color: "transparent"
-                                            Text{
-                                                text: modelData.body
-                                                color: "#FFFFFF"
-                                                font.pixelSize: 14
-                                            }
+                                    }
+
+                                    Item{
+                                        implicitWidth: parent.width
+                                        implicitHeight: parent.height / 2
+                                        clip: true
+
+                                        Text{
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 10
+
+                                            text: modelData.summary
+                                            color: "white"
+                                            font.pixelSize: 14
                                         }
+                                    }
+                                }
+
+                                MouseArea{
+                                    id: notifArea
+                                    hoverEnabled: true
+                                    anchors.fill:parent
+                                    onEntered:{
+                                        modelData.timer.stop()
+                                    }
+                                    onExited:{
+                                        modelData.timer.start()
                                     }
                                 }
                             }
-                        }
                     }
                 }
             }
-            ParallelAnimation{
-                id: openAnimation
-                NumberAnimation{
-                    target: scaleTransform
-                    property: "xScale"
-                    from: 0
-                    to: 1.0
-                    duration: 300
-                    easing.type: Easing.OutCubic
-                }
+        }
+        
+        ParallelAnimation{
+            id: openAnimation
+
+            NumberAnimation{
+                target: outerWrapper
+                property: "y"
+                to: 0
+                duration: 300
+                easing.type: Easing.OutCubic
+                easing.overshoot: 1.1
+            }
+
+            NumberAnimation{
+                target: scaleTransform
+                property: "yScale"
+                to: 1.0
+                duration: 300
+                easing.type: Easing.OutCubic
+            }
+        } 
+        
+        ParallelAnimation{
+            id: closeAnimation
+
+            NumberAnimation{
+                target: outerWrapper
+                property: "y"
+                to: -30
+                duration: 200
+                easing.type: Easing.InCubic
+            }
+
+            NumberAnimation{
+                target: scaleTransform
+                property: "yScale"
+                to: 0
+                duration: 200
+                easing.type: Easing.InCubic
+                easing.overshoot: 1.1
+            }
+
+            onFinished:{
+                isNotifVisible = false
             }
         }
+    }
+
+    function open(){
+        isNotifVisible = true
+        openAnimation.start()
+    }
+
+    function close(){
+        closeAnimation.start()
     }
 }

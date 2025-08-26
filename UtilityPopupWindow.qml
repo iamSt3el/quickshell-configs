@@ -51,6 +51,7 @@ Item {
             }
 
             Shape {
+                preferredRendererType: Shape.CurveRenderer
                 ShapePath {
                     fillColor: "#11111b"
                     //strokeColor: "blue"

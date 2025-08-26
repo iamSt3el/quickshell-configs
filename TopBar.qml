@@ -2,10 +2,11 @@ import Quickshell
 import QtQuick
 import Quickshell.Io
 import QtQuick.Shapes
-
+import Quickshell.Hyprland
 
 Scope{
-    id: root
+    id: topBarRoot
+   
 
     Variants{
         model: Quickshell.screens
@@ -23,6 +24,24 @@ Scope{
                 left: true
                 right: true
                 top: true
+            }
+
+            Process{
+                id: cursorProcess
+                command: ["hyprctl", "cursorpos"]
+                running: false
+
+                stdout: StdioCollector{
+                    onStreamFinished:{
+                        let coords = this.text.trim().split(", ")
+                        if(coords.length === 2){
+                            aipanel.mouseX = parseInt(coords[0])
+                            aipanel.mouseY = parseInt(coords[1])
+                        }
+
+                        console.log(aipanel.mouseX + " " + aipanel.mouseY)
+                    }
+                }
             }
 
             /*PopupWindow{

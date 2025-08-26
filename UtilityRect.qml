@@ -6,6 +6,7 @@ import Quickshell.Hyprland
 import Qt5Compat.GraphicalEffects
 import Quickshell.Services.UPower
 import Quickshell.Services.Pipewire
+import Quickshell.Services.Mpris
 
 Item{
     id: utilityRectItem
@@ -39,10 +40,10 @@ Item{
             right: parent.right
         }
 
-         Shape{
+        Shape{
+            preferredRendererType: Shape.CurveRenderer
             ShapePath{
                 fillColor: "#11111b"
-                //strokeColor: "blue"
                 strokeWidth: 0
                 startX: utilityRectWrapper.width
                 startY: utilityRectWrapper.height
@@ -87,6 +88,11 @@ Item{
         UserPanel{
             id: userPanelWrapper
         }
+
+        NotificationPanel{
+            id: notificationPanel
+        }
+
 
         Rectangle{
             id: utilityRect
@@ -133,7 +139,7 @@ Item{
                      
                     Process {
                         id: cavaProc
-                        running: true
+                        running: MprisPlaybackState.Playing
                         command: ["sh", "-c", `printf '[general]\nframerate=60\nbars=16\nsleep_timer=3\n[output]\nchannels=mono\nmethod=raw\nraw_target=/dev/stdout\ndata_format=ascii\nascii_max_range=100' | cava -p /dev/stdin`]
                         stdout: SplitParser {
                             onRead: data => {
@@ -171,27 +177,10 @@ Item{
                                         velocity: -1
                                     }
                                 }
-                                
-                                /*Rectangle {
-                                    anchors.centerIn: parent
-                                    width: parent.width + 1
-                                    height: parent.height + 1
-                                    radius: parent.radius
-                                    color: parent.color
-                                    opacity: 0.4
-                                    z: -1
-                                    
-                                    Behavior on height {
-                                        SmoothedAnimation {
-                                            duration: 100
-                                            velocity: -1
-                                        }
-                                    }
-                                }*/
                             }
                         }
                     }
-
+                    
                 }
 
                 Rectangle{
@@ -305,7 +294,7 @@ Item{
 
                         layer.enabled: true
                         layer.effect: ColorOverlay{
-                            color: "#F5F5F5"
+                            color: "#b4befe"
                         }
                     }
 
@@ -356,7 +345,7 @@ Item{
                         source: "./assets/bluetooth.svg"
                         layer.enabled: true
                         layer.effect: ColorOverlay{
-                            color: bt.isActive ? "#fab387" : "#F5F5F5"
+                            color: bt.isActive ? "#fab387" : "#89b4fa"
                         }
                     }
 
@@ -403,7 +392,22 @@ Item{
                     
                         layer.enabled: true
                         layer.effect: ColorOverlay{
-                           color: "#F5F5F5"
+                           color: "#f5e0dc"
+                       }
+                   }
+
+                   MouseArea{
+                       id: notifArea
+                       hoverEnabled: true
+                       anchors.fill: parent
+                       cursorShape: Qt.PointingHandCursor
+                       onClicked:{
+                           if(notificationPanel.isNotifVisible){
+                               notificationPanel.close()
+                           }else{
+                               notificationPanel.open()
+                           }
+
                        }
                    }
                }
@@ -426,7 +430,7 @@ Item{
                     
                         layer.enabled: true
                         layer.effect: ColorOverlay{
-                           color: "#F5F5F5"
+                           color: "#f38ba8"
                        }
                    }
                }
@@ -437,7 +441,7 @@ Item{
                     id: battery
                     //implicitWidth: batteryChild.implicitWidth + 15
                     //implicitHeight: batteryChild.implicitHeight + 5
-                    implicitWidth: componentWidth + 4
+                    implicitWidth: componentWidth + 8
                     implicitHeight: componentHeight 
                     //border.color: "#45475A"
                     /*color: {
@@ -446,17 +450,18 @@ Item{
                         //return "#45475A"
                     }*/
                     radius: 10
-                    color: "transparent"
+                    color: "#313244"
                     
                     Rectangle{
                         id: wrapper
-                        implicitWidth: parent.width - 10
-                        implicitHeight: parent.height - 10
+                        implicitWidth: parent.width - 17
+                        implicitHeight: parent.height - 14
                         color: "#45475A"
                         radius: 5
                         anchors{
-                            left: parent.left
-                            verticalCenter: parent.verticalCenter
+                            centerIn: parent
+                            //left: parent.left
+                            //verticalCenter: parent.verticalCenter
 
                         }
                             Rectangle{
@@ -467,7 +472,7 @@ Item{
                                     if (UPower.displayDevice.state === UPowerDeviceState.Discharging) return "#FFB22C"
                                     return "#A6E3A1"
                                 }
-                                radius: 5
+                                radius: 3
                                 
 
                                 anchors{
@@ -483,18 +488,20 @@ Item{
                                 }
                                 color: "#FFFFFF"
                                 text: Math.round(UPower.displayDevice.percentage * 100)
-                                font.pixelSize: 16
+                                font.pixelSize: 14
                         }
                     }
                 
 
                     Rectangle{
-                        implicitHeight: 10
-                        implicitWidth: 6
-                        color: "#45475A"
+                        implicitHeight: 8
+                        implicitWidth: 4
+                        color: "#7f849c"
                         topRightRadius: 5
                         bottomRightRadius: 5
+
                         anchors{
+                            rightMargin: 3
                             right: parent.right
                             verticalCenter: parent.verticalCenter
                         }

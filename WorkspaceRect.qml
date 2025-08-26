@@ -16,9 +16,9 @@ Item{
         }
 
         Shape{
+            preferredRendererType: Shape.CurveRenderer
             ShapePath{
                 fillColor: "#06070e"
-                //strokeColor: "blue"
                 strokeWidth: 0
                 startX: 0
                 startY: topBarWrapper.height

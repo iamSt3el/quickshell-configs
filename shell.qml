@@ -4,7 +4,7 @@ import QtQuick
 
 ShellRoot{    
 
-    // Dock related code
+    // Dock related c
     //Dock{}
 
     // Power panel code
@@ -12,8 +12,12 @@ ShellRoot{
 
     // Top bar code 
     TopBar{}
+    AiHelper{}
+    //Test{}
+    // Manga reader
+    //MangaReader{}
 
     // Notification code
     //NotificationPanel{}
-    NotificationServer{}
+    //NotificationServer{}
 }
