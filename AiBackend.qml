@@ -5,7 +5,7 @@ Item {
     
     // Google Gemini API Configuration
     property string apiKey: "AIzaSyAlloUClKdRegH-pERfnmdrotLDL2HXIDQ"
-    property string apiEndpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+    property string apiEndpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
     property bool isLoading: false
     
     // Signals

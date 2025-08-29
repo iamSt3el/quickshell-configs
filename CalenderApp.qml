@@ -2,12 +2,17 @@ import Quickshell
 import QtQuick
 import Quickshell.Io
 import Quickshell.Hyprland
+import qs.util
 
 Item{
     id: calanderItem
     property bool calenderVisible: false 
     property var clockRect: null
     property real scaleProgress: scaleTransform.yScale
+    
+    Colors {
+        id: colors
+    }
 
     
     PopupWindow{
@@ -27,7 +32,7 @@ Item{
             id: calenderContent
             implicitHeight: parent.height
             implicitWidth: parent.width
-            color: "#11111B"
+            color: colors.surfaceContainer
             bottomLeftRadius: 20
             bottomRightRadius: 20
             
@@ -134,7 +139,7 @@ Item{
                             font.pixelSize: 16
                             font.family: nothingFonts.name
                             font.weight: Font.Medium
-                            color: "#cdd6f4"
+                            color: colors.surfaceText
                         }
                     }
                     
@@ -181,7 +186,7 @@ Item{
                 Rectangle {
                     width: parent.width
                     height: 1
-                    color: Qt.rgba(1, 1, 1, 0.1)
+                    color: colors.outlineVariant
                     
                     MouseArea {
                         anchors.fill: parent
@@ -306,7 +311,7 @@ Item{
                                     if (!modelData.isCurrentMonth) {
                                         return Qt.rgba(1, 1, 1, 0.2);
                                     }
-                                    return "#cdd6f4";
+                                    return colors.surfaceText;
                                 }
                             }
                             

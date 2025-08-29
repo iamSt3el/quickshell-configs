@@ -2,9 +2,14 @@ import Quickshell
 import QtQuick
 import QtQuick.Controls
 import Quickshell.Bluetooth
+import qs.util
 
 Item {
     anchors.fill: parent
+    
+    Colors {
+        id: colors
+    }
     
     property var sortedDevices: {
         if (!Bluetooth.devices || !Bluetooth.devices.values) {
@@ -41,14 +46,14 @@ Item {
                 color: "transparent"
                 Text {
                     text: "Bluetooth"
-                    color: "#89b4fa"
+                    color: colors.primary
                     font.pixelSize: 18
                 }
 
                 Rectangle {
                     implicitWidth: 50
                     implicitHeight: 20
-                    color: "#11111b"
+                    color: colors.surfaceContainerLowest
                     radius: 10
 
                     anchors {
@@ -60,7 +65,7 @@ Item {
                         id: toggleButton
                         implicitWidth: 25
                         implicitHeight: 20
-                        color: "#89b4fa"
+                        color: colors.primary
                         radius: 20
                         x: isToggleOn ? 25 : 0
 
@@ -122,7 +127,7 @@ Item {
                     visible: Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.state === 1 ? true : false
                     width: parent.width
                     height: 50
-                    color: modelData.state === 1 ? "#a6e3a1" : modelData.state === 3 ? "#f9e2af" : "#9399b2"
+                    color: modelData.state === 1 ? colors.tertiary : modelData.state === 3 ? colors.secondary : colors.surfaceVariant
                     radius: 10
 
                     MouseArea{
@@ -167,7 +172,7 @@ Item {
                             Text {
                                 id: deviceName
                                 text: modelData.deviceName
-                                color: "#FFFFFF"
+                                color: colors.surfaceText
                                 font.pixelSize: 16
                                 anchors.verticalCenter: parent.verticalCenter
 
@@ -220,7 +225,7 @@ Item {
             implicitWidth: parent.width - 10
 
             radius: 10
-            color: "#89b4fa"
+            color: colors.primary
 
             anchors{
                 centerIn: parent
@@ -231,7 +236,7 @@ Item {
                 anchors{
                     centerIn: parent
                 }
-                color:"#E4E4E4"
+                color: colors.primaryText
             }
 
             MouseArea{

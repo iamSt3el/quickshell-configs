@@ -55,32 +55,32 @@ Item {
         }
     }
     
-    // CPU Usage Process
+    // CPU Usage Process (btop-style accuracy)
     Process {
         id: cpuProcess
         command: ["sh", "-c", `
-            read1=$(grep 'cpu ' /proc/stat)
-            sleep 0.1
-            read2=$(grep 'cpu ' /proc/stat)
+            # Read /proc/stat twice with proper interval like btop
+            cpu1=$(awk '/^cpu / {print $2+$3+$4, $5+$6}' /proc/stat)
+            sleep 0.5
+            cpu2=$(awk '/^cpu / {print $2+$3+$4, $5+$6}' /proc/stat)
             
-            echo "$read1" | awk '{idle1=$5; total1=$2+$3+$4+$5+$6+$7+$8; print idle1, total1}' > /tmp/cpu1
-            echo "$read2" | awk '{idle2=$5; total2=$2+$3+$4+$5+$6+$7+$8; print idle2, total2}' > /tmp/cpu2
-            
-            awk 'BEGIN {usage=0}
-                 NR==1 {idle1=$1; total1=$2}
-                 NR==2 {
-                     idle2=$1; total2=$2;
-                     idle_diff = idle2 - idle1;
-                     total_diff = total2 - total1;
-                     if (total_diff > 0) {
-                         usage = (1 - idle_diff/total_diff) * 100;
-                         if (usage < 0) usage = 0;
-                         if (usage > 100) usage = 100;
-                     }
-                 }
-                 END {printf "%.1f", usage}' /tmp/cpu1 /tmp/cpu2
-            
-            rm -f /tmp/cpu1 /tmp/cpu2
+            echo "$cpu1 $cpu2" | awk '{
+                # cpu1: active1 idle1, cpu2: active2 idle2
+                active1=$1; idle1=$2; active2=$3; idle2=$4;
+                
+                active_diff = active2 - active1;
+                idle_diff = idle2 - idle1;
+                total_diff = active_diff + idle_diff;
+                
+                if (total_diff > 0) {
+                    cpu_usage = (active_diff / total_diff) * 100;
+                    if (cpu_usage < 0) cpu_usage = 0;
+                    if (cpu_usage > 100) cpu_usage = 100;
+                    printf "%.1f", cpu_usage;
+                } else {
+                    print "0.0";
+                }
+            }'
         `]
         
         stdout: StdioCollector {

@@ -5,9 +5,14 @@ import Quickshell.Io
 import Qt5Compat.GraphicalEffects
 import Quickshell.Hyprland
 import QtQuick.Shapes
+import qs.util
 
 Item{
     id: monitorPopupItem
+
+    Colors {
+        id: colors
+    }
 
     property bool isMonitorVisible: false
     property var timer: monitorPopupTimer

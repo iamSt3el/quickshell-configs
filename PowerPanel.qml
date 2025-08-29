@@ -5,9 +5,15 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 import QtQuick.Shapes
 import Qt5Compat.GraphicalEffects
+import qs.util
 
 Scope {
     id: root
+    
+    Colors {
+        id: colors
+    }
+    
     Variants {
         model: Quickshell.screens
 

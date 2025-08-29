@@ -7,6 +7,7 @@ import Qt5Compat.GraphicalEffects
 import Quickshell.Services.UPower
 import Quickshell.Services.Pipewire
 import Quickshell.Services.Mpris
+import qs.util
 
 Item{
     id: utilityRectItem
@@ -21,6 +22,10 @@ Item{
     //implicitWidth: utilityRectWrapper.width
     anchors{
         right: parent.right
+    }
+    
+    Colors {
+        id: colors
     }
 
     CPUUsage{
@@ -43,7 +48,7 @@ Item{
         Shape{
             preferredRendererType: Shape.CurveRenderer
             ShapePath{
-                fillColor: "#11111b"
+                fillColor: colors.surfaceContainer
                 strokeWidth: 0
                 startX: utilityRectWrapper.width
                 startY: utilityRectWrapper.height
@@ -99,7 +104,7 @@ Item{
             implicitWidth: utilityRowWrapper.width + 20
             //implicitWidth: 300
             implicitHeight: 40
-            color: "#11111b"
+            color: colors.surfaceContainer
             bottomLeftRadius: 20
 
           
@@ -116,7 +121,7 @@ Item{
                 }
                 spacing: 10
 
-                Rectangle{
+                /*Rectangle{
                     id: musicPlayer
                     property var values: []
                     property int refCount: 1
@@ -181,14 +186,14 @@ Item{
                         }
                     }
                     
-                }
+                }*/
 
                 Rectangle{
                     id: user
                     implicitWidth: componentWidth
                     implicitHeight: componentHeight
 
-                    color: "#313244"
+                    color: colors.surfaceVariant
                     radius: 10
                     Image{
                         anchors.centerIn: parent
@@ -199,7 +204,7 @@ Item{
 
                         layer.enabled: true
                         layer.effect: ColorOverlay{
-                            color: "#74c7ec"
+                            color: colors.inverseSurface
                         }
                     }
 
@@ -223,7 +228,7 @@ Item{
             Rectangle{
                 implicitWidth: monitor.width + bt.width + wifi.width + notification.width + power.width
                 implicitHeight: componentHeight
-                color: "#313244"
+                color: colors.surfaceVariant
                 radius: 10
                 Row{
                     anchors{
@@ -253,7 +258,7 @@ Item{
                         layer.enabled: true
                         layer.effect: ColorOverlay{
                             //color: "#F5F5F5"
-                            color: "#94e2d5"
+                            color: colors.surfaceText
                         }
                     }
 
@@ -294,7 +299,7 @@ Item{
 
                         layer.enabled: true
                         layer.effect: ColorOverlay{
-                            color: "#b4befe"
+                            color: colors.surfaceText
                         }
                     }
 
@@ -345,7 +350,7 @@ Item{
                         source: "./assets/bluetooth.svg"
                         layer.enabled: true
                         layer.effect: ColorOverlay{
-                            color: bt.isActive ? "#fab387" : "#89b4fa"
+                            color: bt.isActive ? "#fab387" : colors.surfaceText
                         }
                     }
 
@@ -392,7 +397,7 @@ Item{
                     
                         layer.enabled: true
                         layer.effect: ColorOverlay{
-                           color: "#f5e0dc"
+                           color: colors.surfaceText
                        }
                    }
 
@@ -437,77 +442,121 @@ Item{
            }
        }
 
-                 Rectangle{
-                    id: battery
-                    //implicitWidth: batteryChild.implicitWidth + 15
-                    //implicitHeight: batteryChild.implicitHeight + 5
-                    implicitWidth: componentWidth + 8
-                    implicitHeight: componentHeight 
-                    //border.color: "#45475A"
-                    /*color: {
-                        //if (UPower.displayDevice.state === UPowerDeviceState.Charging) return "#08CB00"
-                        //if (UPower.displayDevice.state === UPowerDeviceState.Discharging) return "#FFB22C"
-                        //return "#45475A"
-                    }*/
-                    radius: 10
-                    color: "#313244"
+Row {
+                    spacing: 18
                     
                     Rectangle{
-                        id: wrapper
-                        implicitWidth: parent.width - 17
-                        implicitHeight: parent.height - 14
-                        color: "#45475A"
-                        radius: 5
-                        anchors{
-                            centerIn: parent
-                            //left: parent.left
-                            //verticalCenter: parent.verticalCenter
+                        id: speaker
+                       
+                        implicitWidth: componentWidth + 40
+                        implicitHeight: componentHeight 
+                    
+                        radius: 10
+                        color: colors.surfaceVariant
 
+                    
+                        Text{
+                            anchors.leftMargin: 8
+                            text: Math.round(Pipewire.defaultAudioSink.audio.volume * 100) + "%"
+                            font.pixelSize: 16
+                            anchors.left: parent.left
+                            font.weight: 900
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: colors.surfaceText
                         }
-                            Rectangle{
-                                implicitHeight: parent.height
-                                implicitWidth: (parent.width * UPower.displayDevice.percentage)
-                                color: {
-                                    if (UPower.displayDevice.state === UPowerDeviceState.Charging) return "#A6E3A1"
-                                    if (UPower.displayDevice.state === UPowerDeviceState.Discharging) return "#FFB22C"
-                                    return "#A6E3A1"
-                                }
-                                radius: 3
-                                
 
-                                anchors{
-                                    //leftMargin: 5
-                                    //verticalCenter: parent.verticalCenter
-                                    left: parent.left 
-                                }
+                        Rectangle{
+                            anchors.rightMargin: -10
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            implicitWidth: 36
+                            implicitHeight: 36
+                            radius: 30
+                            color: colors.primaryContainer
+                            property string icon: {
+                                if (Pipewire.defaultAudioSink.audio.muted) return "./assets/speaker-muted.svg"
+                                if (Pipewire.defaultAudioSink.audio.volume > 0.6) return "./assets/speaker.svg"
+                                if (Pipewire.defaultAudioSink.audio.volume > 0.2) return "./assets/speaker-medium.svg"
+                                if (Pipewire.defaultAudioSink.audio.volume > 0) return "./assets/speaker-low.svg"
+                                return "./assets/speaker-muted.svg"
                             }
 
-                            Text{ 
-                                anchors{
-                                    centerIn: parent
+                            Image{
+                                anchors.centerIn: parent
+                                width: 20
+                                height: 20
+                                sourceSize: Qt.size(width,height)
+                                source: parent.icon
+                                layer.enabled: true
+                                layer.effect: ColorOverlay{
+                                    color: colors.primaryContainerText
                                 }
-                                color: "#FFFFFF"
-                                text: Math.round(UPower.displayDevice.percentage * 100)
-                                font.pixelSize: 14
+                            }
+                            
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    Pipewire.defaultAudioSink.audio.muted = !Pipewire.defaultAudioSink.audio.muted
+                                }
+                                onWheel: function(wheel) {
+                                    var delta = wheel.angleDelta.y / 120 * 0.01
+                                    Pipewire.defaultAudioSink.audio.volume = Math.max(0, Math.min(1, Pipewire.defaultAudioSink.audio.volume + delta))
+                                }
+                            }
                         }
                     }
-                
 
                     Rectangle{
-                        implicitHeight: 8
-                        implicitWidth: 4
-                        color: "#7f849c"
-                        topRightRadius: 5
-                        bottomRightRadius: 5
+                        id: battery
+                        implicitWidth: componentWidth + 40
+                        implicitHeight: componentHeight 
+                      
+                        radius: 10
+                        color: colors.surfaceVariant
 
-                        anchors{
-                            rightMargin: 3
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
+                
+                    Text{
+                        anchors.leftMargin: 8
+                        text: UPower.displayDevice.percentage * 100 + "%"
+                        font.pixelSize: 16
+                        anchors.left: parent.left
+                        font.weight: 900
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: colors.surfaceText
+                    }
+
+                    Rectangle{
+                        anchors.rightMargin: -10
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        implicitWidth: 36
+                        implicitHeight: 36
+                        radius: 30
+                        color: colors.primaryContainer
+                        property string icon: {
+                            if (UPower.displayDevice.state === UPowerDeviceState.Charging) return "./assets/battery-charging.svg"
+                            if(UPower.displayDevice.percentage < 0.5) return "./assets/battery-medium.svg"
+                            if(UPower.displayDevice.percentage == 0.3) return "./assets/battery-low.svg"
+                            return "./assets/battery.svg"
+                        }
+
+                        Image{
+                            anchors.centerIn: parent
+                            width: 20
+                            height: 20
+                            sourceSize: Qt.size(width,height)
+                            source: parent.icon
+                            rotation: -90
+                            layer.enabled: true
+                            layer.effect: ColorOverlay{
+                                color: "#FFFFFF"
+                            }
                         }
                     }
                 }
-
+                }
             }
         }    
     }

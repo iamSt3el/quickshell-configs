@@ -5,10 +5,15 @@ import Quickshell.Io
 import Quickshell.Hyprland
 import QtQuick.Shapes
 import Quickshell.Bluetooth
+import qs.util
 
 Item {
     id: utilityPopUpItem
     property bool isUtilityPopUpVisible: false
+    
+    Colors {
+        id: colors
+    }
     property var utility: null
     property alias utilityCloseTimer: utilityCloseTimer
  
@@ -24,7 +29,7 @@ Item {
     PopupWindow {
         id: utilityPopupWrapper
         anchor.window: topBar
-        implicitWidth: utilityRowWrapper.width - 150
+        implicitWidth: 300
         implicitHeight: 460
         color: "transparent"
         visible: isUtilityPopUpVisible
@@ -53,7 +58,7 @@ Item {
             Shape {
                 preferredRendererType: Shape.CurveRenderer
                 ShapePath {
-                    fillColor: "#11111b"
+                    fillColor: colors.surfaceContainer
                     //strokeColor: "blue"
                     strokeWidth: 0
                     startX: utilityPopupWrapper.x || 0
@@ -91,7 +96,7 @@ Item {
                 implicitHeight: parent.height - 20
                 implicitWidth: parent.width - 20
                 anchors.right: parent.right
-                color: "#11111b"
+                color: colors.surfaceContainer
                 bottomLeftRadius: 20
 
                 Rectangle {

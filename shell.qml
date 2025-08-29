@@ -10,10 +10,11 @@ ShellRoot{
     // Power panel code
     //PowerPanel{}
 
-    // Top bar code 
+    // Top bar code
     TopBar{}
     AiHelper{}
-    //Test{}
+    AppLauncher{}
+     //Test{}
     // Manga reader
     //MangaReader{}
 

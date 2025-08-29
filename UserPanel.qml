@@ -5,10 +5,15 @@ import Quickshell.Io
 import Qt5Compat.GraphicalEffects
 import Quickshell.Hyprland
 import Quickshell.Services.Mpris
+import qs.util
 
 Item{
     id: userPanelItem
     property bool userPanelVisible: false
+    
+    Colors {
+        id: colors
+    }
 
     PopupWindow{
         id: userPanelWrapper
@@ -36,7 +41,7 @@ Item{
                 implicitWidth: parent.width
                 implicitHeight: parent.height / 2 - 30
 
-                color: "#11111B"
+                color: colors.surface
                 radius: 10
 
                 Row{
@@ -136,7 +141,7 @@ Item{
                 implicitHeight: parent.height / 2
                 implicitWidth: parent.width
 
-                color: "#11111B"
+                color: colors.surface
                 radius: 10
                     Rectangle{
                         implicitWidth: parent.width

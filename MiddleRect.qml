@@ -4,27 +4,41 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import QtQuick.Shapes
+import qs.util
 
 
 Item{
     id: middleItem
-    implicitWidth: 240
+    implicitWidth: middleRectWrapper.width
     anchors{
          horizontalCenter: parent.horizontalCenter
+     }
+
+     Timer{
+         id: middleTimer
+         interval: 200
+         onTriggered: {
+             clockWrapper.implicitWidth = 220
+         }
+     }
+    
+    Colors {
+        id: colors
     }
-    Rectangle{
+    Item{
         id: middleRectWrapper
-        implicitWidth: 240 
-        implicitHeight: 40
-        color: "transparent"
+        width: clockWrapper.width + 20 
+        height: 40
         anchors{
             horizontalCenter: parent.horizontalCenter
         }
+
+   
         
         Shape{
             preferredRendererType: Shape.CurveRenderer
             ShapePath{
-                fillColor: "#11111B"
+                fillColor: colors.surfaceContainer
                 //strokeColor: "blue"
                 strokeWidth: 0
 
@@ -55,26 +69,32 @@ Item{
             }
         }
         
-        CalenderApp{
+        /*CalenderApp{
             id: calenderApp
+        }*/
+
+        Dashboard{
+            id: dashboardPanel
         }
         
         Rectangle{
             id: clockWrapper
-            implicitWidth: parent.width - 20 
+            implicitWidth: 220 
             implicitHeight: 40
-            color: "#11111B"
+            color: colors.surfaceContainer
            
-            bottomRightRadius: calenderApp.calenderVisible ? 0 : 20
-            bottomLeftRadius: calenderApp.calenderVisible ? 0 : 20
-            
-           /* Behavior on bottomRightRadius{
-                NumberAnimation{duration: 300; easing.type:Easing.OutCubic}
-            }
+            //bottomRightRadius: calenderApp.calenderVisible ? 0 : 20
+            //bottomLeftRadius: calenderApp.calenderVisible ? 0 : 20
+            bottomLeftRadius: 20
+            bottomRightRadius: 20
 
-            Behavior on bottomLeftRadius{
-                NumberAnimation{duration: 300; easing.type: Easing.OutCubic}
-            }*/
+            Behavior on implicitWidth{
+                NumberAnimation{
+                    duration: 200;
+                    easing.type: Easing.OutCurve
+                }
+            }
+     
 
             anchors{
                 horizontalCenter: parent.horizontalCenter
@@ -91,10 +111,11 @@ Item{
             }
 
             Text{
+                visible: parent.width === 220
                 anchors{
                     centerIn: parent
                 }
-                color: "#cdd6f4"
+                color: colors.surfaceText
                 text: Qt.formatDateTime(clock.date, "hh : mm AP  ddd dd")
                 font.family: nothingFonts.name
                 font.pixelSize: 22
@@ -105,16 +126,36 @@ Item{
                 hoverEnabled: true
                 anchors{
                     fill: parent
-                }    
-
+                } 
 
                 onClicked:{
+                    var value = clockWrapper.implicitWidth
+                    if(value == 220){ 
+                        middleTimer.stop()
+                        value = 720
+                    }
+                    else middleTimer.start()
+
+                    clockWrapper.implicitWidth = value
+
+                    if(dashboardPanel.isDashboardVisible){
+                        dashboardPanel.close()
+                    }else{
+                        dashboardPanel.aliasTimer.start()
+                    }
+
+
+                }
+
+
+               /* onClicked:{
                     if(!calenderApp.calenderVisible){
                         calenderApp.open()
                     }else{
                         calenderApp.close()
                     }
                 }
+                */
             }
             
         }

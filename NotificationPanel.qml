@@ -3,8 +3,13 @@ import QtQuick
 import Quickshell.Io
 import QtQuick.Shapes
 import Quickshell.Wayland
+import qs.util
 
 Item{
+
+    Colors {
+        id: colors
+    }
 
     readonly property var notifications: NotificationManager.popups
     property bool isNotifVisible: false

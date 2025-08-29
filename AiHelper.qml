@@ -4,20 +4,35 @@ import QtQuick.Controls
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
+import qs.util
 
 Scope{
     id: root 
     property var activePanels: Quickshell.globalPanels || (Quickshell.globalPanels = {})
+    property bool isResponeVisible: false
+    ListModel {
+        id: chatList
+    }
+    
+    Colors {
+        id: colors
+    }
     
     // AI Backend instance
     AiBackend {
         id: aiBackend
         
         onResponseReceived: function(response) {
+            //aipanel.responseArea.visible= true
+            root.isResponeVisible = true
+            chatList.append({from: "AI", text: response})
+            console.log(chatList)
             aipanel.responseText.text = response
         }
         
         onErrorOccurred: function(errorMessage) {
+            root.isResponeVisible = true
+            chatList.append({from: "AI", text: "Error: " + errorMessage})
             aipanel.responseText.text = errorMessage
         }
         
@@ -60,8 +75,8 @@ Scope{
 
 
        // mask: Region{}
-        implicitWidth: 600
-        implicitHeight: 400
+        implicitWidth: 500
+        implicitHeight: isResponeVisible ? 600 : 70
 
         Component.onCompleted: {
             // Register panel for all screens
@@ -118,9 +133,14 @@ Scope{
         WlrLayershell.keyboardFocus: aipanel.visible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
         Rectangle{
-            anchors.fill: parent
-            color: "#11111b"
+            implicitHeight: parent.height
+            implicitWidth: parent.width
+            color: colors.surface
             radius: 10
+
+            Behavior on implicitHeight{
+                NumberAnimation{duration: 300; easing.type: Easing.OutCubic}
+            }
 
             Column{
                 anchors.fill: parent
@@ -132,25 +152,80 @@ Scope{
                     id: responseArea
                     width: parent.width
                     height: parent.height - inputArea.height - parent.spacing
-                    color: "#1e1e2e"
+                    color: colors.surfaceContainer
                     radius: 5
-                    border.color: "#45475a"
+                    border.color: colors.outline
                     border.width: 1
 
-                    ScrollView{
+                    visible: isResponeVisible
+
+
+
+                    ListView{
+                        id: chatListView
                         anchors.fill: parent
                         anchors.margins: 10
+                        model: chatList
+                        clip: true
+                            
+                            delegate: Item {
+                                width: chatListView.width
+                                height: messageContent.height + 20
+                                Rectangle {
+                                    id: messageBubble
+                                    anchors.fill: parent
+                                    anchors.margins: 5
+                                    color: model.from === "You" ? colors.surfaceVariant : colors.surfaceContainer
+                                    radius: 8
+                                    border.color: model.from === "You" ? colors.outlineVariant : colors.outline
+                                    border.width: 1
 
-                        TextArea{
-                            id: responseText
-                            text: "AI responses will appear here..."
-                            color: "#cdd6f4"
-                            readOnly: true
-                            wrapMode: TextArea.Wrap
-                            selectByMouse: true
-                            background: Rectangle { color: "transparent" }
+                                    Column {
+                                        id: messageContent
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        anchors.top: parent.top
+                                        anchors.margins: 10
+                                        spacing: 5
+                                        
+                                        Text {
+                                            text: model.from + ":"
+                                            color: model.from === "You" ? colors.primary : colors.tertiary
+                                            font.bold: true
+                                            font.pixelSize: 12
+                                        }
+                                        
+                                        TextArea {
+                                            width: parent.width
+                                            text: model.text || "No text"
+                                            color: colors.surfaceText
+                                            textFormat: TextArea.MarkdownText
+                                            wrapMode: TextArea.Wrap
+                                            readOnly: true
+                                            selectByMouse: true
+                                            background: Rectangle { color: "transparent" }
+                                            padding: 0
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // Auto-scroll to bottom when new messages are added
+                            onCountChanged: {
+                                Qt.callLater(function() {
+                                    if (count > 0) {
+                                        positionViewAtEnd()
+                                    }
+                                })
+                            }
                         }
-                    }
+                        
+                        // Hidden TextArea for compatibility (referenced by backend)
+                        TextArea {
+                            id: responseText
+                            visible: false
+                            text: ""
+                        }
                 }
 
                 // Input area
@@ -158,9 +233,9 @@ Scope{
                     id: inputArea
                     width: parent.width
                     height: 50
-                    color: "#313244"
-                    radius: 5
-                    border.color: aiBackend.isLoading ? "#f9e2af" : (input.activeFocus ? "#89b4fa" : "#45475a")
+                    color: colors.surfaceVariant
+                    radius: 10
+                    border.color: aiBackend.isLoading ? colors.tertiary : (input.activeFocus ? colors.primary : colors.outline)
                     border.width: 1
 
                     TextInput{
@@ -168,7 +243,7 @@ Scope{
                         anchors.fill: parent
                         anchors.margins: 10
                         text: "Type your question..."
-                        color: "#ffffff"
+                        color: colors.surfaceText
                         clip: true
                         selectByMouse: true
                         
@@ -181,6 +256,7 @@ Scope{
                         Keys.onReturnPressed: {
                             if (text.trim() !== "" && text !== "Type your question..." && !aiBackend.isLoading) {
                                 aiBackend.sendToGemini(text.trim())
+                                chatList.append({from: "You", text: text.trim()})
                                 text = ""
                             }
                         }
