@@ -1,3 +1,4 @@
+//@ pragma UseQApplication
 import Quickshell
 import QtQuick
 
@@ -12,7 +13,7 @@ ShellRoot{
 
     // Top bar code
     TopBar{}
-    AiHelper{}
+    //AiHelper{}
     AppLauncher{}
      //Test{}
     // Manga reader

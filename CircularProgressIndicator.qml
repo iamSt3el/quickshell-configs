@@ -24,7 +24,7 @@ Item {
     }
     
     // Visual properties using Material You colors
-    property color bgColor: colors.surfaceVariant
+    property color bgColor: colors.surface
     property color fgColor: colors.primary
     property color textColor: colors.surfaceText
     property color nameColor: colors.surfaceText

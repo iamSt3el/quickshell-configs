@@ -21,11 +21,14 @@ QtObject {
             "obsidian": "obsidian",
             "telegram": "telegram",
             "brave-browser": "brave-browser",
-            "zen": "zen-browser"
+            "zen": "zen-browser",
+            "emblem-mail": "telegram"
 
         }
         
-        return iconMap[windowClass.toLowerCase()] || windowClass.toLowerCase()
+        if (!windowClass) return ""
+        var lowerClass = windowClass.toLowerCase()
+        return iconMap[lowerClass] || lowerClass || ""
     }
     
     function getIconPath(windowClass, fallback = "application-x-executable") { 

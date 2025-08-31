@@ -8,6 +8,7 @@ import Quickshell.Services.UPower
 import Quickshell.Services.Pipewire
 import Quickshell.Services.Mpris
 import qs.util
+import Quickshell.Services.SystemTray
 
 Item{
     id: utilityRectItem
@@ -107,6 +108,13 @@ Item{
             color: colors.surfaceContainer
             bottomLeftRadius: 20
 
+            Behavior on implicitWidth{
+                NumberAnimation{
+                    duration: 200
+                    easing.type: Easing.OutCirc
+                }
+            }
+
           
             anchors{
                 right: parent.right
@@ -120,6 +128,58 @@ Item{
                     rightMargin: 10
                 }
                 spacing: 10
+
+                Rectangle{
+                    id: sysTray
+                    implicitWidth: sysTrayRow.width + 10
+                    implicitHeight: componentHeight
+                    color: colors.surfaceVariant
+                    visible: sysTrayRow.width != 0
+                    radius: 10
+
+                    Row{
+                        id: sysTrayRow
+                        anchors.centerIn: parent
+                        spacing: 8
+                        Repeater{
+                            model: SystemTray.items
+
+                            delegate: Item{
+                                id: sysTrayIcon
+                                implicitWidth: 25
+                                implicitHeight: 25
+
+                                Image{
+                                    anchors.centerIn: parent
+                                    width: parent.width
+                                    height: parent.height
+                                    sourceSize: Qt.size(width, height)
+                                    source: modelData.icon
+                                }
+
+                                MouseArea{
+                                    id: iconArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    acceptedButtons: Qt.RightButton | Qt.LeftButton
+                                    cursorShape: Qt.PointingHandCursor
+
+                                    onClicked: function(mouse) {
+
+                                        console.log(modelData.icon)
+                                        if(mouse.button === Qt.RightButton && modelData.hasMenu){ 
+                                            modelData.display(topBar, utilityRectItem.x - utilityRectWrapper.width , 40)
+                                        }
+
+                                        if(mouse.button === Qt.LeftButton){
+                                            modelData.activate()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
                 /*Rectangle{
                     id: musicPlayer
@@ -188,45 +248,11 @@ Item{
                     
                 }*/
 
-                Rectangle{
-                    id: user
-                    implicitWidth: componentWidth
-                    implicitHeight: componentHeight
 
-                    color: colors.surfaceVariant
-                    radius: 10
-                    Image{
-                        anchors.centerIn: parent
-                        width: iconSize
-                        height: iconSize
-                        sourceSize: Qt.size(width, height)
-                        source: "./assets/user.svg"
-
-                        layer.enabled: true
-                        layer.effect: ColorOverlay{
-                            color: colors.inverseSurface
-                        }
-                    }
-
-                    MouseArea{
-                        id: userArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-
-                        onClicked:{
-                            if(userPanelWrapper.userPanelVisible){
-                                userPanelWrapper.userPanelVisible = false
-                            }else{
-                                userPanelWrapper.userPanelVisible = true
-                            }
-                        }
-                    }
-                }
 
              
             Rectangle{
-                implicitWidth: monitor.width + bt.width + wifi.width + notification.width + power.width
+                implicitWidth:  bt.width + wifi.width + notification.width + power.width
                 implicitHeight: componentHeight
                 color: colors.surfaceVariant
                 radius: 10
@@ -234,51 +260,7 @@ Item{
                     anchors{
                         fill: parent
                     }
-                Rectangle{
-                    id: monitor
-                    implicitHeight: componentHeight
-                    implicitWidth: componentWidth
-                    //color: monitorArea.containsMouse ? "#a6da95" : "#1E1E2E"
-                    color:"transparent"
-                    //radius: 10
-                    //border.color: monitorArea.containsMouse ? "#1E1E2E" : "transparent"
-
-                    Behavior on color{
-                        ColorAnimation{duration: 200}
-                    }
-
-                    Image{
-                        id: monitorIcon
-                        anchors.centerIn: parent
-                        width: iconSize
-                        height: iconSize
-                        sourceSize: Qt.size(width, height)
-                        source: "./assets/monitor.svg"
-
-                        layer.enabled: true
-                        layer.effect: ColorOverlay{
-                            //color: "#F5F5F5"
-                            color: colors.surfaceText
-                        }
-                    }
-
-                    MouseArea{
-                        id: monitorArea
-                        hoverEnabled: true
-                        implicitWidth: iconSize
-                        implicitHeight: iconSize
-                        anchors.centerIn: parent
-                        onEntered: {
-                            monitorPopupWrapper.timer.stop()
-                            monitorPopupWrapper.isMonitorVisible= true
-                        }
-
-                        onExited:{
-                            monitorPopupWrapper.timer.start()
-                        }
-
-                    }
-                }
+               
                 Rectangle{
                     id: wifi
                     implicitHeight: componentHeight
@@ -457,7 +439,9 @@ Row {
                     
                         Text{
                             anchors.leftMargin: 8
-                            text: Math.round(Pipewire.defaultAudioSink.audio.volume * 100) + "%"
+                            text: Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.audio 
+                                ? Math.round(Pipewire.defaultAudioSink.audio.volume * 100) + "%" 
+                                : "0%"
                             font.pixelSize: 16
                             anchors.left: parent.left
                             font.weight: 900
@@ -474,6 +458,7 @@ Row {
                             radius: 30
                             color: colors.primaryContainer
                             property string icon: {
+                                if (!Pipewire.defaultAudioSink || !Pipewire.defaultAudioSink.audio) return "./assets/speaker-muted.svg"
                                 if (Pipewire.defaultAudioSink.audio.muted) return "./assets/speaker-muted.svg"
                                 if (Pipewire.defaultAudioSink.audio.volume > 0.6) return "./assets/speaker.svg"
                                 if (Pipewire.defaultAudioSink.audio.volume > 0.2) return "./assets/speaker-medium.svg"

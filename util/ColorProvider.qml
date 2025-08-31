@@ -51,7 +51,5 @@ Item {
     // Wallpaper path
     property string wallpaper: "{{image}}"
     
-    Component.onCompleted: {
-        console.log("Material You colors loaded from wallpaper")
-    }
+
 }

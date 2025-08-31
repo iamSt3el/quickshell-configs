@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell.Io
 import Quickshell.Hyprland
 import qs.util
+import QtQuick.Controls
 
 Item{
     id: dashboardItem
@@ -15,6 +16,10 @@ Item{
 
     SystemMonitor{
         id: systemMonitor
+    }
+
+    SystemInfo{
+        id: sysInfo
     }
 
     Timer{
@@ -38,179 +43,69 @@ Item{
             rect.y: middleRectWrapper.height - 20
             gravity: Edges.Bottom
         }
-
+        
         Item{
             id: dashboardWrapper
-            anchors.fill: parent
+            height: parent.height
+            width: parent.width
 
             transform: Scale{
                 id: scaleTransform
                 origin.x: dashboardWrapper.width / 2
                 origin.y: 0
                 yScale: 0
-            } 
-
+            }
             Rectangle{
                 implicitHeight: parent.height
                 implicitWidth: parent.width
 
+                Behavior on implicitHeight{
+                    NumberAnimation{
+                        duration: 200
+                        easing.type: Easing.InQuad
+                    }
+                }
+
                 bottomLeftRadius: 20
                 bottomRightRadius: 20
                 color: colors.surfaceContainer
+                Item{ 
+                    implicitHeight: parent.height - 10
+                    implicitWidth: parent.width - 10
+                    anchors.centerIn: parent
+                    clip: true
+                    SwipeView{
+                    id: swipeView
+                    interactive: true
+                    orientation: Qt.Horizontal
+                    currentIndex: 0
+                    width: parent.width
+                    height: parent.height
+                    anchors.centerIn: parent
 
-                Row{
-                    anchors.fill: parent
-
-                    Column{
-                        width: parent.width - parent.width / 3
-                        height: parent.height
-                        Item{
-                            width: parent.width
-                            height: parent.height / 3
-                            Row{
-                                anchors.fill: parent
-                                Item{
-                                    implicitHeight: parent.height
-                                    implicitWidth: parent.width / 2
-
-                                    Rectangle{
-                                        implicitHeight: parent.height - 10
-                                        implicitWidth: parent.width - 10
-                                        anchors.centerIn: parent
-                                        color: colors.surfaceVariant
-                                        radius: 10
-
-                                        Column{
-                                            id: user
-                                            anchors.fill: parent
-
-                                            Item{
-                                                width: parent.width
-                                                height: parent.height / 2
-                                                Rectangle{
-                                                    anchors.centerIn: parent
-                                                    implicitWidth: parent.height - 10
-                                                    implicitHeight: parent.height - 10
-                                                    radius: 10
-                                                    color: "#94E2D5"
-                                                    Image{
-                                                        source: "./assets/dinosaur.png"
-                                                        anchors.centerIn: parent
-                                                        fillMode: Image.PreserveAspectFit
-                                                        width: parent.width - 10
-                                                        height: parent.height - 10
-                                                        sourceSize: Qt.size(width, height)
-
-                                                    }
-                                                }
-                                            }
-                                            Item{
-                                                width: parent.width
-                                                height: parent.height / 2
-                                                Text{
-                                                    anchors.centerIn: parent
-                                                    text: "Steel"
-                                                    font.pixelSize: 32
-                                                    color: colors.surfaceText
-                                                }                                                
-                                            }
-                                        }
-                                    }
-                                }
-
-                                Item{
-                                    id: userStat
-                                    implicitHeight: parent.height
-                                    implicitWidth: parent.width / 2
-
-                                    Rectangle{
-                                        implicitHeight: parent.height - 10
-                                        implicitWidth: parent.width - 10
-                                        anchors.centerIn: parent
-                                        color: colors.surfaceVariant
-                                        radius: 10
-                                    }
-                                }
-
-                            }
+                    onCurrentIndexChanged:{
+                        var height = dashboardWrapper.height
+                        if(height > 300){
+                            height = 300
+                        }else{
+                            height = 600
                         }
-                        Item{
-                            id: calendar
-                            width: parent.width
-                            height: parent.height - parent.height / 3
-                            Row{
-                                anchors.fill: parent
-                                Item{
-                                    implicitWidth: parent.width
-                                    implicitHeight: parent.height
-                                    
-                                    Rectangle{
-                                        implicitHeight: parent.height - 10
-                                        implicitWidth: parent.width - 10
-                                        anchors.centerIn: parent
-                                        color: colors.surfaceVariant
-                                        radius: 10
-                                    }
-                                }
-
-                            }
-                        }
+                        dashboardWrapper.height = height
                     }
-                    Item{
-                        id: stats
-                        width: parent.width / 3
-                        height: parent.height
-
-                        Item{
-                            implicitHeight: parent.height
-                            implicitWidth: parent.width
-
-                            Rectangle{
-                                implicitHeight: parent.height - 10
-                                implicitWidth: parent.width - 10
-                                anchors.centerIn: parent
-                                color: colors.surfaceVariant
-                                radius: 10
-
-                                Column{
-                                    anchors.fill: parent
-
-                                    CircularProgressIndicator{
-                                        width: parent.width
-                                        height: parent.height / 4
-                                        progress: systemMonitor.cpuUsage / 100
-                                        iconSource: "./assets/cpu.svg"
-                                    }
-                                    CircularProgressIndicator{
-                                        width: parent.width
-                                        height: parent.height / 4
-                                        progress: systemMonitor.ramUsage / 100
-                                        iconSource: "./assets/ram.svg"
-                                        fgColor: colors.secondary
-                                    }
-                                    CircularProgressIndicator{
-                                        width: parent.width
-                                        height: parent.height / 4
-                                        progress: systemMonitor.diskUsage / 100
-                                        iconSource: "./assets/disk.svg"
-                                        fgColor: colors.tertiary
-                                    }
-                                    CircularProgressIndicator{
-                                        width: parent.width
-                                        height: parent.height / 4
-                                        progress: systemMonitor.cpuTemp / 100
-                                        iconSource: "./assets/temp.svg"
-                                        isTemperature: true
-                                        fgColor: colors.primaryContainer
-                                    }
-                                }
-                            }
-                        }
+                    
+                    DashboardSection_1{
+                        //anchors.fill: parent
+                        isDashboardVisible: dashboardItem.isDashboardVisible
                     }
+
+                    DashboardSection_2{}
                 }
             }
+            }
+
         }
 
+       
         ParallelAnimation{
             id: openAnimation
 
@@ -219,7 +114,7 @@ Item{
                 property: "y"
                 to: 0
                 duration: 300
-                easing.type: Easing.OutCubic
+                easing.type: Easing.OutQuad
                 easing.overshoot: 1.2
             }
 
@@ -228,7 +123,7 @@ Item{
                 property: "yScale"
                 to: 1.0
                 duration: 300
-                easing.type: Easing.OutCubic
+                easing.type: Easing.OutQuad
                 easing.overshoot: 1.1
             }
         }
@@ -240,15 +135,15 @@ Item{
                 target: dashboardWrapper
                 property: "y"
                 to: 0
-                duration: 200
-                easing.type: Easing.InCubic
+                duration: 300
+                easing.type: Easing.InQuad
             }
             NumberAnimation{
                 target: scaleTransform
                 property: "yScale"
                 to: 0
-                duration: 200
-                easing.type: Easing.InCubic
+                duration: 300
+                easing.type: Easing.InQuad
             }
 
             onFinished:{

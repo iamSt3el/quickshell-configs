@@ -16,7 +16,7 @@ Item{
 
      Timer{
          id: middleTimer
-         interval: 200
+         interval: 300
          onTriggered: {
              clockWrapper.implicitWidth = 220
          }
@@ -91,7 +91,7 @@ Item{
             Behavior on implicitWidth{
                 NumberAnimation{
                     duration: 200;
-                    easing.type: Easing.OutCurve
+                    easing.type: Easing.OutQuad
                 }
             }
      
@@ -102,7 +102,8 @@ Item{
 
             FontLoader{
                 id: nothingFonts
-                source: "./fonts/nothing-font-5x7.ttf/nothing-font-5x7.ttf"
+                source: "./fonts/PkgTTF-Iosevka-33.2.9/Iosevka-Bold.ttf"
+                //source: "./fonts/nothing-font-5x7.ttf/nothing-font-5x7.ttf"
             }
 
             SystemClock{
@@ -116,7 +117,7 @@ Item{
                     centerIn: parent
                 }
                 color: colors.surfaceText
-                text: Qt.formatDateTime(clock.date, "hh : mm AP  ddd dd")
+                text: Qt.formatDateTime(clock.date, "hh:mm AP ddd dd")
                 font.family: nothingFonts.name
                 font.pixelSize: 22
             }
@@ -130,7 +131,7 @@ Item{
 
                 onClicked:{
                     var value = clockWrapper.implicitWidth
-                    if(value == 220){ 
+                    if(value !=720){ 
                         middleTimer.stop()
                         value = 720
                     }
@@ -143,8 +144,6 @@ Item{
                     }else{
                         dashboardPanel.aliasTimer.start()
                     }
-
-
                 }
 
 

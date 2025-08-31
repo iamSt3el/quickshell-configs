@@ -6,52 +6,50 @@ Item {
     id: colorProvider
     
     // Material You color properties (safe names to avoid QML conflicts)
-    property string primary: "#ccbeff"
-    property string primaryText: "#33275e"
-    property string primaryContainer: "#4a3e76"
-    property string primaryContainerText: "#e7deff"
+    property string primary: "#9ccbfb"
+    property string primaryText: "#003354"
+    property string primaryContainer: "#114a73"
+    property string primaryContainerText: "#cfe5ff"
     
-    property string secondary: "#cac3dc"
-    property string secondaryText: "#322e41"
-    property string secondaryContainer: "#494458"
-    property string secondaryContainerText: "#e7dff8"
+    property string secondary: "#b9c8da"
+    property string secondaryText: "#243240"
+    property string secondaryContainer: "#3a4857"
+    property string secondaryContainerText: "#d5e4f7"
     
-    property string tertiary: "#eeb8cb"
-    property string tertiaryText: "#492534"
-    property string tertiaryContainer: "#623b4a"
-    property string tertiaryContainerText: "#ffd9e5"
+    property string tertiary: "#d4bee6"
+    property string tertiaryText: "#392a49"
+    property string tertiaryContainer: "#504060"
+    property string tertiaryContainerText: "#efdbff"
     
     property string error: "#ffb4ab"
     property string errorText: "#690005"
     property string errorContainer: "#93000a"
     property string errorContainerText: "#ffdad6"
     
-    property string surface: "#141318"
-    property string surfaceText: "#e6e1e9"
-    property string surfaceVariant: "#48454e"
-    property string surfaceVariantText: "#cac4cf"
+    property string surface: "#101418"
+    property string surfaceText: "#e0e2e8"
+    property string surfaceVariant: "#42474e"
+    property string surfaceVariantText: "#c2c7cf"
     
-    property string outline: "#938f99"
-    property string outlineVariant: "#48454e"
+    property string outline: "#8c9199"
+    property string outlineVariant: "#42474e"
     property string shadow: "#000000"
     property string scrim: "#000000"
     
-    property string inverseSurface: "#e6e1e9"
-    property string inverseSurfaceText: "#312f35"
-    property string inversePrimary: "#625690"
+    property string inverseSurface: "#e0e2e8"
+    property string inverseSurfaceText: "#2d3135"
+    property string inversePrimary: "#31628d"
     
-    property string surfaceDim: "#141318"
-    property string surfaceBright: "#3a383e"
-    property string surfaceContainerLowest: "#0f0d13"
-    property string surfaceContainerLow: "#1c1b20"
-    property string surfaceContainer: "#201f24"
-    property string surfaceContainerHigh: "#2b292f"
-    property string surfaceContainerHighest: "#36343a"
+    property string surfaceDim: "#101418"
+    property string surfaceBright: "#36393e"
+    property string surfaceContainerLowest: "#0b0e12"
+    property string surfaceContainerLow: "#181c20"
+    property string surfaceContainer: "#1c2024"
+    property string surfaceContainerHigh: "#272a2f"
+    property string surfaceContainerHighest: "#32353a"
     
     // Wallpaper path
-    property string wallpaper: "/home/steel/wallpaper/dracula-portolans-ff79c6.png"
+    property string wallpaper: "/home/steel/wallpaper/arch-nord-light.png"
     
-    /*Component.onCompleted: {
-        console.log("Material You colors loaded from wallpaper")
-    }*/
+
 }

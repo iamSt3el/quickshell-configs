@@ -12,9 +12,7 @@ Item{
     width: wrapper.width + 20
     height: parent.height
     
-    WindowInfoProvider {
-        id: windowInfoProvider
-    }
+
     
     Colors {
         id: colors
@@ -71,7 +69,7 @@ Item{
                 width: Hyprland.workspaces.length * 40
                 anchors.centerIn: parent
                 spacing: 10
-
+    
                 Repeater{
                     model: Hyprland.workspaces
 
@@ -80,6 +78,7 @@ Item{
                         implicitHeight: 25
                         color: modelData.focused ? colors.primaryContainer : colors.surfaceVariant 
                         radius: 10
+
                      
 
                         Behavior on color{
@@ -132,26 +131,16 @@ Item{
                                     implicitWidth: 20
                                     color: "transparent"
 
-                                    property string appClass: ""
-
                                     Component.onCompleted:{
-                                        windowInfoProvider.getAppClass(modelData.address)
+                                        Hyprland.refreshToplevels()
                                     }
 
-                                    Connections {
-                                        target: windowInfoProvider
-                                        function onAppClassRetrieved(address, retrievedAppClass) {
-                                            if (address === modelData.address) {
-                                                appClass = retrievedAppClass
-                                            }
-                                        }
-                                    }
 
                                     Image{
                                         width: 20
                                         height: 20
                                         sourceSize: Qt.size(width, height)
-                                        source: IconUtils.getIconPath(appClass)
+                                        source: IconUtils.getIconPath(modelData.lastIpcObject.class)
                                         anchors.centerIn: parent
                                     }
                                 }
