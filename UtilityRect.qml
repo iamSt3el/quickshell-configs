@@ -99,6 +99,10 @@ Item{
             id: notificationPanel
         }
 
+        PowerPanel{
+            id: powerPanel
+        } 
+
 
         Rectangle{
             id: utilityRect
@@ -293,11 +297,7 @@ Item{
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked:{
-                            /*if(utilityPopupWrapper.isUtilityPopUpVisible){
-                                utilityPopupWrapper.close()
-                            }else{
-                                 utilityPopupWrapper.open()
-                             }*/
+                 
                            Quickshell.execDetached(["kitty", "--class", "nmtui-popup", "-e", "nmtui"])
                         }
                     }
@@ -308,11 +308,7 @@ Item{
                     property bool isActive: false
                     implicitWidth: componentWidth
                     implicitHeight: componentHeight
-                    //color: isActive ? "#fab387" : "#1E1E2E"
-                    //radius: 10
-                    //objectName: "bt"
-                    //border.color: "#45475A"
-                    //border.width: 1
+            
                     color: "transparent"
 
                     Behavior on color{
@@ -322,7 +318,6 @@ Item{
 
                     Image{
                         anchors{
-                            //fill: parent
                             centerIn: parent
                         }
                         width: iconSize
@@ -353,7 +348,6 @@ Item{
                                 utilityPopupWrapper.open()
                             }
 
-                            //Quickshell.execDetached(["blueman-manager"])
                         }
                     }
 
@@ -364,9 +358,7 @@ Item{
                     id: notification
                     implicitWidth: componentWidth
                     implicitHeight: componentHeight
-                    //color: "#1E1E2E"
-                    //radius: 10
-                    //border.color: "#45475A"
+                
                     color: "transparent"
                     Image{
                         anchors{
@@ -402,9 +394,7 @@ Item{
                     id: power
                     implicitWidth: componentWidth
                     implicitHeight: componentHeight
-                    //color: "#1E1E2E"
-                    //radius: 10
-                    //border.color: "#45475A"
+            
                     color: "transparent"
                     Image{
                         anchors{
@@ -420,6 +410,17 @@ Item{
                            color: "#f38ba8"
                        }
                    }
+
+                   MouseArea{
+                       id: powerArea
+                       anchors.fill: parent
+                       cursorShape: Qt.PointingHandCursor 
+                       hoverEnabled: true
+                       onClicked:{
+                          Quickshell.execDetached(["bash", "/home/steel/.config/ml4w/scripts/wlogout.sh"])
+                       }
+                   }
+
                }
            }
        }

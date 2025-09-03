@@ -6,9 +6,14 @@ import Qt5Compat.GraphicalEffects
 import Quickshell.Hyprland
 import QtQuick.Shapes
 import Quickshell.Services.Pipewire
+import qs.util
+
 
 
 Item{
+    Colors{
+        id: colors
+    }
     id: sliderItem
     width: 50
     height: parent ? parent.height : 100
@@ -47,7 +52,7 @@ Item{
         id: slider
         implicitHeight: parent.height - 20
         implicitWidth: 40
-        color: "#585B70"
+        color: colors.surfaceBright
         radius: 10
         anchors{
             centerIn: parent
@@ -64,7 +69,7 @@ Item{
                 }
             }
             implicitWidth: parent.width
-            color: "#B4BEFE"
+            color: colors.tertiary
             radius: 10
             anchors{
                 bottom: parent.bottom
@@ -105,6 +110,7 @@ Item{
             }
 
             Image{
+                visible: !sliderBallArea.drag.active
                 anchors.centerIn: parent
                 source: icon ? "./assets/" + icon : ""
                 width: 20
@@ -114,6 +120,23 @@ Item{
                 layer.effect: ColorOverlay{
                     color: "#11111B"
                 }
+
+          
+            }
+
+            Text{
+                anchors.centerIn: parent
+                text: {
+                    var value
+                    if(sliderType === "volume") value = currentVolume
+                    else return Math.floor(((currentBrightness  * 100)/ 6039500) * 100)
+
+                    return Math.floor(value * 100)
+                }
+                visible: sliderBallArea.drag.active
+                font.pixelSize: 16
+                font.weight: 800
+          
             }
         }
 

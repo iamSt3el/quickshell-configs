@@ -40,7 +40,7 @@ Item {
                     
                     Item{
                         implicitHeight: parent.height
-                        implicitWidth: parent.width / 2
+                        implicitWidth: parent.width - parent.width / 3
 
                         Rectangle{
                             implicitHeight: parent.height - 10
@@ -52,91 +52,59 @@ Item {
                             Item{
                                 width: parent.width
                                 height: parent.height
-                                
-                                Rectangle{
-                                    anchors.centerIn: parent
-                                    implicitWidth: parent.height - 10
-                                    implicitHeight: parent.height - 10
-                                    radius: 10
-                                    color: "transparent"
-                                    
-                                    AnimatedImage{
-                                        source: "./gifs/funny.gif"
-                                        width: parent.width
-                                        height: parent.height
-                                        playing: root.isDashboardVisible
-                                        asynchronous: true
-                                        cache: true
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Item{
-                        id: userStat
-                        implicitHeight: parent.height
-                        implicitWidth: parent.width / 2
-
-                        Rectangle{
-                            implicitHeight: parent.height - 10
-                            implicitWidth: parent.width - 10
-                            anchors.centerIn: parent
-                            color: colors.surfaceVariant
-                            radius: 10
-
-                            Column{
-                                anchors.fill: parent
-                                anchors.margins: 10
-
-                                Item{
-                                    implicitWidth: parent.width
-                                    implicitHeight: parent.height / 5
-                                    
-                                    Row{
+                
+                                    Column{
                                         anchors.fill: parent
-                                        spacing: 10
-                                        
-                                        Image{
-                                            width: 25
-                                            height: 25
-                                            sourceSize: Qt.size(width, height)
-                                            source: "./assets/linux-platform.png"
-                                        }
+                                        anchors.margins: 10
 
-                                        Text{
-                                            text: sysInfo.distro
-                                            font.pixelSize: 18
-                                            color: colors.surfaceText
-                                            font.weight: 800
+                                        Item{
+                                            implicitWidth: parent.width
+                                            implicitHeight: parent.height / 5
+                                    
+                                            Row{
+                                            anchors.fill: parent
+                                            spacing: 10
+                                        
+                                                Image{
+                                                    width: 25
+                                                    height: 25
+                                                    sourceSize: Qt.size(width, height)
+                                                    source: "./assets/linux-platform.png"
+                                                }
+
+                                                Text{
+                                                    text: sysInfo.distro
+                                                    font.pixelSize: 18
+                                                    color: colors.surfaceText
+                                                    font.weight: 800
+                                                }
+                                            }
                                         }
-                                    }
-                                }
                                 
-                                Item{
-                                    implicitWidth: parent.width
-                                    implicitHeight: parent.height / 5
+                                    Item{
+                                        implicitWidth: parent.width
+                                        implicitHeight: parent.height / 5
 
-                                    Row{
-                                        anchors.fill: parent
-                                        spacing: 10
+                                        Row{
+                                            anchors.fill: parent
+                                            spacing: 10
                                         
-                                        Image{
-                                            width: 25
-                                            height: 25
-                                            sourceSize: Qt.size(width, height)
-                                            source: "./assets/clock.svg"
-                                        }
+                                            Image{
+                                                width: 25
+                                                height: 25
+                                                sourceSize: Qt.size(width, height)
+                                                source: "./assets/clock.svg"
+                                            }
                                         
-                                        Text{
-                                            anchors.leftMargin: 10
-                                            text: sysInfo.uptime
-                                            font.pixelSize: 18
-                                            color: colors.surfaceText
-                                            font.weight: 800
+                                            Text{
+                                                anchors.leftMargin: 10
+                                                text: sysInfo.uptime
+                                                font.pixelSize: 18
+                                                color: colors.surfaceText
+                                                font.weight: 800
+                                            }
                                         }
                                     }
-                                }
                                 
                                 Item{
                                     implicitWidth: parent.width
@@ -210,6 +178,38 @@ Item {
                                         }
                                     }
                                 }
+                            }
+                        }
+                     }
+                }
+
+                    Item{
+                        id: userStat
+                        implicitHeight: parent.height
+                        implicitWidth: parent.width / 3
+
+                        Rectangle{
+                            implicitHeight: parent.height - 10
+                            implicitWidth: parent.width - 10
+                            anchors.centerIn: parent
+                            color: colors.surfaceVariant
+                            radius: 10
+
+                            Row{
+                                anchors.fill: parent
+                                spacing: 40
+
+                                CustomSlider{
+                                    id: volumeslider
+                                    icon: "music.svg"
+                                    sliderType: "volume"
+                                }
+
+                                CustomSlider{
+                                    id: brightnessslider
+                                    icon: "sun.svg"
+                                    sliderType: "brightness" 
+                                }            
                             }
                         }
                     }

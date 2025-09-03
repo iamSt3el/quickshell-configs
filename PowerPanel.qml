@@ -7,65 +7,49 @@ import QtQuick.Shapes
 import Qt5Compat.GraphicalEffects
 import qs.util
 
-Scope {
+Item {
+
     id: root
-    
     Colors {
         id: colors
     }
-    
-    Variants {
-        model: Quickshell.screens
+
+            property bool isPowerPanelVisible: false
+            
+            function open() {
+                isPowerPanelVisible = true
+                openAnimation.start()
+            }
+            
+            function close() {
+                closeAnimation.start()
+            }
 
         PanelWindow {
-            required property var modelData
-            screen: modelData
 
             id: powerPanel
 
-            property bool isPowerPanelVisible: true
             property var buttons: ["shutdown", "reboot", "suspend"]
 
             WlrLayershell.layer: WlrLayer.Overlay
             exclusionMode: ExclusionMode.Normal
             implicitHeight: 230
-            implicitWidth: isPowerPanelVisible ? 90 : 20
-            visible: true
+            implicitWidth: 90
+            visible: root.isPowerPanelVisible
             color: "transparent"
 
             anchors {
                 right: true
             }
 
-            Timer {
-                id: powerPanelTimer
-                interval: 800
-                running: true
-                onTriggered: {
-                    powerPanel.isPowerPanelVisible = false
-                }
-            }
 
-            MouseArea {
-                id: powerPanelArea
-                width: 20
-                height: parent.height
-                anchors.right: parent.right
-                hoverEnabled: true
-               // visible: !isPowerPanelVisible
-                onEntered: {
-                    //console.log("Entered")
-                    //powerPanelTimer.start();
-                    //powerPanel.isPowerPanelVisible = true
-                    //openAnimation.start()
-                }
-            }
+
+
 
             // Container for both Shape and Rectangle
             Item {
                 id: powerPanelContainer
                 anchors.fill: parent
-                visible: powerPanel.isPowerPanelVisible
 
                 // Apply transform to the entire container
                 transform: Scale {
@@ -178,12 +162,7 @@ Scope {
                                     anchors {
                                         fill: parent
                                     }
-                                    onEntered:{
-                                        powerPanelTimer.stop()
-                                    }
-                                    onExited:{
-                                        powerPanelTimer.start()
-                                    }
+                             
                                     onClicked: {
                                         Quickshell.execDetached(["systemctl", modelData])
                                     }
@@ -206,6 +185,22 @@ Scope {
                     easing.type: Easing.OutCubic
                 }
             }
+            
+            ParallelAnimation {
+                id: closeAnimation
+
+                NumberAnimation {
+                    target: scaleTransform
+                    property: "xScale"
+                    from: 1.0
+                    to: 0
+                    duration: 200
+                    easing.type: Easing.InCubic
+                }
+                
+                onFinished: {
+                    root.isPowerPanelVisible = false
+                }
+            }
         }
-    }
 }

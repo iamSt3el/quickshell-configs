@@ -34,7 +34,7 @@ Item{
 
                     Timer{
                         id: positionTimer
-                        running: activePlayer && activePlayer && activePlayer.playbackState === MprisPlaybackState.Playing
+                        running: activePlayer && activePlayer.playbackState === MprisPlaybackState.Playing
                         interval: 1000
                         repeat: true
                         triggeredOnStart: true
@@ -88,7 +88,7 @@ Item{
                                         Text{
                                             anchors.left: parent.left
                                             anchors.verticalCenter: parent.verticalCenter
-                                            text: activePlayer.trackTitle || "No Title"
+                                            text: (activePlayer && activePlayer.trackTitle) || "No Title"
                                             font.pixelSize: 36
                                             color: colors.primaryText
                                             font.family: nothingFonts.name
@@ -104,7 +104,7 @@ Item{
                                         Text{
                                             anchors.left: parent.left
                                             anchors.verticalCenter: parent.verticalCenter
-                                            text: activePlayer.trackArtist || "No Artist"
+                                            text: (activePlayer && activePlayer.trackArtist) || "No Artist"
                                             font.pixelSize: 26
                                             color: colors.secondaryText
                                             font.family: nothingFonts.name
@@ -119,7 +119,7 @@ Item{
                                         Text{
                                             anchors.left: parent.left
                                             anchors.verticalCenter: parent.verticalCenter
-                                            text: formatTimer(activePlayer.position)
+                                            text: formatTimer(activePlayer ? activePlayer.position : 0)
                                             font.pixelSize: 24
                                             font.family: nothingFonts.name
                                         }
@@ -128,7 +128,7 @@ Item{
                                             anchors.right: parent.right
                                             anchors.verticalCenter: parent.verticalCenter
                                             anchors.rightMargin: 10
-                                            text: formatTimer(activePlayer.length)
+                                            text: formatTimer(activePlayer ? activePlayer.length : 0)
                                             font.pixelSize: 24
                                             font.family: nothingFonts.name
                                         }
@@ -147,7 +147,7 @@ Item{
 
                                             Rectangle{
                                                 anchors.left: parent.left
-                                                implicitWidth: Math.max(parent.width * (activePlayer.position / activePlayer.length), 0)
+                                                implicitWidth: Math.max(parent.width * ((activePlayer && activePlayer.position && activePlayer.length) ? (activePlayer.position / activePlayer.length) : 0), 0)
                                                 implicitHeight: parent.height
                                                 radius: 5
                                                 color: colors.surface

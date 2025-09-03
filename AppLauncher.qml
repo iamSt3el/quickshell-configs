@@ -28,11 +28,12 @@ Scope{
                     if(hyprMonitor && hyprMonitor.name === focusedMonitor.name){
                         var panel = appLauncherRoot.activePanels[screen.name];
                         if(panel){
-                            panel.visible = !panel.visible;
-                            if(panel.visible){
+                            if(!panel.visible) panel.open()
+                            else panel.close()
+                            /*if(panel.visible){
                                 panel.searchInput.forceActiveFocus();
                                 panel.searchInput.text = "";
-                            }
+                            }*/
                             return;
                         }
                     }
@@ -45,11 +46,12 @@ Scope{
         model: Quickshell.screens
 
         PanelWindow{
+            id: appLauncherWindow
             required property var modelData
             implicitHeight: 600
-            implicitWidth: 400
+            implicitWidth: 300
             visible: false
-            property alias searchInput: input
+            //property alias searchInput: input
             property string searchText: ""
             property var currentFilteredApps: DesktopEntries.applications
             property int selectedIndex: 0
@@ -63,7 +65,7 @@ Scope{
                 appLauncherRoot.activePanels[modelData.name] = this;
             }
             
-            function getFilteredApps() {
+            /*function getFilteredApps() {
                 var searchTerm = searchText.toLowerCase().trim();
               
                 if (searchTerm === "" || searchTerm === "search.." || searchTerm === "Search..") {
@@ -101,9 +103,9 @@ Scope{
                 }
                 
                 return patternIndex === pattern.length;
-            }
+            }*/
             anchors{
-                bottom: true
+                left: true
             }
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
@@ -113,31 +115,38 @@ Scope{
             Item{
                 id: wrapper
                 anchors.fill: parent
+                
+                transform: Scale{
+                    id: scaleTransform
+                    origin.x: -40
+                    origin.y: 0
+                    xScale: 0
+                }
 
                 Shape{
-                    preferredRendererType: Shape.CurveRenderer
+                    preferredRendererType: Shape.CurveRenderer 
                     ShapePath{
                         fillColor: colors.surface
                         strokeWidth: 0
 
                         startX: wrapper.x
-                        startY: wrapper.height
+                        startY: wrapper.y
 
                         PathArc{
                             relativeX: 20
-                            relativeY: -20
+                            relativeY: 20
                             radiusX: 20
                             radiusY: 20
                             direction: PathArc.Counterclockwise
                         }
 
                         PathLine{
-                            relativeX: wrapper.width - 40
-                            relativeY: 0
+                            relativeY: wrapper.height - 40
+                            relativeX: 0
                         }
 
                         PathArc{
-                            relativeX: 20
+                            relativeX: -20
                             relativeY: 20
                             radiusX: 20
                             radiusY: 15
@@ -148,17 +157,19 @@ Scope{
                 }
 
                 Rectangle{
-                    implicitWidth: parent.width - 40
-                    implicitHeight: parent.height
+                    implicitWidth: parent.width
+                    implicitHeight: parent.height - 40
 
+                    //color: "transparent"
                     color: colors.surface
-                    topLeftRadius: 20
                     topRightRadius: 20
+                    bottomRightRadius: 20
                     anchors{
-                        horizontalCenter: parent.horizontalCenter
+                        verticalCenter: parent.verticalCenter
+                        //horizontalCenter: parent.horizontalCenter
                     }
 
-                    Column{
+                    /*Column{
                         anchors.fill: parent
 
                         Rectangle{
@@ -200,21 +211,7 @@ Scope{
                                     }
                                 }
                                 
-                                Keys.onUpPressed: {
-                                    if (selectedIndex > 0) {
-                                        selectedIndex--;
-                                    }
-                                }
-                                
-                                Keys.onDownPressed: {
-                                    if (selectedIndex < currentFilteredApps.values.length - 1) {
-                                        selectedIndex++;
-                                    }
-                                }
-                                
-                                Keys.onEscapePressed: {
-                                    visible = false;
-                                }
+            
                             }
                         }
 
@@ -265,8 +262,46 @@ Scope{
                             }
 
                         }
-                    }
+                    }*/
                 }
+            }
+            ParallelAnimation{
+                id: openAnimation
+
+                NumberAnimation{
+                    target: scaleTransform
+                    property: "xScale"
+                    from: 0
+                    to: 1.0
+                    duration: 300
+                    easing.type: Easing.OutQuad
+                }
+            }
+
+            ParallelAnimation{
+                id: closeAnimation
+
+                NumberAnimation{
+                    target: scaleTransform
+                    property: "xScale"
+                    from: 1.0
+                    to: 0
+                    duration: 300
+                    easing.type: Easing.InQuad
+                }
+
+                onFinished:{
+                    appLauncherWindow.visible = false
+                }
+            }
+
+            function open(){
+                appLauncherWindow.visible = true
+                openAnimation.start()
+            }
+
+            function close(){
+                closeAnimation.start()
             }
         }
     }
