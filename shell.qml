@@ -15,7 +15,7 @@ ShellRoot{
     TopBar{}
     //AiHelper{}
     AppLauncher{}
-     //Test{}
+     Test{}
     // Manga reader
     //MangaReader{}
 
