@@ -5,7 +5,7 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 import QtQuick.Shapes
 import qs.util
-
+import QtQuick.Effects
 
 Item{
     id: middleItem
@@ -33,7 +33,14 @@ Item{
             horizontalCenter: parent.horizontalCenter
         }
 
-   
+        layer.enabled: true
+        layer.effect: MultiEffect {
+          shadowEnabled: true
+          blurMax: 15
+          shadowColor: Qt.alpha(colors.shadow, 1)
+        }
+          
+     
         
         Shape{
             preferredRendererType: Shape.CurveRenderer

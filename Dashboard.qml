@@ -10,6 +10,10 @@ Item{
     id: dashboardItem
     property bool isDashboardVisible: false
     property alias aliasTimer: timer
+
+
+          
+
     
     Colors{
         id: colors
@@ -56,6 +60,8 @@ Item{
                 origin.y: 0
                 yScale: 0
             }
+
+
             Rectangle{
                 implicitHeight: parent.height
                 implicitWidth: parent.width

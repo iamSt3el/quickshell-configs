@@ -231,7 +231,7 @@ Item{
                                                 width: 30
                                                 height: 30
                                                 sourceSize: Qt.size(width, height)
-                                                source: Quickshell.iconPath(modelData.appIcon) || modelData.image
+                                                source: Quickshell.iconPath(modelData.appIcon, true) || modelData.image
                                             }
                                         }
                                         Item{

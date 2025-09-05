@@ -9,6 +9,7 @@ import Quickshell.Services.Pipewire
 import Quickshell.Services.Mpris
 import qs.util
 import Quickshell.Services.SystemTray
+import QtQuick.Effects
 
 Item{
     id: utilityRectItem
@@ -45,6 +46,16 @@ Item{
         anchors{
             right: parent.right
         }
+
+        
+        layer.enabled: true
+        layer.effect: MultiEffect {
+          shadowEnabled: true
+          blurMax: 15
+          shadowColor: Qt.alpha(colors.shadow, 1)
+        }
+          
+
 
         Shape{
             preferredRendererType: Shape.CurveRenderer

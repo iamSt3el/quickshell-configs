@@ -3,9 +3,8 @@ pragma Singleton
 import QtQuick
 import Quickshell
 
-QtObject {
+Item {
     function getIconName(windowClass) {
-        // Direct class-to-icon mapping for common apps
         const iconMap = {
             "firefox": "firefox",
             "google-chrome": "google-chrome",

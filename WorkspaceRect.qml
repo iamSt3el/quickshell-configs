@@ -4,13 +4,23 @@ import Quickshell.Io
 import QtQuick.Shapes
 import Quickshell.Hyprland
 import qs.util
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 Item{
     id: workspacesItem
     anchors.left: parent.left
     width: wrapper.width + 20
     height: parent.height
+
+    
+        layer.enabled: true
+        layer.effect: MultiEffect {
+          shadowEnabled: true
+          blurMax: 15
+          shadowColor: Qt.alpha(colors.shadow, 1)
+        }
+          
+
     
 
     
@@ -60,21 +70,23 @@ Item{
         Rectangle{
             anchors.centerIn: parent
             implicitWidth: workspacesRow.width + 10
-            implicitHeight: workspacesRow.height + 4
+            implicitHeight: parent.height
             radius: 10
             //color: "#44444E"
             color: "transparent"
-            Row{
+            ListView{
                 id: workspacesRow
-                width: Hyprland.workspaces.length * 40
+                width: contentWidth
+                height: parent.height - 10 
+                orientation: Qt.Horizontal
                 anchors.centerIn: parent
                 spacing: 10
-    
-                Repeater{
-                    model: Hyprland.workspaces
+                interactive: false
+                
+                model: Hyprland.workspaces
 
                     delegate: Rectangle{
-                        implicitWidth: Math.max(30, appRow.width + 20) 
+                        implicitWidth: Math.max(40, (modelData.toplevels.values.length * 24) + 20) 
                         implicitHeight: 25
                         color: modelData.focused ? colors.primaryContainer : colors.surfaceVariant 
                         //radius: 10
@@ -104,8 +116,6 @@ Item{
                         Item{
                             anchors.fill: parent
                         Rectangle{
-                            //anchors.verticalCenter: parent.verticalCenter
-                            //anchors.bottom: parent.bottom
                             x: -5
                             y: 10
                             implicitHeight: 20
@@ -123,16 +133,49 @@ Item{
                         }
                         
 
-                        Row{
+                        ListView{
                             id: appRow
-                            width: modelData.toplevels.length
-                            anchors.rightMargin: 5
+                            //width: Math.max(20, contentWidth)
+                            width: parent.width
+                            height: parent.height - 5
+                            orientation: Qt.Horizontal
+                            //anchors.centerIn: parent
+                            anchors.leftMargin: 15
                             anchors.verticalCenter: parent.verticalCenter
-                            anchors.right: parent.right
+                            anchors.left: parent.left
                             spacing: 4
-                         
-                            Repeater{
-                                model: modelData.toplevels
+                            interactive: false
+                            //layoutDirection: Qt.LeftToRight
+
+                            add: Transition { 
+                                ParallelAnimation {
+                                    NumberAnimation{
+                                        property: "opacity"
+                                        from: 0
+                                        to: 1
+                                        duration: 300
+                                        easing.type: Easing.OutBack
+                                    }
+                                    NumberAnimation{
+                                        property: "scale"
+                                        from: 0.3
+                                        to: 1.0
+                                        duration: 300
+                                        easing.type: Easing.OutBack
+                                    }
+                                    NumberAnimation{
+                                        property: "y"
+                                        from: -10
+                                        to: 0
+                                        duration: 300
+                                        easing.type: Easing.OutBack
+                                    }
+                                }
+                            }
+
+                        
+                            
+                            model: modelData.toplevels
 
                                 delegate: Rectangle{
                                     implicitHeight: 20
@@ -152,7 +195,6 @@ Item{
                                         anchors.centerIn: parent
                                     }
                                 }
-                            }
                         }
 
                         MouseArea{
@@ -166,7 +208,6 @@ Item{
                             }
                         }
                     }
-                }
                 }
             }
         }
