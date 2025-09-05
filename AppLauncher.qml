@@ -274,6 +274,7 @@ Scope{
                                 onClicked:{
                                     modelData.execute()
                                     appLauncherWindow.close()
+                                    input.text = ""
                                 }
                             }
                         }

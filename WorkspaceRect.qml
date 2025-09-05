@@ -77,7 +77,11 @@ Item{
                         implicitWidth: Math.max(30, appRow.width + 20) 
                         implicitHeight: 25
                         color: modelData.focused ? colors.primaryContainer : colors.surfaceVariant 
-                        radius: 10
+                        //radius: 10
+                        topLeftRadius: 30
+                        bottomRightRadius: 30
+                        topRightRadius: 5
+                        bottomLeftRadius: 5
 
                      
 
@@ -97,20 +101,24 @@ Item{
                             anchors.centerIn: parent
                         }
 
-                        
+                        Item{
+                            anchors.fill: parent
                         Rectangle{
-                            anchors.left: parent.left
-                            implicitHeight: 25
-                            implicitWidth: 12
-                            color: colors.primaryContainer
-                            topLeftRadius: 10
-                            bottomLeftRadius: 5
-
+                            //anchors.verticalCenter: parent.verticalCenter
+                            //anchors.bottom: parent.bottom
+                            x: -5
+                            y: 10
+                            implicitHeight: 20
+                            implicitWidth: 20
+                            color: colors.tertiaryContainer
+                            radius: 30
+                        
                             Text{
                                 text: modelData.id
                                 font.pixelSize: 12
                                 anchors.centerIn: parent
-                                color: colors.surfaceText
+                                color: colors.tertiaryContainerText
+                                font.weight: 800
                             }
                         }
                         
@@ -158,6 +166,7 @@ Item{
                             }
                         }
                     }
+                }
                 }
             }
         }

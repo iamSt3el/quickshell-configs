@@ -106,10 +106,7 @@ Item{
                 //source: "./fonts/nothing-font-5x7.ttf/nothing-font-5x7.ttf"
             }
 
-            FontLoader{
-                id: clockFonts
-                source: "./fonts/digital-7/digital-7 (mono).ttf"
-            }
+         
 
             SystemClock{
                 id: clock
@@ -123,9 +120,9 @@ Item{
                 }
                 color: colors.surfaceText
                 text: Qt.formatDateTime(clock.date, "hh:mm AP ddd dd")
-                font.family: clockFonts.name
+                font.family: nothingFonts.name
                 font.weight: 600
-                font.pixelSize: 28
+                font.pixelSize: 24
             }
 
             MouseArea{

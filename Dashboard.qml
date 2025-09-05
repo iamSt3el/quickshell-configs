@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell.Io
 import Quickshell.Hyprland
 import qs.util
+import Quickshell.Widgets
 import QtQuick.Controls
 
 Item{
@@ -15,7 +16,7 @@ Item{
     }
 
     SystemMonitor{
-        id: systemMonitor
+        id: systemMonitor 
     }
 
     SystemInfo{
@@ -69,11 +70,12 @@ Item{
                 bottomLeftRadius: 20
                 bottomRightRadius: 20
                 color: colors.surfaceContainer
-                Item{ 
+                ClippingWrapperRectangle{ 
                     implicitHeight: parent.height - 10
                     implicitWidth: parent.width - 10
                     anchors.centerIn: parent
-                    clip: true
+                    color: "transparent"
+                    radius: 10
                     SwipeView{
                     id: swipeView
                     interactive: true
