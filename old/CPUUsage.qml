@@ -8,8 +8,8 @@ Item {
     // Public property - CPU usage percentage (0-100)
     property real cpuUsage: 0.0
     
-    // Configuration
-    property int updateInterval: 1000  // Update every 2 seconds
+    // Configuration - Optimized for better performance
+    property int updateInterval: 2000  // Update every 2 seconds
     
     // CPU Usage Process
     Process {

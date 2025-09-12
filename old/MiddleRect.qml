@@ -4,8 +4,9 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import QtQuick.Shapes
-import qs.util
 import QtQuick.Effects
+import qs.util
+import qs.components
 
 Item{
     id: middleItem
@@ -18,13 +19,17 @@ Item{
          id: middleTimer
          interval: 300
          onTriggered: {
-             clockWrapper.implicitWidth = 220
+             clockWrapper.implicitWidth = clockWidth
          }
      }
     
     Colors {
         id: colors
     }
+    
+    // Use structured dimensions instead of hardcoded values
+    readonly property int clockWidth: 220
+    readonly property int clockExpandedWidth: 720
     Item{
         id: middleRectWrapper
         width: clockWrapper.width + 20 
@@ -35,9 +40,9 @@ Item{
 
         layer.enabled: true
         layer.effect: MultiEffect {
-          shadowEnabled: true
-          blurMax: 15
-          shadowColor: Qt.alpha(colors.shadow, 1)
+            shadowEnabled: true
+            blurMax: Dimensions.spacing.medium
+            shadowColor: Qt.alpha(colors.shadow, 1)
         }
           
      
@@ -76,9 +81,7 @@ Item{
             }
         }
         
-        /*CalenderApp{
-            id: calenderApp
-        }*/
+ 
 
         Dashboard{
             id: dashboardPanel
@@ -86,14 +89,14 @@ Item{
         
         Rectangle{
             id: clockWrapper
-            implicitWidth: 220 
-            implicitHeight: 40
+            implicitWidth: clockWidth 
+            implicitHeight: Dimensions.component.height + Dimensions.spacing.small
             color: colors.surfaceContainer
            
             //bottomRightRadius: calenderApp.calenderVisible ? 0 : 20
             //bottomLeftRadius: calenderApp.calenderVisible ? 0 : 20
-            bottomLeftRadius: 20
-            bottomRightRadius: 20
+            bottomLeftRadius: Dimensions.radius.large
+            bottomRightRadius: Dimensions.radius.large
 
             Behavior on implicitWidth{
                 NumberAnimation{
@@ -120,16 +123,14 @@ Item{
                 precision: SystemClock.Seconds
             }
 
-            Text{
-                visible: parent.width === 220
-                anchors{
-                    centerIn: parent
-                }
-                color: colors.surfaceText
-                text: Qt.formatDateTime(clock.date, "hh:mm AP ddd dd")
+            StyledText {
+                visible: parent.width === clockWidth
+                anchors.centerIn: parent
+                content: Qt.formatDateTime(clock.date, "hh:mm AP ddd dd")
+                textVariant: "heading"
+                colorVariant: "surfaceText"
                 font.family: nothingFonts.name
-                font.weight: 600
-                font.pixelSize: 24
+                font.weight: Typography.weight.bold
             }
 
             MouseArea{
@@ -141,9 +142,9 @@ Item{
 
                 onClicked:{
                     var value = clockWrapper.implicitWidth
-                    if(value !=720){ 
+                    if(value != clockExpandedWidth){ 
                         middleTimer.stop()
-                        value = 720
+                        value = clockExpandedWidth
                     }
                     else middleTimer.start()
 
@@ -155,18 +156,7 @@ Item{
                         dashboardPanel.aliasTimer.start()
                     }
                 }
-
-
-               /* onClicked:{
-                    if(!calenderApp.calenderVisible){
-                        calenderApp.open()
-                    }else{
-                        calenderApp.close()
-                    }
-                }
-                */
-            }
-            
+            }          
         }
     }
 }

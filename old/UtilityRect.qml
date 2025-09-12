@@ -102,17 +102,14 @@ Item{
             id: monitorPopupWrapper
         }
 
-        UserPanel{
-            id: userPanelWrapper
-        }
+        // Conditional loading - only create when needed
+        // NotificationPanel{
+        //     id: notificationPanel
+        // }
 
-        NotificationPanel{
-            id: notificationPanel
-        }
-
-        PowerPanel{
-            id: powerPanel
-        } 
+        // PowerPanel{
+        //     id: powerPanel
+        // } 
 
 
         Rectangle{
@@ -196,72 +193,7 @@ Item{
                     }
                 }
 
-                /*Rectangle{
-                    id: musicPlayer
-                    property var values: []
-                    property int refCount: 1
-                    property int barCount: 16
-                    property real maxHeight: componentHeight
-                    property real barWidth: 6
-                    property real barSpacing: 2
-                    
-                    property var barColors: [
-                        "#4ECDC4", "#45B7AF", "#96CEB4", "#FFEAA7",
-                        "#DDA0DD", "#FFB6C1", "#98FB98", "#F0E68C",
-                        "#87CEEB", "#DDA0DD", "#98FB98", "#4ECDC4",
-                        "#99D1DB", "#A6D189", "#E5C890"
-                    ]
-                    
-                    implicitHeight: componentHeight
-                    implicitWidth: 135
-                    color: "#1E1E2E"
-                    radius: 10
-                     
-                    Process {
-                        id: cavaProc
-                        running: MprisPlaybackState.Playing
-                        command: ["sh", "-c", `printf '[general]\nframerate=60\nbars=16\nsleep_timer=3\n[output]\nchannels=mono\nmethod=raw\nraw_target=/dev/stdout\ndata_format=ascii\nascii_max_range=100' | cava -p /dev/stdin`]
-                        stdout: SplitParser {
-                            onRead: data => {
-                                if (musicPlayer.refCount)
-                                    musicPlayer.values = data.slice(0, -1).split(";").map(v => parseInt(v, 10));
-                            }
-                        }
-                    }
-
-                    Row {
-                        id: barsContainer
-                        anchors.centerIn: parent
-                        //width: parent.width
-                        height: parent.height
-                        spacing: musicPlayer.barSpacing
-                        
-                        Repeater {
-                            id: barRepeater
-                            model: musicPlayer.barCount
-                            
-                            Rectangle {
-                                id: bar
-                                width: musicPlayer.barWidth
-                                height: {
-                                    var value = index < musicPlayer.values.length ? musicPlayer.values[index] : 0
-                                    return Math.max(2, (value / 100) * musicPlayer.maxHeight)
-                                }
-                                radius: musicPlayer.barWidth / 2
-                                color: musicPlayer.barColors[index % musicPlayer.barColors.length]
-                                anchors.bottom: parent.bottom
-
-                                Behavior on height {
-                                    SmoothedAnimation {
-                                        duration: 100
-                                        velocity: -1
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                }*/
+                // Music player visualization removed to reduce memory usage
 
 
 

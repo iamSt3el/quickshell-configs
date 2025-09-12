@@ -5,15 +5,10 @@ import Quickshell.Hyprland
 import qs.util
 import Quickshell.Widgets
 import QtQuick.Controls
-
 Item{
     id: dashboardItem
     property bool isDashboardVisible: false
     property alias aliasTimer: timer
-
-
-          
-
     
     Colors{
         id: colors
