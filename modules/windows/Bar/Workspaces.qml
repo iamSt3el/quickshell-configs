@@ -5,6 +5,7 @@ import QtQuick.Effects
 import qs.modules.util
 import qs.modules.services
 import qs.modules.components
+import Quickshell.Widgets
 
 Item{
     id: wrapper
@@ -63,6 +64,31 @@ Item{
         implicitHeight: 40
         bottomRightRadius: 20
         color: Colors.surfaceContainer
+        property var posX
+        property var posY
+        property var w
+
+
+        Rectangle{
+            implicitWidth: container.w 
+            implicitHeight: 25
+            color: Colors.primaryContainer
+
+            topLeftRadius: 30
+            bottomRightRadius: 30
+            topRightRadius: 5
+            bottomLeftRadius: 5
+
+            x: container.posX
+            y: container.posY
+
+            Behavior on x{ 
+                NumberAnimation{
+                    duration: 300
+                    easing.type: Easing.OutQuad
+                }
+            }
+        }
 
         ListView{
             id: workspacesRow
@@ -77,6 +103,7 @@ Item{
 
 
             delegate: Rectangle{
+                id: rect
                 implicitWidth: Math.max(40, (modelData.toplevels.values.length * 24) + 20)
                 implicitHeight: 25
                 color: modelData.focused ? Colors.primaryContainer : Colors.surfaceVariant
@@ -85,8 +112,28 @@ Item{
                 topRightRadius: 5
                 bottomLeftRadius: 5
 
+                property bool isFocused : modelData.focused
+
+                onIsFocusedChanged:{
+                    if(isFocused) {
+                        var gb = rect.mapToItem(container, 0, 0)
+                        container.posX = gb.x
+                        container.posY = gb.y
+                        container.w = rect.width
+                    }
+                }
+
+                onImplicitWidthChanged:{
+                      if(isFocused) {
+                        var gb = rect.mapToItem(container, 0, 0)
+                        container.posX = gb.x
+                        container.posY = gb.y
+                        container.w = rect.width
+                    }
+                }
+
                 Behavior on color{
-                    ColorAnimation{duration: 100}
+                    ColorAnimation{duration: 150}
                 }
 
                 Behavior on implicitWidth{
@@ -96,7 +143,7 @@ Item{
                     }
                 }
 
-                TopLevels{}
+                    TopLevels{}
 
                 MouseArea{
                     anchors.fill: parent
@@ -105,5 +152,7 @@ Item{
                 }
             }
         }
+
+
     }
 }

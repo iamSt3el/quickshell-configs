@@ -14,5 +14,7 @@ PanelWindow{
 
     Workspaces{}
     Clock{}
-    Utility{}
+    Utility{
+        screen: bar.screen
+    }
 }

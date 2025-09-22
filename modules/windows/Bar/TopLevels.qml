@@ -21,7 +21,6 @@ Item{
             anchors.centerIn: parent
             content: modelData.id
             color: Colors.tertiaryContainerText
-            weight: 800
             size: 12
         }
     }

@@ -15,46 +15,41 @@ Item{
         horizontalCenter: parent.horizontalCenter
     }
 
-
-
+    property bool isDashboard: false
     Shape{
-            preferredRendererType: Shape.CurveRenderer
+        preferredRendererType: Shape.CurveRenderer
             
-            // Inner shadow effect for shape
-     
-            ShapePath{
-                fillColor: Colors.surfaceContainer
-                strokeWidth: 0
+        ShapePath{
+            fillColor: Colors.surfaceContainer
+            strokeWidth: 0
+            startX: clockWrapper.x - 20 
+            startY: 0
 
-                startX: clockWrapper.x - 20 
-                startY: 0
+            PathArc{
+                relativeX: Dimensions.position.x
+                relativeY: Dimensions.position.y 
+                radiusX: Dimensions.radius.large
+                radiusY: Dimensions.radius.medium
+            }
 
-                PathArc{
-                    relativeX: Dimensions.position.x
-                    relativeY: Dimensions.position.y 
-                    radiusX: Dimensions.radius.large
-                    radiusY: Dimensions.radius.medium
-                }
+            PathLine{
+                relativeX: clockWrapper.width 
+                relativeY: 0
+            }
 
-                PathLine{
-                    relativeX: clockWrapper.width 
-                    relativeY: 0
-                }
-
-                PathArc{
-                    relativeX: Dimensions.position.x
-                    relativeY: -Dimensions.position.y
-                    radiusX: Dimensions.radius.large
-                    radiusY: Dimensions.radius.medium
-                }
+            PathArc{
+                relativeX: Dimensions.position.x
+                relativeY: -Dimensions.position.y
+                radiusX: Dimensions.radius.large
+                radiusY: Dimensions.radius.medium
             }
         }
+    }
  
-
-        Rectangle{
-         property bool isDashboard: false
+    Rectangle{
         id: clockWrapper
-        implicitWidth: isDashboard ? 600 : clockText.width + 20
+        property bool isClicked: false
+        implicitWidth: isClicked ? 600 : clockText.width + 20
         implicitHeight: 40
         color:  Colors.surfaceContainer
         bottomLeftRadius: Dimensions.radius.large
@@ -72,12 +67,13 @@ Item{
         }
 
         StyledText{
-            visible: !clockWrapper.isDashboard
+            visible: !clockWrapper.isClicked
             id: clockText
             anchors.centerIn: parent
             content: ServiceClock.date
-            size: Typography.size.subtitle
-            weight: Typography.weight.bold
+            size: Typography.size.title
+            font.family: Typography.cartoon
+
             
             Behavior on visible{
                 NumberAnimation{
@@ -99,16 +95,45 @@ Item{
         shadowVerticalOffset: 0
     }
 
+    Loader{
+        id: dashboardLoader
+        active: wrapper.isDashboard
+
+        sourceComponent: Component{
+            Dashboard{
+                id: dashboardComponent
+                onCloseFinished: {
+                    clockWrapper.isClicked = false
+                    wrapper.isDashboard = false
+                }
+            }
+        }
+    }
+
+    Timer{
+        id: dashboardTimer
+        interval: 300
+        onTriggered:{
+             wrapper.isDashboard = true
+             if(dashboardLoader.item) {
+                 dashboardLoader.item.open()
+             }
+        }
+    }
 
     MouseArea{
         id: clockArea
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         onClicked:{
-            clockWrapper.isDashboard = !clockWrapper.isDashboard
+            if(!wrapper.isDashboard) {
+                clockWrapper.isClicked = true
+                dashboardTimer.start()
+            } else {
+                if(dashboardLoader.item) {
+                    dashboardLoader.item.close()
+                }
+            }
         }
     }
-
-
-
 }

@@ -1,0 +1,254 @@
+pragma Singleton
+pragma ComponentBehavior: Bound
+
+import Quickshell
+import Quickshell.Io
+import QtQuick
+
+Singleton {
+    id: root
+
+    property real cpuPerc
+    property real cpuTemp
+    property string gpuType: "NONE"
+    property real gpuPerc
+    property real gpuTemp
+    property real memUsed
+    property real memTotal
+    readonly property real memPerc: memTotal > 0 ? memUsed / memTotal : 0
+    property real storageUsed
+    property real storageTotal
+    property real storagePerc: storageTotal > 0 ? storageUsed / storageTotal : 0
+
+    property real lastCpuIdle
+    property real lastCpuTotal
+
+    readonly property var cpuInfo: ({
+        temperature: Math.round(cpuTemp) + "°C",
+        usage: Math.round(cpuPerc * 100) + "%",
+        progress: cpuPerc
+    })
+
+    readonly property var gpuInfo: ({
+        temperature: Math.round(gpuTemp) + "°C",
+        usage: Math.round(gpuPerc * 100) + "%",
+        progress: gpuPerc,
+        available: gpuType !== "NONE"
+    })
+
+    readonly property var memoryInfo: ({
+        used: formatMemory(memUsed),
+        total: formatMemory(memTotal),
+        progress: memPerc,
+        usageText: Math.round(memPerc * 100) + "%"
+    })
+
+    readonly property var storageInfo: ({
+        used: formatStorage(storageUsed),
+        total: formatStorage(storageTotal),
+        progress: storagePerc,
+        usageText: Math.round(storagePerc * 100) + "%"
+    })
+
+    function formatKib(kib: real): var {
+        const mib = 1024;
+        const gib = 1024 ** 2;
+        const tib = 1024 ** 3;
+
+        if (kib >= tib)
+            return {
+                value: kib / tib,
+                unit: "TiB"
+            };
+        if (kib >= gib)
+            return {
+                value: kib / gib,
+                unit: "GiB"
+            };
+        if (kib >= mib)
+            return {
+                value: kib / mib,
+                unit: "MiB"
+            };
+        return {
+            value: kib,
+            unit: "KiB"
+        };
+    }
+
+    function formatMemory(kib) {
+        const formatted = formatKib(kib);
+        return formatted.value.toFixed(1) + formatted.unit;
+    }
+
+    function formatStorage(kb) {
+        const kib = kb * 1000 / 1024;
+        const formatted = formatKib(kib);
+        return formatted.value.toFixed(0) + formatted.unit;
+    }
+
+    Timer {
+        running: true
+        interval: 3000
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            stat.reload();
+            meminfo.reload();
+            storage.running = true;
+            gpuUsage.running = true;
+            sensors.running = true;
+        }
+    }
+
+    FileView {
+        id: stat
+
+        path: "/proc/stat"
+        onLoaded: {
+            const data = text().match(/^cpu\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/);
+            if (data) {
+                const stats = data.slice(1).map(n => parseInt(n, 10));
+                const total = stats.reduce((a, b) => a + b, 0);
+                const idle = stats[3] + (stats[4] ?? 0);
+
+                const totalDiff = total - root.lastCpuTotal;
+                const idleDiff = idle - root.lastCpuIdle;
+                root.cpuPerc = totalDiff > 0 ? (1 - idleDiff / totalDiff) : 0;
+
+                root.lastCpuTotal = total;
+                root.lastCpuIdle = idle;
+            }
+        }
+    }
+
+    FileView {
+        id: meminfo
+
+        path: "/proc/meminfo"
+        onLoaded: {
+            const data = text();
+            root.memTotal = parseInt(data.match(/MemTotal: *(\d+)/)[1], 10) || 1;
+            root.memUsed = (root.memTotal - parseInt(data.match(/MemAvailable: *(\d+)/)[1], 10)) || 0;
+        }
+    }
+
+    Process {
+        id: storage
+
+        command: ["sh", "-c", "df | grep '^/dev/' | awk '{print $1, $3, $4}'"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const deviceMap = new Map();
+
+                for (const line of text.trim().split("\n")) {
+                    if (line.trim() === "")
+                        continue;
+
+                    const parts = line.trim().split(/\s+/);
+                    if (parts.length >= 3) {
+                        const device = parts[0];
+                        const used = parseInt(parts[1], 10) || 0;
+                        const avail = parseInt(parts[2], 10) || 0;
+
+                        if (!deviceMap.has(device) || (used + avail) > (deviceMap.get(device).used + deviceMap.get(device).avail)) {
+                            deviceMap.set(device, {
+                                used: used,
+                                avail: avail
+                            });
+                        }
+                    }
+                }
+
+                let totalUsed = 0;
+                let totalAvail = 0;
+
+                for (const [device, stats] of deviceMap) {
+                    totalUsed += stats.used;
+                    totalAvail += stats.avail;
+                }
+
+                root.storageUsed = totalUsed;
+                root.storageTotal = totalUsed + totalAvail;
+            }
+        }
+    }
+
+    Process {
+        id: gpuTypeCheck
+
+        running: true
+        command: ["sh", "-c", "if command -v nvidia-smi &>/dev/null && nvidia-smi -L &>/dev/null; then echo NVIDIA; elif ls /sys/class/drm/card*/device/gpu_busy_percent 2>/dev/null | grep -q .; then echo GENERIC; else echo NONE; fi"]
+        stdout: StdioCollector {
+            onStreamFinished: root.gpuType = text.trim()
+        }
+    }
+
+    Process {
+        id: gpuUsage
+
+        command: root.gpuType === "GENERIC" ? ["sh", "-c", "cat /sys/class/drm/card*/device/gpu_busy_percent"] : root.gpuType === "NVIDIA" ? ["nvidia-smi", "--query-gpu=utilization.gpu,temperature.gpu", "--format=csv,noheader,nounits"] : ["echo"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (root.gpuType === "GENERIC") {
+                    const percs = text.trim().split("\n");
+                    const sum = percs.reduce((acc, d) => acc + parseInt(d, 10), 0);
+                    root.gpuPerc = sum / percs.length / 100;
+                } else if (root.gpuType === "NVIDIA") {
+                    const [usage, temp] = text.trim().split(",");
+                    root.gpuPerc = parseInt(usage, 10) / 100;
+                    root.gpuTemp = parseInt(temp, 10);
+                } else {
+                    root.gpuPerc = 0;
+                    root.gpuTemp = 0;
+                }
+            }
+        }
+    }
+
+    Process {
+        id: sensors
+
+        command: ["sensors"]
+        environment: ({
+                LANG: "C",
+                LC_ALL: "C"
+            })
+        stdout: StdioCollector {
+            onStreamFinished: {
+                let cpuTemp = text.match(/(?:Package id [0-9]+|Tdie):\s+((\+|-)[0-9.]+)(°| )C/);
+                if (!cpuTemp)
+                    cpuTemp = text.match(/Tctl:\s+((\+|-)[0-9.]+)(°| )C/);
+
+                if (cpuTemp)
+                    root.cpuTemp = parseFloat(cpuTemp[1]);
+
+                if (root.gpuType !== "GENERIC")
+                    return;
+
+                let eligible = false;
+                let sum = 0;
+                let count = 0;
+
+                for (const line of text.trim().split("\n")) {
+                    if (line === "Adapter: PCI adapter")
+                        eligible = true;
+                    else if (line === "")
+                        eligible = false;
+                    else if (eligible) {
+                        let match = line.match(/^(temp[0-9]+|GPU core|edge)+:\s+\+([0-9]+\.[0-9]+)(°| )C/);
+                        if (!match)
+                            match = line.match(/^(junction|mem)+:\s+\+([0-9]+\.[0-9]+)(°| )C/);
+
+                        if (match) {
+                            sum += parseFloat(match[2]);
+                            count++;
+                        }
+                    }
+                }
+
+                root.gpuTemp = count > 0 ? sum / count : 0;
+            }
+        }
+    }
+}

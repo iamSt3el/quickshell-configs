@@ -4,7 +4,7 @@ import QtQuick.Shapes
 import qs.modules.util
 import qs.modules.services
 import QtQuick.Effects
-
+import Quickshell.Widgets
 
 Item{
     id: root
@@ -15,7 +15,21 @@ Item{
     property string iconSource: ""
     property real thickness: 2
     property real radius: Math.min(width, height) / 2 - thickness
-    property bool isVolume: false
+    property bool isInteractive: false
+
+    signal clicked()
+    signal wheelChanged(delta: int)
+
+    
+    layer.enabled: true
+    layer.effect: MultiEffect{
+        shadowEnabled: true
+        shadowBlur: 0.4
+        shadowOpacity: 0.6
+        shadowColor: Qt.alpha(Colors.shadow, 0.6)
+        shadowHorizontalOffset: 0
+        shadowVerticalOffset: 0
+    }
     
     Canvas{
         id: canvas
@@ -64,21 +78,15 @@ Item{
         implicitHeight: parent.height - 6
         radius: width
         color: Colors.primaryContainer
-        Image{
+        IconImage{
              visible: !area.containsMouse
              id: iconImage
              source: root.iconSource
              width: parent.width - 6
              height: parent.height - 6
-             sourceSize: Qt.size(width, height)
              anchors.centerIn: parent
 
-            layer.enabled: true
-            layer.effect: MultiEffect{
-                colorization: 1.0
-                colorizationColor: Colors.surfaceText
-                brightness: 1
-            }
+            
             scale: visible ? 1 : 0
             
             Behavior on scale {
@@ -113,14 +121,14 @@ Item{
         id: area
         anchors.fill: parent
         hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
+        cursorShape: root.isInteractive ? Qt.PointingHandCursor : Qt.ArrowCursor
 
         onClicked: {
-            if(root.isVolume)ServicePipewire.updateState()
+            if (root.isInteractive) root.clicked()
         }
-        
-        onWheel: function(whell){
-            if(root.isVolume) ServicePipewire.updateVolume(whell.angleDelta.y / 120 * 0.01)
+
+        onWheel: function(wheel){
+            if (root.isInteractive) root.wheelChanged(wheel.angleDelta.y / 120)
         }
     }
 

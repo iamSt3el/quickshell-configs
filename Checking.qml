@@ -3,32 +3,32 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Widgets
 
 Loader {
     id: backgroundLoader
 
-
+    active: true
     sourceComponent: PanelWindow {
             id: panel;
-            WlrLayershell.layer: WlrLayer.Background
-            WlrLayershell.namespace: "Shell:Background"
-            WlrLayershell.exclusionMode: ExclusionMode.Ignore
+            WlrLayershell.layer: WlrLayer.Overlay
+            //WlrLayershell.namespace: "Shell:Background"
+            WlrLayershell.exclusionMode: ExclusionMode.Normal
             screen: Quickshell.screens[1]
-            anchors.top: true
-            anchors.bottom: true
-            anchors.left: true
-            anchors.right: true
+            implicitWidth: 400
+            implicitHeight: 100
+           
 
             Item {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                width: 42
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: Qt.rgba(0, 255, 255, 1)
-
+                anchors.fill: parent
+                ClippingWrapperRectangle {
+                    id: wrapper
+                    anchors.centerIn: parent
+                    implicitHeight: 50
+                    implicitWidth: 50
+                    //color: "black"
+                    radius: 20
+                    
                 }
             }
         }

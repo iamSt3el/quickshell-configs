@@ -43,14 +43,14 @@ Item {
                 height: parent.height
                 width: parent.width - 60
 
-                Text {
+                StyledText {
                     anchors.left: parent.left
                     anchors.margins: 10
                     anchors.verticalCenter: parent.verticalCenter
-                    text: appData ? appData.name : ""
+                    content: appData ? appData.name : ""
                     font.pixelSize: 16
                     color: Colors.surfaceText
-                    font.weight: 800
+                    font.weight: 100
                     elide: Text.ElideRight
                     width: parent.width - 20
                 }

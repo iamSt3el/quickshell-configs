@@ -5,6 +5,7 @@ import qs.modules.windows.Bar
 import qs.modules.windows.AppLauncher
 import qs.modules.windows.WorkspaceOverview
 import qs.modules.windows.ToolsWidget
+import qs.modules.windows.NotificationPanel
 import qs.modules.services
 
 ShellRoot {
@@ -16,39 +17,36 @@ ShellRoot {
             model: Quickshell.screens
             delegate: Item {
                 required property var modelData
-    
-                
-                 Loader {
-                    // Only create AppLauncher on primary screen (index 0)
-                    active: ServiceIpcHandler.isToolWidgetVisible && modelData === Quickshell.screens[0]
-                    sourceComponent: Component{
-                                ToolsWidget{}
-                    }
+            
+                NotificationPanel{
+                    screen: modelData[0]
                 }
-             
-                
                 Bar {
                     screen: modelData
-                }
-                
-                Loader {
-                    // Only create AppLauncher on primary screen (index 0)
-                    active: ServiceIpcHandler.isAppLauncherVisible && modelData === Quickshell.screens[0]
+                } 
+            }
+        }
+
+           Loader {
+                    active: ServiceIpcHandler.isAppLauncherVisible
                     sourceComponent: Component{
                         AppLauncher{}
                     }
                 }
 
                 Loader {
-                    // Only create WorkspaceOverview on focused monitor
-                    active: ServiceIpcHandler.isWorkspaceOverviewVisible && modelData === Quickshell.screens[0]
+                    active: ServiceIpcHandler.isWorkspaceOverviewVisible
                     sourceComponent: Component{
                         WorkspaceOverview{}
                     }
                 }
 
-            }
-        }
+                Loader {
+                    active: ServiceIpcHandler.isToolWidgetVisible
+                    sourceComponent: Component{
+                                ToolsWidget{}
+                    }
+                }
     }   
 }
 

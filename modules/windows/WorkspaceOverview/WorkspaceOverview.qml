@@ -6,6 +6,7 @@ import Quickshell.Io
 import qs.modules.util
 import qs.modules.services
 import QtQuick.Shapes
+import QtQuick.Effects
 
 PanelWindow {
     id: testpanel
@@ -132,6 +133,16 @@ PanelWindow {
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
 
+        layer.enabled: wrapper.width > 100 ? true : false
+        layer.effect: MultiEffect{
+            shadowEnabled: true
+            shadowBlur: 0.4
+            shadowOpacity: 1.0
+            shadowColor: Qt.alpha(Colors.shadow, 1)
+            shadowHorizontalOffset: 0
+            shadowVerticalOffset: 0
+        }
+
         Shape{
             id: shapeElement
             preferredRendererType: Shape.CurveRenderer
@@ -143,7 +154,7 @@ PanelWindow {
                 yScale: 0
             }
             ShapePath{
-                fillColor: Colors.surface
+                fillColor: Colors.surfaceContainer
                 strokeWidth: 0
 
                 startX: wrapper.x
@@ -177,7 +188,7 @@ PanelWindow {
             id: workspaceOverview
             width: parent.width - 40
             height: parent.height
-            color: Colors.surface
+            color: Colors.surfaceContainer
             topLeftRadius: 20
             topRightRadius: 20
             clip: true

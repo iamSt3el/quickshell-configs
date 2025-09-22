@@ -70,6 +70,16 @@ PopupWindow{
          height: 0
          clip: true
 
+        layer.enabled: true
+        layer.effect: MultiEffect{
+            shadowEnabled: true
+            shadowBlur: 0.4
+            shadowOpacity: 1.0
+            shadowColor: Qt.alpha(Colors.shadow, 1)
+            shadowHorizontalOffset: 0
+            shadowVerticalOffset: 0
+        }
+
           Shape {
                 preferredRendererType: Shape.CurveRenderer
                 ShapePath {
@@ -161,9 +171,8 @@ PopupWindow{
                                     Column{
                                         anchors.fill: parent
                                         StyledText{
-                                            content: "Bluetooth"
-                                            size: 14
-                                            weight: 600
+                                            content: "BLUETOOTH"
+                                            size: 16
                                         }
                                         StyledText{
                                             content:  ServiceBluetooth.state ? ServiceBluetooth.connectedDevices + " connected" : "Disabled"
@@ -225,6 +234,7 @@ PopupWindow{
                                         id: text
                                         content: scanButton.isScanning ? "Scanning" : "Scan"
                                         size: 16
+                                        effect: false
                                         color: Colors.primaryText
                                     }
                                 }

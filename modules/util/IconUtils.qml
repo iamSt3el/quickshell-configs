@@ -37,4 +37,8 @@ Item {
     function getSystemIcon(iconName) {
         return Qt.resolvedUrl("../../assets/" + iconName + ".svg")
     }
+
+    function getImage(name){
+        return Qt.resolvedUrl("../../assets/" + name)
+    }
 }

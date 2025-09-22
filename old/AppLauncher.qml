@@ -60,6 +60,7 @@ Scope{
             property var currentFilteredApps: []
             property int selectedIndex: 0
             property bool appsLoaded: false
+            focusable: true
             
             onSearchTextChanged: {
                 if (searchText.length > 0 && !fuzzySearchLoader.loading) {
@@ -96,7 +97,7 @@ Scope{
                 left: true
             }
             WlrLayershell.layer: WlrLayer.Overlay
-            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+            //WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
             exclusionMode: ExclusionMode.Normal
             color: "transparent"
 

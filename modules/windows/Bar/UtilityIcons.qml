@@ -4,6 +4,8 @@ import qs.modules.components
 import Quickshell.Widgets
 import qs.modules.util
 import QtQuick.Effects
+import Quickshell.Widgets
+import qs.modules.services
 
 StyledRect{
     id: utilityIcons
@@ -22,30 +24,19 @@ StyledRect{
             id: wifi
             implicitWidth: Dimensions.component.width
             implicitHeight: Dimensions.component.height
-            
-            color: "transparent"
 
-            Image{
-                id: wifiIcon
+            radius: 10
+
+            color: wifiArea.containsMouse ? Colors.primary : "transparent"
+
+            Behavior on color{
+                ColorAnimation{duration: 100}
+            }
+
+            IconImage{
+                implicitSize: Dimensions.icon.normal
                 anchors.centerIn: parent
-                //implicitSize: Dimensions.icon.normal
-                width: Dimensions.icon.normal
-                height: Dimensions.icon.normal
-                sourceSize: Qt.size(width, height)
-
-                source: IconUtils.getSystemIcon("wifi")
-                cache: true
-                
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    colorization: 1.0
-                    colorizationColor: wifiArea.containsMouse ? Colors.primary : Colors.surfaceText
-                    brightness: 1
-                    
-                    Behavior on colorizationColor {
-                        ColorAnimation { duration: Dimensions.animation.fast }
-                    }
-                }
+                source: IconUtils.getSystemIcon("wifi") 
             }
 
         
@@ -64,31 +55,19 @@ StyledRect{
             id: bt
             implicitWidth: Dimensions.component.width
             implicitHeight: Dimensions.component.height
-            
-            color: "transparent"
-
-            Image{
-                id: btIcon
-                anchors.centerIn: parent
-                //implicitSize: Dimensions.icon.normal
-                width: Dimensions.icon.normal
-                height: Dimensions.icon.normal
-                sourceSize: Qt.size(width, height)
-                cache: true
-
-                source: IconUtils.getSystemIcon("bluetooth")
-                
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    colorization: 1.0
-                    colorizationColor: btArea.containsMouse ? Colors.primary : Colors.surfaceText
-                    brightness: 1
-                    
-                    Behavior on colorizationColor {
-                        ColorAnimation { duration: Dimensions.animation.fast }
-                    }
-                }
+            radius: 10
+            color: btArea.containsMouse ? Colors.primary : "transparent"    
+            Behavior on color{
+                ColorAnimation{duration: 100}
             }
+
+            
+            IconImage{
+                implicitSize: Dimensions.icon.normal
+                anchors.centerIn: parent
+                source: IconUtils.getSystemIcon("bluetooth")
+            }
+            
             
             MouseArea{
                 id: btArea
@@ -103,28 +82,45 @@ StyledRect{
             id: notification
             implicitWidth: Dimensions.component.width
             implicitHeight: Dimensions.component.height
-            
-            color: "transparent"
+            radius: 10
+            color: notificationArea.containsMouse ? Colors.primary : "transparent"
 
-            Image{
-                id: notificationIcon
+            Rectangle{
+                visible: ServiceNotification.notificationsNumber > 0
+                anchors.right: parent.right
+                implicitHeight: 15
+                implicitWidth:  15
+                color: Colors.errorContainer
+                radius: implicitWidth
+                z: 1
+
+                StyledText{
+                    id: text
+                    anchors.centerIn: parent
+                    content: ServiceNotification.notificationsNumber
+                    color: Colors.errorContainerText
+                    effect: false
+                    size: 12
+                }
+            }
+
+            Behavior on color{
+                ColorAnimation{duration: 100}
+            }
+
+            IconImage{
+                implicitSize: Dimensions.icon.normal
                 anchors.centerIn: parent
-                //implicitSize: Dimensions.icon.normal
-                source: IconUtils.getSystemIcon("notification")
+                source: IconUtils.getSystemIcon(ServiceNotification.muted ? "notification-no" : "notification")
+            }
 
-                width: Dimensions.icon.normal
-                height: Dimensions.icon.normal
-                sourceSize: Qt.size(width, height)
-                cache: true
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    colorization: 1.0
-                    colorizationColor:  Colors.surfaceText
-                    brightness: 1
-                    
-                    Behavior on colorizationColor {
-                        ColorAnimation { duration: Dimensions.animation.fast }
-                    }
+            MouseArea{
+                id: notificationArea
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill:parent
+                onClicked: {
+                    ServiceNotification.toggleMute()
                 }
             }
         }
@@ -133,29 +129,24 @@ StyledRect{
             id: power
             implicitWidth: Dimensions.component.width
             implicitHeight: Dimensions.component.height
+            radius: 10
+            color: powerArea.containsMouse ? Colors.primary : "transparent"
             
-            color: "transparent"
+            Behavior on color{
+                ColorAnimation{duration: 100}
+            }
 
-            Image{
-                id: powerIcon
+            IconImage{
+                implicitSize: Dimensions.icon.normal
                 anchors.centerIn: parent
-                //implicitSize: Dimensions.icon.normal
                 source: IconUtils.getSystemIcon("shutdown")
-                cache: true
-                width: Dimensions.icon.normal
-                height: Dimensions.icon.normal
-                sourceSize: Qt.size(width, height)
+            }
 
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    colorization: 1.0
-                    colorizationColor: Colors.error
-                    brightness: 1
-                    
-                    Behavior on colorizationColor {
-                        ColorAnimation { duration: Dimensions.animation.fast }
-                    }
-                }
+            MouseArea{
+                id: powerArea
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                anchors.fill:parent
             }
         }
     }

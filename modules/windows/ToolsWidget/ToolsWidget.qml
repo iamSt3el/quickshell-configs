@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import QtQuick.Effects
 import qs.modules.util
 import qs.modules.services
+import Quickshell.Widgets
 
 PanelWindow {
     id: panel
@@ -51,10 +52,12 @@ PanelWindow {
 
 
     Item {
+        id: item
         anchors.centerIn: parent
         width: 300
         height: 300
         z: 1
+ 
 
         Rectangle {
             id: wrapper
@@ -79,7 +82,7 @@ PanelWindow {
                         color: Colors.outline
                         width: 1
                     }
-                    color: Colors.secondary
+                    color: iconArea.containsMouse ? Colors.primaryContainer : Colors.secondary
                     scale: 0
 
                     property var pos: panel.getCirclePosition(
@@ -93,11 +96,10 @@ PanelWindow {
                     x: pos.x
                     y: pos.y
 
-                    Image {
+                    IconImage {
                         width: 30
                         height: 30
                         anchors.centerIn: parent
-                        sourceSize: Qt.size(height, width)
                         source: IconUtils.getSystemIcon(modelData.icon)
                     }
 
@@ -113,7 +115,7 @@ PanelWindow {
                                 implicitHeight: 50
                                 implicitWidth: 50
                                 radius: width
-                                color: Colors.secondary
+                                color: optionArea.containsMouse ? Colors.primaryContainer : Colors.secondary
                                 scale: 0
 
                                 property var childPos: panel.getFixedSpaceCirclePosition(
@@ -128,16 +130,17 @@ PanelWindow {
                                 x: childPos.x
                                 y: childPos.y
 
-                                Image {
+                                IconImage {
                                     width: 30
                                     height: 30
                                     anchors.centerIn: parent
-                                    sourceSize: Qt.size(height, width)
                                     source: IconUtils.getSystemIcon(modelData.icon)
                                 }
 
                                 MouseArea {
+                                    id: optionArea
                                     anchors.fill: parent
+                                    hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
                                         ServiceIpcHandler.isToolWidgetVisible = false
@@ -181,6 +184,8 @@ PanelWindow {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+
+                
         
                         onClicked: {
                             let wasOpen = icons.showOptions
@@ -213,11 +218,10 @@ PanelWindow {
                 radius: width
                 color: Colors.primary
 
-                Image {
+                IconImage {
                     width: 30
                     height: 30
                     anchors.centerIn: parent
-                    sourceSize: Qt.size(height, width)
                     source: IconUtils.getSystemIcon("close")
                 }
 

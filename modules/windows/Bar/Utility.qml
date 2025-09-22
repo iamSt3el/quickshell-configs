@@ -11,10 +11,12 @@ Item{
     id: wrapper
     width: utilityWrapper.width + 20
     height: parent.height
-    property bool bluetoothOpen: false
+    property var screen
+    property bool bluetoothOpen: ServiceStateManager.isBluetoothPanelVisible(screen)
     anchors{
         right: parent.right
     }
+
     
     layer.enabled: true
     layer.effect: MultiEffect{
@@ -88,6 +90,7 @@ Item{
                     RecordingIndicator{}
                 }
             }
+
         
             Loader{
                 anchors.verticalCenter: parent.verticalCenter
@@ -99,22 +102,38 @@ Item{
                 }
             }
 
+            NetworkSpeed{}
+
+
             UtilityIcons{
                 id: utilityIcons
                 onBluetoothClicked: {
                     if (wrapper.bluetoothOpen) {
-                        // Panel is open, start close sequence
+                        // Panel is open, start close sequence with animation
                         bluetoothLoader.item.close()  // Call close function directly
                         bluetoothCloseTimer.start()
                     } else {
                         // Panel is closed, open it
-                        wrapper.bluetoothOpen = true
+                        ServiceStateManager.toggleBluetoothPanel(wrapper.screen)
                     }
                 }
             }
 
             CustomCircularProgress{
-                isVolume: true
+                property string icon:{
+                    var value = ServiceBrightness.getBrightness(screen)
+                    if( value > 0.6) return "brightness-full"
+                    if( value > 0.1) return "brightness-medium"
+                    return "brightness-low"
+                }
+                isInteractive: true
+                iconSource: IconUtils.getSystemIcon(icon)
+                progress: ServiceBrightness.getBrightness(screen)
+                onWheelChanged: function(delta) {ServiceBrightness.updateBrightness(screen, delta * 5)}
+            }
+
+            CustomCircularProgress{
+                isInteractive: true
                 property string icon:{
                     if(ServicePipewire.isMuted) return "speaker-muted"
                     if(ServicePipewire.volume > 0.5) return "speaker"
@@ -123,12 +142,14 @@ Item{
                     return "speaker"
                 }
                 iconSource: IconUtils.getSystemIcon(icon)
+                onWheelChanged: function(delta) { ServicePipewire.updateVolume(delta * 0.01) }
+                onClicked: ServicePipewire.updateState()
                 progress: ServicePipewire.volume
             }
             //VolumeIcon{}
             
             CustomCircularProgress{
-                isVolume: false
+                isInteractive: false
                 property string icon:{
                     if(ServiceUPower.isCharging) return "battery-charging"
                     if(ServiceUPower.powerLevel < 0.6) return "battery-medium"
@@ -144,7 +165,9 @@ Item{
     Timer {
         id: bluetoothCloseTimer
         interval: 250  // Slightly longer than animation (200ms)
-        onTriggered: wrapper.bluetoothOpen = false
+        onTriggered: {
+            ServiceStateManager.getVisibilities(wrapper.screen).bluetoothPanel = false
+        }
     }
 
     Loader{

@@ -9,6 +9,8 @@ Singleton {
     readonly property string digital: "Digital-7"
     readonly property string nothing: "nothing-font-5x7"
     readonly property string material: "Material Symbols Rounded"
+    readonly property string cartoon: "Super Trend"
+    readonly property string orbitron: "Orbitron"
     
     property Size size: Size {}
     property Weight weight: Weight {}

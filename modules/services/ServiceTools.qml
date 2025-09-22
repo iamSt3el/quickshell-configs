@@ -32,9 +32,13 @@ Singleton {
     readonly property string recordingInfoFile: "/tmp/quickshell-recording-info"
     
     // Direct file reading - much simpler!
-    FileView { 
+    FileView {
         id: recordingInfoFileView
-        path: recordingInfoFile 
+        path: recordingInfoFile
+        // Suppress warnings when file doesn't exist initially
+        Component.onCompleted: {
+            // FileView will handle non-existent files gracefully
+        }
     }
     
     // File checking state

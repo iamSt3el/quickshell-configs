@@ -8,14 +8,16 @@ import qs.modules.util
 import qs.modules.components
 import qs.modules.services
 import Quickshell.Wayland
+import QtQuick.Effects
 
 PanelWindow{
     id: appLauncherPanel
     implicitWidth: 350
     implicitHeight: 600
 
+    focusable: true
+
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     exclusionMode: ExclusionMode.Normal
     anchors{
         left: true
@@ -40,6 +42,16 @@ PanelWindow{
         anchors.left: parent.left
         anchors.top: parent.top
 
+        layer.enabled: item.width > 100 ? true : false
+        layer.effect: MultiEffect{
+            shadowEnabled: true
+            shadowBlur: 0.4
+            shadowOpacity: 1.0
+            shadowColor: Qt.alpha(Colors.shadow, 1)
+            shadowHorizontalOffset: 0
+            shadowVerticalOffset: 0
+        }
+
         Shape{
             id: shapeElement
             preferredRendererType: Shape.CurveRenderer         
@@ -52,7 +64,7 @@ PanelWindow{
             }
 
             ShapePath{
-                fillColor: Colors.surface
+                fillColor: Colors.surfaceContainer
                 strokeWidth: 0
                 startX: 0
                 startY: 0
@@ -85,12 +97,14 @@ PanelWindow{
             id: wrapper
             width: item.width 
             implicitHeight: parent.height - 40
-            color: Colors.surface
+            color: Colors.surfaceContainer
             topRightRadius: 20
             bottomRightRadius: 20
             anchors{
                 verticalCenter: parent.verticalCenter
             }
+
+
             
             AppLauncherContent {
                 id: launcherContent
