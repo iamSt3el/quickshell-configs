@@ -18,7 +18,7 @@ StyledRect{
         StyledText{
             content: ServiceNetworkSpeed.downloadSpeedText
             size: 14
-            weight: 100
+            weight: 800
         }
     }
 

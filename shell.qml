@@ -11,7 +11,9 @@ import qs.modules.services
 ShellRoot {
     Scope{
         id: root
-
+    
+       //Checking{}
+       //SliderCode{} 
 
         Variants{
             model: Quickshell.screens

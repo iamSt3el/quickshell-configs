@@ -1,5 +1,6 @@
 import QtQuick
 import qs.modules.util
+import qs.modules.services
 import QtQuick.Effects
 
 
@@ -8,19 +9,19 @@ Text {
     
     // Custom properties
     property alias content: root.text
-    property int size: 16
-    property int weight: 200
-    property bool effect: true
-    property bool enableScrolling: true
+    property int size: ServiceDashboardSettings.settings ? ServiceDashboardSettings.settings.defaultTextSize : 16
+    property int weight: ServiceDashboardSettings.settings ? ServiceDashboardSettings.settings.defaultTextWeight : 200
+    property bool effect: ServiceDashboardSettings.settings ? ServiceDashboardSettings.settings.textEffect : true
+    property bool enableScrolling: ServiceDashboardSettings.settings ? ServiceDashboardSettings.settings.textScrolling : true
  
     color: Colors.surfaceText
  
     font.pixelSize: size
     font.weight: weight
-    font.family: Typography.cartoon
+    font.family: ServiceDashboardSettings.settings ? ServiceDashboardSettings.settings.defaultFontFamily : Typography.cartoon
     renderType: Text.NativeRendering
 
-    layer.enabled: effect
+    layer.enabled: false
     layer.effect: MultiEffect{
         shadowEnabled: true
         shadowBlur: 0.4
@@ -28,32 +29,5 @@ Text {
         shadowColor: Qt.alpha(Colors.shadow, 0.6)
         shadowHorizontalOffset: 0
         shadowVerticalOffset: 0
-    }
-
-
-     property bool needsScrolling: root.contentWidth > parent.width && enableScrolling
-    SequentialAnimation {
-        running: root.needsScrolling
-        loops: Animation.Infinite
-
-        PauseAnimation {duration: 1000}
-
-        NumberAnimation {
-                target: root
-                property: "x"
-                from: 0
-                to: -(root.contentWidth - root.parent.width)
-                duration: 3000
-                easing.type: Easing.Linear
-        }
-        PauseAnimation {duration: 1000}
-        NumberAnimation {
-            target: root
-            property: "x"
-            from: -(root.contentWidth - root.parent.width)
-            to: 0
-            duration: 1500
-            easing.type: Easing.Linear
-        }
     }
 }

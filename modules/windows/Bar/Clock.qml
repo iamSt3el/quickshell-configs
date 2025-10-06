@@ -72,7 +72,6 @@ Item{
             anchors.centerIn: parent
             content: ServiceClock.date
             size: Typography.size.title
-            font.family: Typography.cartoon
 
             
             Behavior on visible{

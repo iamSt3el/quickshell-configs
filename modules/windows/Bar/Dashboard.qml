@@ -12,9 +12,12 @@ PopupWindow{
 
     id: dashboard
     property bool isDashboardVisible: false
+    property bool showingSettings: false
     visible: isDashboardVisible
     implicitWidth: wrapper.width + 20
-    implicitHeight: 400 + 20
+    implicitHeight: showingSettings ? 600 + 20 : 450 + 20
+
+
     color: "transparent"
     anchor{
         window: bar
@@ -26,7 +29,8 @@ PopupWindow{
 
     Item{
         id: dashboardWrapper
-        anchors.fill: parent
+        implicitWidth: parent.width
+        implicitHeight: parent.height
 
         layer.enabled: true
         layer.effect: MultiEffect{
@@ -37,6 +41,13 @@ PopupWindow{
             shadowHorizontalOffset: 0
             shadowVerticalOffset: 0
         }
+
+            Behavior on implicitHeight {
+        NumberAnimation {
+            duration: 300
+            easing.type: Easing.OutCubic
+        }
+    }
 
         transform: Scale{
             id: scaleTransform
@@ -54,25 +65,94 @@ PopupWindow{
             bottomLeftRadius: 20
             bottomRightRadius: 20
 
-            Row{
-                width: parent.width - 20
-                height: parent.height
-                spacing: 8
+            Column{
+                anchors.fill: parent
+                spacing: 0
 
-                anchors.centerIn: parent
-
-                DashboardOptions{}
-
+                // Title bar with buttons
                 Rectangle{
-                    anchors.verticalCenter: parent.verticalCenter
-                    implicitHeight: parent.height - 20
-                    implicitWidth: 2
-                    color: Colors.surfaceVariant
-                
+                    width: parent.width
+                    height: 50
+                    color: "transparent"
+
+                    Row{
+                        anchors.centerIn: parent
+                        spacing: 10
+
+                        Rectangle{
+                            width: 100
+                            height: 35
+                            radius: 18
+                            color: !showingSettings ? Colors.primary : Colors.surfaceVariant
+
+                            StyledText{
+                                anchors.centerIn: parent
+                                content: "Dashboard"
+                                size: 14
+                                color: !showingSettings ? Colors.primaryText : Colors.surfaceVariantText
+                            }
+
+                            MouseArea{
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: showingSettings = false
+                            }
+                        }
+
+                        Rectangle{
+                            width: 100
+                            height: 35
+                            radius: 18
+                            color: showingSettings ? Colors.primary : Colors.surfaceVariant
+
+                            StyledText{
+                                anchors.centerIn: parent
+                                content: "Settings"
+                                size: 14
+                                color: showingSettings ? Colors.primaryText : Colors.surfaceVariantText
+                            }
+
+                            MouseArea{
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: showingSettings = true
+                            }
+                        }
+                    }
                 }
 
-                DashboardNotifications{}
+                // Content area
+                Item{
+                    width: parent.width
+                    height: parent.height - 50
 
+                    // Dashboard content
+                    Row{
+                        visible: !showingSettings
+                        width: parent.width - 20
+                        height: parent.height
+                        spacing: 8
+                        anchors.centerIn: parent
+
+                        DashboardOptions{}
+
+                        Rectangle{
+                            anchors.verticalCenter: parent.verticalCenter
+                            implicitHeight: parent.height - 20
+                            implicitWidth: 2
+                            color: Colors.surfaceVariant
+                        }
+
+                        DashboardNotifications{}
+                    }
+
+                    // Settings content
+                    DashboardSettings{
+                        visible: showingSettings
+                        anchors.fill: parent
+                        anchors.margins: 10
+                    }
+                }
             }
         }
     }
