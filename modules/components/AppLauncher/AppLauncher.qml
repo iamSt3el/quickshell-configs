@@ -134,8 +134,13 @@ Item{
                         delegate: Rectangle{
                             implicitHeight: 80
                             implicitWidth: 280
-                            color: appLauncher.selectedIndex === index? Colors.primary : Colors.inversePrimary
+                            color: appLauncher.selectedIndex === index? Colors.primary : Settings.layoutColor
                             radius: 10
+
+                            border{
+                                width: appLauncher.selectedIndex === index ? 1 : 0
+                                color: Colors.outline
+                            }
 
                             Behavior on color{
                                 ColorAnimation{

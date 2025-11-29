@@ -44,7 +44,14 @@ PanelWindow{
             width: isToolsWidgetClicked ? loader.width : 0;
             height: isToolsWidgetClicked ? loader.height : 0;
             intersection: Intersection.Subtract
+        }
 
+        Region{
+            x: utility.x
+            y: utility.y
+            width: utility.container.width
+            height: utility.container.height
+            intersection: Intersection.Subtract
         }
     }
     Rectangle{
@@ -131,7 +138,7 @@ PanelWindow{
             }
             PathLine{
                 relativeX: 0
-                relativeY: 20
+                relativeY: utility.container.height - 20
             }
             
             PathArc{

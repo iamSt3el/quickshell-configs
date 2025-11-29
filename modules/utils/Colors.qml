@@ -7,50 +7,50 @@ Item {
     id: colorProvider
     
     // Material You color properties (safe names to avoid QML conflicts)
-    property string primary: "#b8c4ff"
-    property string primaryText: "#1f2c61"
-    property string primaryContainer: "#374379"
-    property string primaryContainerText: "#dde1ff"
+    property string primary: "#ffb691"
+    property string primaryText: "#542202"
+    property string primaryContainer: "#703716"
+    property string primaryContainerText: "#ffdbcb"
     
-    property string secondary: "#c2c5dd"
-    property string secondaryText: "#2c2f42"
-    property string secondaryContainer: "#424659"
-    property string secondaryContainerText: "#dfe1f9"
+    property string secondary: "#e6beac"
+    property string secondaryText: "#432b1e"
+    property string secondaryContainer: "#5c4032"
+    property string secondaryContainerText: "#ffdbcb"
     
-    property string tertiary: "#e4bad9"
-    property string tertiaryText: "#44273f"
-    property string tertiaryContainer: "#5c3d56"
-    property string tertiaryContainerText: "#ffd7f4"
+    property string tertiary: "#cfc890"
+    property string tertiaryText: "#353107"
+    property string tertiaryContainer: "#4c481c"
+    property string tertiaryContainerText: "#ece4aa"
     
     property string error: "#ffb4ab"
     property string errorText: "#690005"
     property string errorContainer: "#93000a"
     property string errorContainerText: "#ffdad6"
     
-    property string surface: "#121318"
-    property string surfaceText: "#e3e1e9"
-    property string surfaceVariant: "#45464f"
-    property string surfaceVariantText: "#c6c5d0"
+    property string surface: "#1a120e"
+    property string surfaceText: "#f0dfd8"
+    property string surfaceVariant: "#52443d"
+    property string surfaceVariantText: "#d7c2b9"
     
-    property string outline: "#90909a"
-    property string outlineVariant: "#45464f"
+    property string outline: "#a08d85"
+    property string outlineVariant: "#52443d"
     property string shadow: "#000000"
     property string scrim: "#000000"
     
-    property string inverseSurface: "#e3e1e9"
-    property string inverseSurfaceText: "#2f3036"
-    property string inversePrimary: "#4f5b92"
+    property string inverseSurface: "#f0dfd8"
+    property string inverseSurfaceText: "#382e2a"
+    property string inversePrimary: "#8d4e2b"
     
-    property string surfaceDim: "#121318"
-    property string surfaceBright: "#38393f"
-    property string surfaceContainerLowest: "#0d0e13"
-    property string surfaceContainerLow: "#1b1b21"
-    property string surfaceContainer: "#1f1f25"
-    property string surfaceContainerHigh: "#292a2f"
-    property string surfaceContainerHighest: "#34343a"
+    property string surfaceDim: "#1a120e"
+    property string surfaceBright: "#423732"
+    property string surfaceContainerLowest: "#140c09"
+    property string surfaceContainerLow: "#221a16"
+    property string surfaceContainer: "#271e19"
+    property string surfaceContainerHigh: "#322823"
+    property string surfaceContainerHighest: "#3d332e"
     
     // Wallpaper path
-    property string wallpaper: "/home/steel/wallpaper/rocket_launch.jpg"
+    property string wallpaper: "/home/steel/wallpaper/city-skyline.jpg"
     
 
 }

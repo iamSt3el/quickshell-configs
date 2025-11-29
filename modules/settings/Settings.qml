@@ -7,5 +7,5 @@ import qs.modules.utils
 Item{
     id: settings
 
-    property string layoutColor: Colors.surfaceContainerHighest
+    property string layoutColor: Colors.surface
 }
