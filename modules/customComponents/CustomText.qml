@@ -7,7 +7,7 @@ Text{
     property alias content: root.text
     property int size: 12
     property int weight: 800
-    property string customColor: Colors.surfaceVariantText
+    property string customColor: Colors.surfaceText
     property string family: "Rubik"
     renderType: Text.NativeRendering
     

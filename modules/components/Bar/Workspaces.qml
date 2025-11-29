@@ -64,6 +64,7 @@ Item{
                     acceptedButtons: Qt.RightButton | Qt.LeftButton
                     onClicked: function(mouse){
                         if(mouse.button === Qt.LeftButton){
+                            console.log(Hyprland.monitorFor(layout.screen).lastIpcObject)
                             if(currentWorkspace){
                                 currentWorkspace.activate()
                             }else{

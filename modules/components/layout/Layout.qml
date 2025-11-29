@@ -1,22 +1,26 @@
 import Quickshell
 import QtQuick
 import Quickshell.Wayland
+import Quickshell.Hyprland
 import QtQuick.Shapes
 import qs.modules.utils
 import qs.modules.components.Bar
 import qs.modules.settings
 import qs.modules.components.AppLauncher
+import qs.modules.components.ToolsWidget
 import QtQuick.Effects
 
 PanelWindow{
     id: layout
     color: "transparent"
     anchors{
-        top: true
+        top: true 
         left: true
         right: true
         bottom: true
     }
+
+        WlrLayershell.keyboardFocus: appLauncher.container.isClicked ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     mask: Region{
         item: maskRect;
         intersection: Intersection.Xor;
@@ -26,13 +30,21 @@ PanelWindow{
             width: workspaces.container.width;
             height: workspaces.container.height;
             intersection: Intersection.Subtract
-        }
+        } 
         Region{
             x: appLauncher.x;
             y: appLauncher.y;
             width: appLauncher.container.width;
             height: appLauncher.container.height;
             intersection: Intersection.Subtract
+        }
+        Region{
+            x: isToolsWidgetClicked ? loader.x : 0;
+            y: isToolsWidgetClicked ? loader.y : 0;
+            width: isToolsWidgetClicked ? loader.width : 0;
+            height: isToolsWidgetClicked ? loader.height : 0;
+            intersection: Intersection.Subtract
+
         }
     }
     Rectangle{
@@ -41,8 +53,9 @@ PanelWindow{
         implicitWidth: parent.width
         anchors.bottom: parent.bottom
         color: "transparent"
-        //color: Qt.alpha("red", 0.1)
     }
+
+    property bool isToolsWidgetClicked: false
 
 
     Shape{
@@ -158,22 +171,24 @@ PanelWindow{
             }
 
             PathArc{
-                x: appLauncher.x + 8 + Math.max(0, Math.min(20, (appLauncher.container.width - 8) / 192 * 20))
+                x: appLauncher.x + 8 + Math.max(0, Math.min(20, (appLauncher.container.width - 8) / 292 * 20))
                 y: appLauncher.y + appLauncher.container.height 
-                radiusX: Math.max(0, Math.min(18, (appLauncher.container.width - 8) / 192 * 18))
+                radiusX: Math.max(0, Math.min(18, (appLauncher.container.width - 8) / 292 * 18))
                 radiusY: 12
-
             }
 
+
+
+
             PathLine{
-                x: appLauncher.x + 8 + Math.max(0, Math.min(20, (appLauncher.container.width - 8) / 192 * 20))
+                x: appLauncher.x + 8 + Math.max(0, Math.min(20, (appLauncher.container.width - 8) / 292 * 20))
                 y: appLauncher.y 
             }
             
             PathArc{
                 x: appLauncher.x + 8
                 y: appLauncher.y - 12
-                radiusX: Math.max(0, Math.min(18, (appLauncher.container.width - 8) / 192 * 18))
+                radiusX: Math.max(0, Math.min(18, (appLauncher.container.width - 8) / 292 * 18))
                 radiusY: 12
             }
             
@@ -213,6 +228,29 @@ PanelWindow{
         }
         AppLauncher{
             id: appLauncher
+        }
+
+        GlobalShortcut{
+            name: "toolsWidget"
+            onPressed:{
+                if(Hyprland.focusedMonitor.name === layout.screen.name){
+                   layout.isToolsWidgetClicked = !layout.isToolsWidgetClicked 
+                }
+            }
+        }
+
+
+        Loader{
+            id: loader
+            active: layout.isToolsWidgetClicked
+            anchors.centerIn: parent
+            width: 300
+            height: 300
+            sourceComponent: Item{
+                ToolsWidget{
+                    id: toolsWidget
+                }
+            }
         }
     }
 }
