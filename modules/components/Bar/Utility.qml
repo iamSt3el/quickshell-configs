@@ -1,7 +1,9 @@
 import Quickshell
+import Quickshell.Widgets
 import QtQuick
 import QtQuick.Shapes
-import Quickshell.Widgets
+import QtQuick.Effects
+import QtQuick.Layouts
 import qs.modules.utils
 import qs.modules.settings
 import qs.modules.services
@@ -9,80 +11,156 @@ import qs.modules.customComponents
 
 Item{
     id: utility
-    width: container.width
-    height: container.height
+    width: utility.isClicked ? 300 : row.width + 20
+    height: utility.isClicked ? utility.isWifiClicked || utility.isBluetoothClicked ? 480: (dashboardLoader.item ? dashboardLoader.item.height : 40) : 40
     anchors.right: parent.right
     property alias container: container
     property bool isClicked: false
 
+    property bool isWifiClicked: false
+    property bool isBluetoothClicked: false
+
+    Behavior on width{
+        NumberAnimation{
+            duration: 200
+            easing.type: Easing.OutQuad
+        }
+    }
+    Behavior on height{
+        NumberAnimation{
+            duration: 200
+            easing.type: Easing.OutQuad
+        }
+    }
     Rectangle{
         id: container 
-        implicitWidth: utility.isClicked ? 300 : row.width + 20
-        implicitHeight: utility.isClicked ? 600 : 40
-        anchors.right: parent.right
+        anchors.fill: parent
         color: Settings.layoutColor
         bottomLeftRadius: 20 
-
-        Behavior on implicitHeight{
-            NumberAnimation{
-                duration: 200
-                easing.type: Easing.OutQuad
-            }
-        }
-        Behavior on implicitWidth{
-            NumberAnimation{
-                duration: 200
-                easing.type: Easing.OutQuad
-            }
-        }
-
-        Loader{
-            active: utility.isClicked
-            anchors.fill: parent
-            sourceComponent: Dashboard{
-                
-            }
-        }
         
-        Row{
+        Loader{
+            id: dashboardLoader
+            active: utility.isClicked
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            sourceComponent: Dashboard{
+                id: dashboard
+                onToggleDashboard: utility.isClicked = false
+
+                onIsWifiClickedChanged: utility.isWifiClicked = dashboard.isWifiClicked
+                onIsBluetoothClickedChanged: utility.isBluetoothClicked = dashboard.isBluetoothClicked
+            }
+        }
+
+        RowLayout{
             id: row
-            visible: !utility.isClicked
-            height: parent.height
-            width: first.width + second.width + spacing
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.margins: 10
+            visible: !utility.isClicked && utility.height === 40
             spacing: 10
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+
+     
             Rectangle{
-                id: first
-                implicitHeight: 20
-                implicitWidth: list.width + 8
                 radius: 10
-                anchors.verticalCenter: parent.verticalCenter
-                color: "transparent"
-                //color: Colors.inversePrimary
-
-                ListView{
-                    id: list
-                    width: contentWidth
-                    height: parent.height
-                    orientation: Qt.Horizontal
-                    anchors.centerIn: parent
-                    model: ServiceUtility.utility
+                Layout.preferredWidth: child.width + 10
+                Layout.preferredHeight: 25
+                color: Colors.surfaceContainerHigh
+                RowLayout{
+                    id: child
                     spacing: 10
-
-                    delegate: Item{
-                        width: 20
-                        height: parent.height
-
+                    anchors.centerIn: parent
+                    Item{
+                        id: wifi
+                        Layout.preferredWidth: 20
+                        Layout.preferredHeight: 40
                         IconImage{
                             anchors.centerIn: parent
-                            implicitSize: 18
-                            source: IconUtil.getSystemIcon(modelData.icon) 
+                            implicitSize: parent.width
+                            source: ServiceWifi.wifiEnabled ? IconUtil.getSystemIcon(ServiceWifi.icon) : IconUtil.getSystemIcon("wifi-off")                    
+                            layer.enabled: true
+                            layer.effect: MultiEffect {
+                                colorization: 1.0
+                                colorizationColor: Colors.surfaceText
+                                Behavior on colorizationColor{
+                                    ColorAnimation{
+                                        duration: 200
+                                    }
+                                }
+                                brightness: 0
+                            }
                         }
 
                         MouseArea{
+                            id: wifiArea
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
+
+                            onClicked:{
+                                utility.isClicked = true
+                            }
+                        }
+                    }
+                    Item{
+                        id: bluetooth
+                        Layout.preferredWidth: 20
+                        Layout.preferredHeight: 40
+                        IconImage{
+                            anchors.centerIn: parent
+                            implicitSize: parent.width
+                            source: ServiceBluetooth.state ? IconUtil.getSystemIcon("bluetooth-on") : IconUtil.getSystemIcon("bluetooth-off")                    
+                            layer.enabled: true
+                            layer.effect: MultiEffect {
+                                colorization: 1.0
+                                colorizationColor: Colors.surfaceText
+                                Behavior on colorizationColor{
+                                    ColorAnimation{
+                                        duration: 200
+                                    }
+                                }
+                                brightness: 0
+                            }
+                        }
+
+                        MouseArea{
+                            id: bluetoothArea
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
+
+                            onClicked:{
+                                utility.isClicked = true
+                            }
+                        }
+                    }
+                    Item{
+                        id: powerProfile
+                        Layout.preferredWidth: 18
+                        Layout.preferredHeight: 40
+                        IconImage{
+                            anchors.centerIn: parent
+                            implicitSize: parent.width
+                            source: IconUtil.getSystemIcon(ServiceUPower.powerProfileIconPath)                    
+                            layer.enabled: true
+                            layer.effect: MultiEffect {
+                                colorization: 1.0
+                                colorizationColor: Colors.surfaceText
+                                Behavior on colorizationColor{
+                                    ColorAnimation{
+                                        duration: 200
+                                    }
+                                }
+                                brightness: 0
+                            }
+                        }
+
+                        MouseArea{
+                            id: powerProfileArea
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
 
                             onClicked:{
                                 utility.isClicked = true
@@ -91,32 +169,43 @@ Item{
                     }
                 }
             }
-            Rectangle{
-                id: second
-                implicitHeight: 20
-                implicitWidth: 30
-                radius:10
-                anchors.verticalCenter: parent.verticalCenter
-                //color: "transparent"
-                color: Colors.surfaceText
-              
 
-                Rectangle{
-                    implicitWidth: parent.width * ServiceUPower.powerLevel
-                    implicitHeight: parent.height
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: Colors.tertiary
-                    radius: 6
-                }
-
-                CustomText{
-                    anchors.centerIn: parent
-                    content: ServiceUPower.powerLevel * 100
-                    weight: 900
-                    color: Settings.layoutColor
-                }
+            Battery{
+                //Layout.preferredWidth: 24
+                Layout.preferredHeight: 40
             }
+
+            /*Item{
+                Layout.preferredWidth: 18
+                Layout.preferredHeight: 40
+                IconImage{
+                    anchors.centerIn: parent
+                    implicitSize: parent.width
+                    source: IconUtil.getSystemIcon("dashboard")                    
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        colorization: 1.0
+                        colorizationColor: Colors.surfaceText
+                        Behavior on colorizationColor{
+                            ColorAnimation{
+                                duration: 200
+                            }
+                        }
+                        brightness: 0
+                    }
+                }
+
+                MouseArea{
+                    id: dashboardArea
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+
+                    onClicked:{
+                        utility.isClicked = true
+                    }
+                }
+            }*/ 
         }
     }
 }

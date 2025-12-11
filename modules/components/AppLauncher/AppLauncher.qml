@@ -1,16 +1,17 @@
 import Quickshell
+import Quickshell.Hyprland
+import Quickshell.Widgets
 import QtQuick
+import QtQuick.Effects
 import qs.modules.utils
 import qs.modules.services
 import qs.modules.settings
-import Quickshell.Hyprland
-import Quickshell.Widgets
 import qs.modules.customComponents
 
 Item{
     id: appLauncher
-    height: container.height
-    width: container.width
+    implicitHeight: container.implicitHeight
+    implicitWidth: container.implicitWidth
     anchors.verticalCenter: parent.verticalCenter
     property alias container: container
     property int selectedIndex
@@ -57,7 +58,7 @@ Item{
                     implicitWidth: parent.width - 20
                     implicitHeight: parent.height - 20
                     radius: 10
-                    color: Colors.inversePrimary
+                    color: Colors.surfaceContainer
                     anchors.centerIn: parent
                     
                     Row{
@@ -69,6 +70,18 @@ Item{
                                 anchors.centerIn: parent
                                 source: IconUtil.getSystemIcon("search")
                                 implicitSize: 20
+
+                                layer.enabled: true
+                                layer.effect: MultiEffect {
+                                    colorization: 1.0
+                                    colorizationColor: Colors.surfaceVariantText
+                                    Behavior on colorizationColor{
+                                        ColorAnimation{
+                                            duration: 200
+                                        }
+                                    }
+                                    brightness: 0
+                                }
                             }
                         }
 
@@ -82,7 +95,7 @@ Item{
                             font.pixelSize: 18
                             font.weight: 800
                             anchors.verticalCenter: parent.verticalCenter
-                            color: Colors.primaryText
+                            color: Colors.inverseSurface
                             
                             Connections{
                                 target: container
@@ -134,13 +147,10 @@ Item{
                         delegate: Rectangle{
                             implicitHeight: 80
                             implicitWidth: 280
-                            color: appLauncher.selectedIndex === index? Colors.primary : Settings.layoutColor
+                            color: appLauncher.selectedIndex === index? Colors.primary : "transparent"
                             radius: 10
 
-                            border{
-                                width: appLauncher.selectedIndex === index ? 1 : 0
-                                color: Colors.outline
-                            }
+                            
 
                             Behavior on color{
                                 ColorAnimation{
@@ -168,12 +178,13 @@ Item{
                                     height: parent.height
 
                                     CustomText{
+                                        width: parent.width
                                         anchors.left: parent.left
                                         anchors.leftMargin: 10
                                         anchors.verticalCenter: parent.verticalCenter
                                         content: modelData.name
                                         size: 16
-                                        color: appLauncher.selectedIndex === index ? Colors.primaryText : Colors.surfaceText
+                                        color: appLauncher.selectedIndex === index ? Colors.primaryText : Colors.surfaceVariantText
                                     } 
                                 }
                             }

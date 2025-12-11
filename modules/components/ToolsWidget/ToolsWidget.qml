@@ -1,5 +1,6 @@
 import Quickshell
 import QtQuick
+import QtQuick.Effects
 import Quickshell.Widgets
 import Quickshell.Hyprland
 import qs.modules.utils
@@ -12,18 +13,9 @@ Item{
     anchors.centerIn: parent
     width:300
     height: 300
-    GlobalShortcut{
-        name: "appLauncher"
-
-        onPressed:{
-            if(Hyprland.focusedMonitor.name === layout.screen.name){
-                container.isClicked = !container.isClicked
-                if(container.isClicked){
-                        searchInput.forceActiveFocus()
-                }
-            }
-        }
-    }    
+    signal toogled
+    signal settingClicked
+        
 
     Rectangle{
         id: container
@@ -40,6 +32,25 @@ Item{
                 implicitSize: 30
                 source: IconUtil.getSystemIcon("close")
                 anchors.centerIn: parent
+
+                layer.enabled: true
+                layer.effect: MultiEffect {
+                    colorization: 1.0
+                    colorizationColor: Colors.surfaceVariantText
+                    Behavior on colorizationColor{
+                        ColorAnimation{
+                            duration: 200
+                        }
+                    }
+                    brightness: 0
+                }
+            }
+
+            MouseArea{
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: toolWidgets.toogled()
+
             }
         }
         
@@ -72,6 +83,18 @@ Item{
                     implicitSize: 30
                     anchors.centerIn: parent
                     source: IconUtil.getSystemIcon(modelData.icon)
+
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        colorization: 1.0
+                        colorizationColor: Colors.surfaceVariantText
+                        Behavior on colorizationColor{
+                            ColorAnimation{
+                                duration: 200
+                            }
+                        }
+                        brightness: 0
+                    }
                 }
 
                 Item{
@@ -109,6 +132,18 @@ Item{
                                     implicitSize: 25
                                     anchors.centerIn: parent
                                     source: IconUtil.getSystemIcon(modelData.icon)
+
+                                    layer.enabled: true
+                                    layer.effect: MultiEffect {
+                                        colorization: 1.0
+                                        colorizationColor: Colors.surfaceVariantText
+                                        Behavior on colorizationColor{
+                                            ColorAnimation{
+                                                duration: 200
+                                            }
+                                        }
+                                        brightness: 0
+                                    }
                                 }
 
                                 MouseArea{
@@ -121,6 +156,13 @@ Item{
                                     }
                                     onExited:{
                                         parent.scale = 1
+                                    }
+
+                                    onClicked:{
+                                        if(modelData.command){
+                                            toolWidgets.toogled()
+                                            Quickshell.execDetached(modelData.command)
+                                        }
                                     }
                                 }
 
@@ -166,7 +208,12 @@ Item{
 
 
                     onClicked:{
-                        icon.showOptions = !icon.showOptions
+                        if(modelData.options)icon.showOptions = !icon.showOptions
+                        else if(modelData.name === "Setting"){
+                            toolWidgets.settingClicked()
+                            toolWidgets.toogled()
+
+                        }
                     }
                 }
 

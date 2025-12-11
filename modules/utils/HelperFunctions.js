@@ -17,3 +17,20 @@ function getFixedSpaceCirclePosition(index, total, radiusValue, centerXValue, ce
 
     return { x: x, y: y }
 }
+
+function getRadius(size, index, activeIndex){
+    if(index !== activeIndex && index === 0){
+        return {topLeft: 20, topRight: 5, bottomLeft: 20, bottomRight: 5} 
+    }else if(index !== activeIndex && index === size - 1){
+        return {topLeft: 5, topRight: 20, bottomLeft: 5, bottomRight: 20} 
+    }
+
+    if(activeIndex - 1 === index){
+        return {topLeft: 5, topRight: 5, bottomLeft: 5, bottomRight: 5} 
+    }else if(activeIndex + 1 === index){
+        return {topLeft: 5, topRight: 5, bottomLeft: 5, bottomRight: 5} 
+    }
+
+    return {topLeft: 20, topRight: 20, bottomLeft: 20, bottomRight: 20}
+
+}

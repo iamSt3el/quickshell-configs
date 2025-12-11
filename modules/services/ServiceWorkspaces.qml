@@ -22,5 +22,16 @@ Singleton{
         }
         return null
     }
+
+    // Check if any workspace in the given array is active
+    function hasActiveWorkspace(workspaceIds): bool {
+        for(var i = 0; i < workspaceIds.length; i++){
+            var ws = getWorkspace(workspaceIds[i])
+            if(ws && ws.active){
+                return true
+            }
+        }
+        return false
+    }
 }
 

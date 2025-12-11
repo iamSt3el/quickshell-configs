@@ -1,0 +1,253 @@
+pragma Singleton
+import Quickshell
+import Quickshell.Io
+import QtQuick
+
+Singleton {
+    id: root
+
+    // Current network info
+    property string currentSSID: ""
+    property int signalStrength: 0
+    property bool isConnected: false
+    property bool wifiEnabled: false
+    property string connectionType: "disconnected" // "wifi", "ethernet", "disconnected"
+    property bool wifiScanning: false
+    // Available WiFi networks
+    property var availableNetworks: []
+
+    property string icon: {
+        if(signalStrength >= 90){
+            return "wifi-full"
+        }
+        else if(signalStrength < 90 && signalStrength >=60){
+            return "wifi-3"
+        }else if(signalStrength < 60 && signalStrength >= 30){
+            return "wifi-2"
+        }
+        return "wifi-1"
+    }
+
+    // Connect to a network
+    function connect(ssid) {
+        console.log("Connecting to:", ssid)
+        connectProc.exec(["nmcli", "dev", "wifi", "connect", ssid])
+    }
+
+    // Disconnect from current network
+    function disconnect() {
+        if (currentSSID) {
+            console.log("Disconnecting from:", currentSSID)
+            disconnectProc.exec(["nmcli", "connection", "down", currentSSID])
+        }
+    }
+
+    // Turn WiFi on or off
+    function setWifi(enabled) {
+        const cmd = enabled ? "on" : "off"
+        console.log("Setting WiFi:", cmd)
+        wifiToggleProc.exec(["nmcli", "radio", "wifi", cmd])
+    }
+
+    // Toggle WiFi on/off
+    function toggleWifi() {
+        setWifi(!wifiEnabled)
+    }
+
+    // Scan for WiFi networks
+    function scanNetworks() {
+        console.log("Scanning for networks...")
+        
+        wifiScanning = true
+        console.log("WifiScanner: " + wifiScanning)
+        scanProc.running = true
+    }
+
+    // Refresh network status
+    function refresh() {
+        updateStatus.running = true
+        checkWifiStatus.running = true
+    }
+
+    // Process to connect to network
+    Process {
+        id: connectProc
+        stdout: SplitParser {
+            onRead: line => {
+                console.log("Connect output:", line)
+                root.refresh()
+            }
+        }
+        stderr: SplitParser {
+            onRead: line => {
+                console.error("Connect error:", line)
+            }
+        }
+    }
+
+    // Process to disconnect
+    Process {
+        id: disconnectProc
+        stdout: SplitParser {
+            onRead: line => {
+                console.log("Disconnect output:", line)
+                root.refresh()
+            }
+        }
+    }
+
+    // Process to toggle WiFi on/off
+    Process {
+        id: wifiToggleProc
+        stdout: SplitParser {
+            onRead: line => {
+                console.log("WiFi toggle output:", line)
+                root.refresh()
+            }
+        }
+    }
+
+    // Check WiFi enabled status
+    Process {
+        id: checkWifiStatus
+        running: true
+        command: ["nmcli", "radio", "wifi"]
+        stdout: SplitParser {
+            onRead: data => {
+                root.wifiEnabled = data.trim() === "enabled"
+            }
+        }
+    }
+
+    // Scan and get available WiFi networks
+    Process {
+        id: scanProc
+        command: ["nmcli", "-g", "ACTIVE,SIGNAL,SSID,SECURITY", "d", "w", "list"]
+        
+        property string buffer: ""
+        
+        stdout: SplitParser {
+            onRead: data => {
+                scanProc.buffer += data + "\n"
+            }
+        }
+        
+        onExited: {
+            const lines = buffer.trim().split('\n').filter(line => line.length > 0)
+            buffer = ""
+            
+            const networks = []
+            const seenSSIDs = new Set()
+            
+            for (const line of lines) {
+                const parts = line.split(':')
+                if (parts.length >= 3) {
+                    const ssid = parts[2].trim()
+                    
+                    // Skip empty SSIDs and duplicates
+                    if (!ssid || seenSSIDs.has(ssid)) continue
+                    
+                    seenSSIDs.add(ssid)
+                    
+                    networks.push({
+                        active: parts[0] === "yes",
+                        signal: parseInt(parts[1]) || 0,
+                        ssid: ssid,
+                        security: parts[3] || "",
+                        isSecure: (parts[3] || "").length > 0
+                    })
+                }
+            }
+            
+            // Sort by signal strength (strongest first), but keep active network at top
+            networks.sort((a, b) => {
+                if (a.active && !b.active) return -1
+                if (!a.active && b.active) return 1
+                return b.signal - a.signal
+            })
+            
+            root.availableNetworks = networks
+            root.wifiScanning = false
+
+            console.log("Found", networks.length, "networks")
+        }
+    }
+
+    // Monitor network changes
+    Process {
+        id: subscriber
+        running: true
+        command: ["nmcli", "monitor"]
+        stdout: SplitParser {
+            onRead: {
+                root.refresh()
+                root.scanNetworks()  // Also refresh network list
+            }
+        }
+    }
+
+    // Get current network status
+    Process {
+        id: updateStatus
+        running: true
+        command: ["sh", "-c", "nmcli -t -f TYPE,STATE d status && nmcli -t -f NAME c show --active | head -1 && nmcli -f IN-USE,SIGNAL,SSID device wifi | awk '/^\\*/{if (NR!=1) {print $2}}'"]
+        
+        property string buffer: ""
+        
+        stdout: SplitParser {
+            onRead: data => {
+                updateStatus.buffer += data + "\n"
+            }
+        }
+        
+        onExited: {
+            const lines = buffer.trim().split('\n')
+            buffer = ""
+            
+            let hasWifi = false
+            let hasEthernet = false
+            
+            // Check connection types
+            lines.forEach(line => {
+                if (line.includes("ethernet") && line.includes("connected")) {
+                    hasEthernet = true
+                } else if (line.includes("wifi:connected")) {
+                    hasWifi = true
+                }
+            })
+            
+            // Get SSID (usually second-to-last line)
+            if (lines.length >= 2) {
+                root.currentSSID = lines[lines.length - 2] || ""
+            }
+            
+            // Get signal strength (last line)
+            if (lines.length >= 1) {
+                const strength = parseInt(lines[lines.length - 1])
+                if (!isNaN(strength)) {
+                    root.signalStrength = strength
+                }
+            }
+            
+            // Set connection status
+            if (hasEthernet) {
+                root.connectionType = "ethernet"
+                root.isConnected = true
+            } else if (hasWifi) {
+                root.connectionType = "wifi"
+                root.isConnected = true
+            } else {
+                root.connectionType = "disconnected"
+                root.isConnected = false
+                root.currentSSID = ""
+                root.signalStrength = 0
+            }
+        }
+    }
+    
+    Component.onCompleted: {
+        console.log("Network service initialized")
+        refresh()
+        scanNetworks()  // Get initial network list
+    }
+}

@@ -31,15 +31,21 @@ Singleton{
             options:[
                 {
                     name: "Screen",
-                    icon: "screen"
+                    icon: "screen",
+                    command: ["sh", "-c", "sleep 0.5 && grimblast --notify copysave output"]
+
                 },
                 {
                     name: "Window",
-                    icon: "window"
+                    icon: "window",
+                    command: ["sh", "-c", "sleep 0.5 && grimblast --notify copysave active"]
+
                 },
                 {
                     name: "Area",
-                    icon: "select"
+                    icon: "select",
+                    command: ["sh", "-c", "sleep 0.5 && grimblast --notify copysave area"]
+
                 }
             ]
         },
@@ -53,18 +59,26 @@ Singleton{
             options:[
                 {
                     name: "Shutdown",
-                    icon: "power"
+                    icon: "power",
+                    command: ["systemctl", "poweroff"]
+
 
                 },
                 {
                     name: "Restart",
-                    icon: "restart"
+                    icon: "restart",
+                    command: ["systemctl", "reboot"]
+
                 },
                 {
                     name: "Logout",
-                    icon: "logout"
+                    icon: "logout",
+                    command: ["hyprctl", "dispatch", "exit"]
+
                 }
             ]
         }
     ]
+
+
 }

@@ -1,0 +1,30 @@
+import Quickshell
+import Quickshell
+import Quickshell.Widgets
+import QtQuick
+import QtQuick.Effects
+import qs.modules.utils
+
+
+
+IconImage {
+    property string icon
+    property var color: Colors.surfaceVariantText
+    property var size
+    implicitSize: size
+    source: IconUtil.getSystemIcon(icon)
+    layer.enabled: true
+    layer.effect: MultiEffect {
+        colorization: 1.0
+        colorizationColor: color
+        Behavior on colorizationColor{
+            ColorAnimation{
+                duration: 200
+            }
+        }
+        brightness: 0
+    } 
+}
+
+
+

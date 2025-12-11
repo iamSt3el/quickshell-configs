@@ -16,12 +16,27 @@ Singleton{
             icon: "bluetooth"
         },
         {
-            name: "PowerProfiles",
-            icon: ServiceUPower.powerProfileIconPath
-        },
-        {
             name: "Notifications",
             icon: "notification"
+        },
+        {
+            name: "Dashboard",
+            icon: "dashboard"
         }
-    ] 
+    ]
+
+    property var theme:[
+        {
+            name: "Dark",
+            icon: "moon"
+        },
+        {
+            name: "Light",
+            icon: "sun"
+        },
+        {
+            name: "Wallpaper",
+            icon: "wallpaper"
+        }
+    ]
 }

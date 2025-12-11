@@ -4,12 +4,11 @@ import Quickshell.Widgets
 import qs.modules.utils
 import QtQuick.Effects
 import qs.modules.customComponents
-
 Item {
     id: root
     width: wrapper.width
     height: parent.height
-    property var progress: 0.2
+    property var progress
     property string icon
     property bool isDragging: handleArea.drag.active
     
@@ -17,17 +16,23 @@ Item {
         id: wrapper
         anchors.centerIn: parent
         implicitWidth: 45
-        implicitHeight: parent.height - 20
+        implicitHeight: parent.height
         radius: 20
         color: Colors.surfaceContainerHighest
+        clip: true
+        
+        
+        
         Rectangle {
             id: handler
             implicitWidth: parent.width
             implicitHeight: 40
             radius: 20
-            z: 1
+            z: 2
+            //color: Colors.tertiary
             color: Colors.primary
-            y: (parent.height - height) * (1 - root.progress)
+            // Handle center is at the progress point
+            y: (wrapper.height - handler.height) * (1 - root.progress)
             
             IconImage {
                 visible: !root.isDragging
@@ -37,7 +42,7 @@ Item {
                 layer.enabled: true
                 layer.effect: MultiEffect {
                     colorization: 1.0
-                    colorizationColor: Colors.surface
+                    colorizationColor: Colors.primaryText
                     brightness: 0
                 }
             }
@@ -67,13 +72,17 @@ Item {
                 }
             }
         }
-        
         Rectangle {
+            id: fillRect
             anchors.bottom: parent.bottom
             implicitWidth: parent.width
-            implicitHeight: parent.height * root.progress
+            // Fill extends to the center of the handle
+            implicitHeight: (wrapper.height - handler.height) * root.progress + handler.height / 2
+            //color: Colors.tertiary
             color: Colors.primary
-            radius: parent.radius
+
+            bottomLeftRadius: parent.radius
+            bottomRightRadius: parent.radius
         }
     }
 }

@@ -1,4 +1,5 @@
 import QtQuick
+import qs.modules.settings
 import qs.modules.utils
 
 
@@ -6,11 +7,12 @@ Text{
     id: root
     property alias content: root.text
     property int size: 12
+    verticalAlignment: Text.AlignVCenter
     property int weight: 800
-    property string customColor: Colors.surfaceText
-    property string family: "Rubik"
+    property string customColor: Colors.surfaceVariantText
+    property string family: Settings.defaultFont
     renderType: Text.NativeRendering
-    
+    elide: Text.ElideRight
     color: customColor
     font.pixelSize: size
     font.weight: weight

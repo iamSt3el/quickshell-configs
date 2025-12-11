@@ -1,0 +1,13 @@
+import Quickshell
+import Quickshell.Wayland
+import Quickshell.Hyprland
+import QtQuick
+import QtQuick.Shapes
+import QtQuick.Effects
+import qs.modules.utils
+import qs.modules.components.Bar
+import qs.modules.settings
+import qs.modules.components.AppLauncher
+import qs.modules.components.ToolsWidget
+import qs.modules.components.Setting
+import qs.modules.components.Clipboard

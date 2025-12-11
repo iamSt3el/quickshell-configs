@@ -11,6 +11,11 @@ import Quickshell.Widgets
 Item{
     id: workspaces
     property alias container: container
+
+    // Get monitor-specific workspaces
+    property var assignedWorkspaces: Settings.getWorkspacesForMonitor(Hyprland.monitorFor(layout.screen).name)
+    property var otherScreenWorkspaces: Settings.getOtherScreenWorkspaces(Hyprland.monitorFor(layout.screen).name)
+
     Rectangle{
         id: container
         property bool isClicked: false
@@ -27,24 +32,32 @@ Item{
             focus: true
         }
 
-        ListView{
-            id: workspacesRow
+        Row {
             visible: !container.isClicked
-            width: contentWidth
-            height: parent.height
-            orientation: Qt.Horizontal
             anchors.centerIn: parent
             spacing: 10
-            model: 5
-            interactive: false
 
-            delegate: Rectangle{
-                property var currentWorkspace: ServiceWorkspaces.getWorkspace((index + 1))
-                anchors.verticalCenter: parent.verticalCenter
-                implicitHeight: currentWorkspace ? 25 : 15
-                implicitWidth: currentWorkspace ? Math.max(15, topLevels.appList.width) + 10 : 15
-                radius: 10
-                color: currentWorkspace ? currentWorkspace.active ? Colors.primary : Colors.inversePrimary : Colors.inversePrimary
+            ListView{
+                id: workspacesRow
+                width: contentWidth
+                height: container.height
+                orientation: Qt.Horizontal
+                spacing: 10
+                model: workspaces.assignedWorkspaces
+                interactive: false
+
+                delegate: Rectangle{
+                    property int workspaceId: modelData
+                    property var currentWorkspace: ServiceWorkspaces.getWorkspace(workspaceId)
+                    anchors.verticalCenter: parent.verticalCenter
+                    implicitHeight: currentWorkspace ? 25 : 15
+                    implicitWidth: currentWorkspace ? Math.max(15, topLevels.appList.width) + 10 : 15
+                    radius: 10
+                    color: currentWorkspace ? currentWorkspace.active ? Colors.primary : Colors.surfaceContainer : Colors.surfaceContainer
+                    border{
+                        width: 1
+                        color: Qt.alpha(Colors.outline, 0.5)
+                    }
 
                 Behavior on implicitWidth{
                     NumberAnimation{
@@ -58,23 +71,25 @@ Item{
                 }
 
 
-                MouseArea{
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    acceptedButtons: Qt.RightButton | Qt.LeftButton
-                    onClicked: function(mouse){
-                        if(mouse.button === Qt.LeftButton){
-                            console.log(Hyprland.monitorFor(layout.screen).lastIpcObject)
-                            if(currentWorkspace){
-                                currentWorkspace.activate()
-                            }else{
-                                Hyprland.dispatch(`workspace ${index + 1}`)
+                    MouseArea{
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        acceptedButtons: Qt.RightButton | Qt.LeftButton
+                        onClicked: function(mouse){
+                            if(mouse.button === Qt.LeftButton){
+                                if(currentWorkspace){
+                                    currentWorkspace.activate()
+                                }else{
+                                    Hyprland.dispatch(`workspace ${workspaceId}`)
+                                }
+                            }else if(mouse.button === Qt.RightButton){
                             }
-                        }else if(mouse.button === Qt.RightButton){
                         }
                     }
                 }
             }
+
+            
         }
     }
 }

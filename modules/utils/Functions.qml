@@ -11,4 +11,8 @@ Singleton{
     function getFixedSpaceCirclePosition(index, total, radiusValue, centerXValue, centerYValue, fixedAngleDegrees, parentIndex){
         return HelperFunctions.getFixedSpaceCirclePosition(index, total, radiusValue, centerXValue, centerYValue, fixedAngleDegrees, parentIndex)
     }
+
+    function getRadius(size, index, currentIndex){
+        return HelperFunctions.getRadius(size, index, currentIndex)
+    }
 }

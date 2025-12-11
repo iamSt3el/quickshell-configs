@@ -2,55 +2,64 @@ pragma Singleton
 import Quickshell
 import QtQuick
 import Quickshell.Io
+import qs.modules.settings
 
-Item {
+Item{
     id: colorProvider
-    
-    // Material You color properties (safe names to avoid QML conflicts)
-    property string primary: "#ffb691"
-    property string primaryText: "#542202"
-    property string primaryContainer: "#703716"
-    property string primaryContainerText: "#ffdbcb"
-    
-    property string secondary: "#e6beac"
-    property string secondaryText: "#432b1e"
-    property string secondaryContainer: "#5c4032"
-    property string secondaryContainerText: "#ffdbcb"
-    
-    property string tertiary: "#cfc890"
-    property string tertiaryText: "#353107"
-    property string tertiaryContainer: "#4c481c"
-    property string tertiaryContainerText: "#ece4aa"
-    
-    property string error: "#ffb4ab"
-    property string errorText: "#690005"
-    property string errorContainer: "#93000a"
-    property string errorContainerText: "#ffdad6"
-    
-    property string surface: "#1a120e"
-    property string surfaceText: "#f0dfd8"
-    property string surfaceVariant: "#52443d"
-    property string surfaceVariantText: "#d7c2b9"
-    
-    property string outline: "#a08d85"
-    property string outlineVariant: "#52443d"
-    property string shadow: "#000000"
-    property string scrim: "#000000"
-    
-    property string inverseSurface: "#f0dfd8"
-    property string inverseSurfaceText: "#382e2a"
-    property string inversePrimary: "#8d4e2b"
-    
-    property string surfaceDim: "#1a120e"
-    property string surfaceBright: "#423732"
-    property string surfaceContainerLowest: "#140c09"
-    property string surfaceContainerLow: "#221a16"
-    property string surfaceContainer: "#271e19"
-    property string surfaceContainerHigh: "#322823"
-    property string surfaceContainerHighest: "#3d332e"
-    
-    // Wallpaper path
-    property string wallpaper: "/home/steel/wallpaper/city-skyline.jpg"
-    
 
+    property var currentTheme: {
+        switch(Settings.activeTheme) {
+            case "Dark": return DarkTheme
+            case "Light": return LightTheme
+            case "Wallpaper": return WallpaperTheme
+            default: return LightTheme
+        }
+    }
+
+    // Expose all color properties from current theme
+    readonly property string primary: currentTheme.primary
+    readonly property string primaryText: currentTheme.primaryText
+    readonly property string primaryContainer: currentTheme.primaryContainer
+    readonly property string primaryContainerText: currentTheme.primaryContainerText
+
+    readonly property string secondary: currentTheme.secondary
+    readonly property string secondaryText: currentTheme.secondaryText
+    readonly property string secondaryContainer: currentTheme.secondaryContainer
+    readonly property string secondaryContainerText: currentTheme.secondaryContainerText
+
+    readonly property string tertiary: currentTheme.tertiary
+    readonly property string tertiaryText: currentTheme.tertiaryText
+    readonly property string tertiaryContainer: currentTheme.tertiaryContainer
+    readonly property string tertiaryContainerText: currentTheme.tertiaryContainerText
+
+    readonly property string error: currentTheme.error
+    readonly property string errorText: currentTheme.errorText
+    readonly property string errorContainer: currentTheme.errorContainer
+    readonly property string errorContainerText: currentTheme.errorContainerText
+
+    readonly property string surface: currentTheme.surface
+    readonly property string surfaceText: currentTheme.surfaceText
+    readonly property string surfaceVariant: currentTheme.surfaceVariant
+    readonly property string surfaceVariantText: currentTheme.surfaceVariantText
+
+    readonly property string outline: currentTheme.outline
+    readonly property string outlineVariant: currentTheme.outlineVariant
+    readonly property string shadow: currentTheme.shadow
+    readonly property string scrim: currentTheme.scrim
+
+    readonly property string inverseSurface: currentTheme.inverseSurface
+    readonly property string inverseSurfaceText: currentTheme.inverseSurfaceText
+    readonly property string inversePrimary: currentTheme.inversePrimary
+
+    readonly property string surfaceDim: currentTheme.surfaceDim
+    readonly property string surfaceBright: currentTheme.surfaceBright
+    readonly property string surfaceContainerLowest: currentTheme.surfaceContainerLowest
+    readonly property string surfaceContainerLow: currentTheme.surfaceContainerLow
+    readonly property string surfaceContainer: currentTheme.surfaceContainer
+    readonly property string surfaceContainerHigh: currentTheme.surfaceContainerHigh
+    readonly property string surfaceContainerHighest: currentTheme.surfaceContainerHighest
+
+    readonly property string wallpaper: currentTheme.wallpaper || ""
 }
+
+
