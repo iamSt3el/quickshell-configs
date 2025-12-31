@@ -122,50 +122,64 @@ Singleton {
     // Scan and get available WiFi networks
     Process {
         id: scanProc
-        command: ["nmcli", "-g", "ACTIVE,SIGNAL,SSID,SECURITY", "d", "w", "list"]
-        
+        command: ["nmcli", "-g", "ACTIVE,SIGNAL,SSID,SECURITY,BSSID,CHAN,FREQ,RATE,MODE", "d", "w", "list"]
+
         property string buffer: ""
-        
+
         stdout: SplitParser {
             onRead: data => {
                 scanProc.buffer += data + "\n"
             }
         }
-        
+
         onExited: {
             const lines = buffer.trim().split('\n').filter(line => line.length > 0)
             buffer = ""
-            
+
             const networks = []
             const seenSSIDs = new Set()
-            
+
             for (const line of lines) {
-                const parts = line.split(':')
+                // nmcli escapes colons as \: - replace with placeholder before splitting
+                const safeLine = line.replace(/\\:/g, '##COLON##')
+                const parts = safeLine.split(':').map(p => p.replace(/##COLON##/g, ':'))
+
                 if (parts.length >= 3) {
                     const ssid = parts[2].trim()
-                    
+
                     // Skip empty SSIDs and duplicates
                     if (!ssid || seenSSIDs.has(ssid)) continue
-                    
+
                     seenSSIDs.add(ssid)
-                    
+
+                    // Parse frequency to get band (2.4GHz or 5GHz)
+                    const freqStr = parts[6] || ""
+                    const freqMhz = parseInt(freqStr) || 0
+                    const band = freqMhz >= 5000 ? "5 GHz" : "2.4 GHz"
+
                     networks.push({
                         active: parts[0] === "yes",
                         signal: parseInt(parts[1]) || 0,
                         ssid: ssid,
-                        security: parts[3] || "",
-                        isSecure: (parts[3] || "").length > 0
+                        security: parts[3] || "Open",
+                        isSecure: (parts[3] || "").length > 0,
+                        bssid: parts[4] || "",
+                        channel: parts[5] || "",
+                        frequency: freqStr,
+                        band: band,
+                        rate: parts[7] || "",
+                        mode: parts[8] || "Infra"
                     })
                 }
             }
-            
+
             // Sort by signal strength (strongest first), but keep active network at top
             networks.sort((a, b) => {
                 if (a.active && !b.active) return -1
                 if (!a.active && b.active) return 1
                 return b.signal - a.signal
             })
-            
+
             root.availableNetworks = networks
             root.wifiScanning = false
 

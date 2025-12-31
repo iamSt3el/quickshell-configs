@@ -10,6 +10,9 @@ import qs.modules.customComponents
 RowLayout{
     property string icon:{
         let level = ServiceUPower.powerLevel
+        if(ServiceUPower.isCharging){
+            return "battery-charging"
+        }
         if(level === 1){
             return "battery-full"
         }else if(level < 1 && level > 0.9){

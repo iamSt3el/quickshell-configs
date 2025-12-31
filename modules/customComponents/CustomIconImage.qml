@@ -9,7 +9,7 @@ import qs.modules.utils
 
 IconImage {
     property string icon
-    property var color: Colors.surfaceVariantText
+    property var color: Colors.surfaceText
     property var size
     implicitSize: size
     source: IconUtil.getSystemIcon(icon)

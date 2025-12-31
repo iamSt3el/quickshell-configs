@@ -19,15 +19,55 @@ Item{
 
     // Workspace configuration per monitor
     property var monitorWorkspaces: ({
-        "HDMI-A-1": { // Your HDMI monitor name - adjust this
+        "eDP-1": { // Your HDMI monitor name - adjust this
             workspaces: [1, 2, 3, 4, 5],
             type: "external"
-        },
-        "eDP-1": { // Your laptop display name - adjust this
-            workspaces: [6, 7, 8, 9, 10],
-            type: "laptop"
         }
+            //,
+        // "eDP-1": { // Your laptop display name - adjust this
+        //     workspaces: [6, 7, 8, 9, 10],
+        //     type: "laptop"
+        // }
     })
+
+    property var quickIcons:[
+        {
+            name: "Airplane",
+            icon: "airplane",
+            iconActive: "airplane-mute"
+
+        },
+        {
+            name: "Notification",
+            icon: "notification",
+            iconActive: "notification-mute"
+        },
+        {
+            name: "Speaker",
+            icon: "volume",
+            iconActive: "volume-mute"
+        },
+        {
+            name: "Mic",
+            icon: "mic",
+            iconActive: "mic-mute"
+        }
+
+    ]
+    property var themeModes:[
+        {
+            name: "Dark",
+            icon: "moon"
+        },
+        {
+            name: "Light",
+            icon: "sun"
+        },
+        {
+            name: "Wallpaper",
+            icon: "wallpaper"
+        }
+    ]
 
     property var pages:[
         {

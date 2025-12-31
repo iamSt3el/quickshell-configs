@@ -24,6 +24,8 @@ Singleton{
     
     Component.onCompleted:{
         console.log("volume: " + (Pipewire.defaultAudioSink?.audio?.volume ?? "not ready"))
+
+        console.log(Pipewire.nodes)
     }
     function updateVolume(volume): void{
         if (Pipewire.defaultAudioSink?.ready && Pipewire.defaultAudioSink?.audio) {

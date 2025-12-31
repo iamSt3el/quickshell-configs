@@ -35,11 +35,11 @@ Rectangle{
             Layout.fillWidth: true
             Layout.preferredHeight: 40
             color: Colors.surfaceContainer
-            radius: 10
+            radius: 20
 
             RowLayout{
                 anchors.fill: parent
-                anchors.margins: 5
+                anchors.margins: 10
                 spacing: 10
                 CustomIconImage{
                     icon: "search"
@@ -158,8 +158,8 @@ Rectangle{
 
                             CustomText{
                                 visible: !ServiceCliphist.entryIsImage(clipItem.modelData)
-                                anchors.fill: parent
-                                text: ServiceCliphist.getEntryText(clipItem.modelData)
+                                width: parent.width
+                                content: ServiceCliphist.getEntryText(clipItem.modelData)
                                 color: clipItem.active ? Colors.primaryText : Colors.surfaceVariantText
                                 elide: Text.ElideRight
                                 wrapMode: Text.Wrap

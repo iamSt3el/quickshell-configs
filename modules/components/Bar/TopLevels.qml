@@ -27,111 +27,121 @@ Item{
             id: iconItem
             height: 20
             width: 20
-            anchors.verticalCenter: parent.verticalCenter
-            
+            anchors.verticalCenter: parent?.verticalCenter
 
-            
+
+
             Component.onCompleted:{
                 ServiceWorkspaces.refreshToplevels()
 
             }
-            
-        
-            
+
+            opacity: 0
+            NumberAnimation on opacity{
+                from: 0
+                to: 1
+                duration: 200
+                running: true
+            }
+
+
+
             IconImage{
                 id: icon
                 anchors.centerIn: parent
                 implicitSize: 18
-                source: modelData && modelData.lastIpcObject ? IconUtil.getIconPath(modelData.lastIpcObject.class) : ""
+                //source: modelData && modelData.lastIpcObject ? IconUtil.getIconPath(modelData.lastIpcObject.class) : ""
+                source: Quickshell.iconPath(DesktopEntries.heuristicLookup(modelData.wayland?.appId)?.icon, "image-missing")
+
             }
-            
+
             //Drag.active: dragArea.drag.active
             //Drag.hotSpot.x: width / 2
             //Drag.hotSpot.y: height / 2
-            
+
             /*MouseArea{
-                id: dragArea
-                anchors.fill: parent
-                acceptedButtons: Qt.RightButton | Qt.LeftButton
-                cursorShape: Qt.PointingHandCursor
-                
-                drag.target: iconItem
-                drag.axis: Drag.XAndYAxis
-                
-                onPressed: function(mouse){
-                    mouse.accepted = true
-                    
-                    // Store original position and parent
-                    iconItem.originalX = iconItem.x
-                    iconItem.originalY = iconItem.y
-                    iconItem.originalWidth = iconItem.width
-                    iconItem.originalHeight = iconItem.height
-                    iconItem.originalParent = iconItem.parent
-                    if (!overlay) {
-                        console.log("Hello " + overlay)
-                        var globalPos = iconItem.mapToItem(overlay, 0, 0)
-                        iconItem.parent = overlay
-                        iconItem.x = globalPos.x
-                        iconItem.y = globalPos.y
-                        iconItem.z = 10
-                    }
-                    
-                    icon.implicitSize = 22
-                }
-                
-                onPositionChanged: {
-                }
-                
-                onClicked: function(mouse){
-                    if(mouse.button === Qt.LeftButton){
-                        if(currentWorkspace){
-                            currentWorkspace.activate()
-                        } else {
-                            Hyprland.dispatch(`workspace ${index + 1}`)
-                        }
-                    }
-                }
-                
-                onReleased: {
-                    console.log("Original Pos: " + iconItem.originalX + " " + iconItem.originalY)
-                    console.log("Current Pos: " + iconItem.x + " " + iconItem.y)
-                    
-                    if (workspacesRow) {
-                        var globalPos = iconItem.mapToItem(workspacesRow, iconItem.width/2, iconItem.height/2)
-                        var targetWorkspaceIndex = -1
-                        
-                        for (var i = 0; i < workspacesRow.count; i++) {
-                            var workspaceItem = workspacesRow.itemAt(i)
-                            if (workspaceItem && 
-                                globalPos.x >= workspaceItem.x && 
-                                globalPos.x <= workspaceItem.x + workspaceItem.width &&
-                                globalPos.y >= workspaceItem.y && 
-                                globalPos.y <= workspaceItem.y + workspaceItem.height) {
-                                targetWorkspaceIndex = i
-                                break
-                            }
-                        }
-                        
-                        if (targetWorkspaceIndex >= 0 && modelData && modelData.address) {
-                            var targetWorkspaceId = targetWorkspaceIndex + 1
-                            var currentWorkspaceId = currentWorkspace ? currentWorkspace.id : -1
-                            
-                            if (targetWorkspaceId !== currentWorkspaceId) {
-                                console.log("Moving window to workspace " + targetWorkspaceId)
-                                Hyprland.dispatch("movetoworkspacesilent " + targetWorkspaceId + ",address:0x" + modelData.address)
-                            }
-                        }
-                    }
-                    
-                    iconItem.parent = iconItem.originalParent
-                    iconItem.x = iconItem.originalX
-                    iconItem.y = iconItem.originalY
-                    iconItem.width = iconItem.originalWidth
-                    iconItem.height = iconItem.originalHeight
-                    iconItem.z = 0
-                    icon.implicitSize = 18
-                }
-            }*/
-        }
+                 id: dragArea
+                 anchors.fill: parent
+                 acceptedButtons: Qt.RightButton | Qt.LeftButton
+                 cursorShape: Qt.PointingHandCursor
+
+                 drag.target: iconItem
+                 drag.axis: Drag.XAndYAxis
+
+                 onPressed: function(mouse){
+                     mouse.accepted = true
+
+                     // Store original position and parent
+                     iconItem.originalX = iconItem.x
+                     iconItem.originalY = iconItem.y
+                     iconItem.originalWidth = iconItem.width
+                     iconItem.originalHeight = iconItem.height
+                     iconItem.originalParent = iconItem.parent
+                     if (!overlay) {
+                         console.log("Hello " + overlay)
+                         var globalPos = iconItem.mapToItem(overlay, 0, 0)
+                         iconItem.parent = overlay
+                         iconItem.x = globalPos.x
+                         iconItem.y = globalPos.y
+                         iconItem.z = 10
+                     }
+
+                     icon.implicitSize = 22
+                 }
+
+                 onPositionChanged: {
+                 }
+
+                 onClicked: function(mouse){
+                     if(mouse.button === Qt.LeftButton){
+                         if(currentWorkspace){
+                             currentWorkspace.activate()
+                         } else {
+                             Hyprland.dispatch(`workspace ${index + 1}`)
+                         }
+                     }
+                 }
+
+                 onReleased: {
+                     console.log("Original Pos: " + iconItem.originalX + " " + iconItem.originalY)
+                     console.log("Current Pos: " + iconItem.x + " " + iconItem.y)
+
+                     if (workspacesRow) {
+                         var globalPos = iconItem.mapToItem(workspacesRow, iconItem.width/2, iconItem.height/2)
+                         var targetWorkspaceIndex = -1
+
+                         for (var i = 0; i < workspacesRow.count; i++) {
+                             var workspaceItem = workspacesRow.itemAt(i)
+                             if (workspaceItem && 
+                             globalPos.x >= workspaceItem.x && 
+                             globalPos.x <= workspaceItem.x + workspaceItem.width &&
+                             globalPos.y >= workspaceItem.y && 
+                             globalPos.y <= workspaceItem.y + workspaceItem.height) {
+                                 targetWorkspaceIndex = i
+                                 break
+                             }
+                         }
+
+                         if (targetWorkspaceIndex >= 0 && modelData && modelData.address) {
+                             var targetWorkspaceId = targetWorkspaceIndex + 1
+                             var currentWorkspaceId = currentWorkspace ? currentWorkspace.id : -1
+
+                             if (targetWorkspaceId !== currentWorkspaceId) {
+                                 console.log("Moving window to workspace " + targetWorkspaceId)
+                                 Hyprland.dispatch("movetoworkspacesilent " + targetWorkspaceId + ",address:0x" + modelData.address)
+                             }
+                         }
+                     }
+
+                     iconItem.parent = iconItem.originalParent
+                     iconItem.x = iconItem.originalX
+                     iconItem.y = iconItem.originalY
+                     iconItem.width = iconItem.originalWidth
+                     iconItem.height = iconItem.originalHeight
+                     iconItem.z = 0
+                     icon.implicitSize = 18
+                 }
+             }*/
+         }
     }
 }

@@ -25,7 +25,7 @@ Singleton{
         }
     ]
     property var powerProfile: PowerProfiles.profile
-    property string powerProfileIconPath: powerProfile === 0 ? "leaf" : "balance" 
+    property string powerProfileIcon: powerProfile === 0 ? "leaf" : "balance" 
     property var powerLevel: UPower.displayDevice.percentage
     property bool isCharging: UPowerDeviceState.Charging === UPower.displayDevice.state 
 

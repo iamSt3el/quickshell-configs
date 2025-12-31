@@ -12,7 +12,9 @@ import qs.modules.components.ToolsWidget
 import qs.modules.components.Setting
 import qs.modules.components.Clipboard
 import qs.modules.components.Notification
+import qs.modules.components.Dock
 import qs.modules.services
+import qs.modules.customComponents
 
 
 PanelWindow{
@@ -25,7 +27,7 @@ PanelWindow{
         bottom: true
     }
 
-        WlrLayershell.keyboardFocus: appLauncher.container.isClicked || isClipboardClicked ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: isAppLauncherClicked || isClipboardClicked ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     mask: Region{
         item: maskRect;
         intersection: Intersection.Xor;
@@ -39,8 +41,8 @@ PanelWindow{
         Region{
             x: appLauncher.x;
             y: appLauncher.y;
-            width: appLauncher.container.width;
-            height: appLauncher.container.height;
+            width: appLauncher.width;
+            height: appLauncher.height;
             intersection: Intersection.Subtract
         }
         Region{
@@ -83,8 +85,41 @@ PanelWindow{
             intersection: Intersection.Subtract
         }
 
-        
+        Region{
+            x: clock.x
+            y: clock.y
+            width: clock.width
+            height: clock.height
+            intersection: Intersection.Subtract
+        } 
+
+        // Region{
+        //     x: demo.x
+        //     y: demo.y
+        //     width: demo.width
+        //     height: demo.height
+        //     intersection: Intersection.Subtract
+        // }
     }
+
+    //Test{}
+    
+    //
+    // Rectangle{
+    //     id: demo
+    //     implicitHeight: 100
+    //     implicitWidth: 100
+    //     radius: height
+    //     anchors.centerIn: parent
+    //
+    //     CustomLoader{
+    //         anchors.centerIn: parent
+    //         size: 80
+    //     }
+    // } 
+
+
+
     Rectangle{
         id: maskRect
         implicitHeight: parent.height
@@ -97,15 +132,16 @@ PanelWindow{
             blurEnabled: true
             blurMax: 7
             blur: 1
-
         }
     }
 
+
+
     property bool isToolsWidgetClicked: false
     property bool isSettingClicked: false
+    property bool isAppLauncherClicked: false
     property bool isClipboardClicked: false
-    property bool isNotificationVisible: ServiceNotification.popups.length > 0 && screen.name === Hyprland.focusedMonitor.name
-
+    property bool isNotificationVisible: !ServiceNotification.muted && !utility.isClicked && notificationLoader.displayCount > 0
 
     Shape{
         preferredRendererType: Shape.CurveRenderer   
@@ -116,19 +152,19 @@ PanelWindow{
             shadowOpacity: 1.0
             shadowColor: Qt.alpha(Colors.shadow, 1)
         }
+
         ShapePath{
             fillColor: Settings.layoutColor
             //fillColor: "transparent"
             strokeWidth: 0
-            //strokeColor: "blue"
-            
+            //strokeColor: Colors.outline
             startX: 0
             startY: 0
             PathLine{ x: layout.width; y: 0 }
             PathLine{ x: layout.width; y: layout.height }
             PathLine{ x: 0; y: layout.height }
             PathLine{ x: 0; y: 0 }
-            
+
             PathMove{ x: workspaces.container.width; y: 20 }
 
             PathArc{
@@ -182,7 +218,7 @@ PanelWindow{
                 relativeX: 0
                 relativeY: utility.height - 20
             }
-            
+
             PathArc{
                 relativeX: 20
                 relativeY: 12
@@ -194,7 +230,7 @@ PanelWindow{
             //     relativeX: 0
             //     relativeY: layout.height - utility.height - 32
             // }
-            
+
             PathLine{
                 relativeX: 0
                 relativeY: layout.isNotificationVisible ? layout.height - notificationLoader.height - utility.height - 24 : layout.height - utility.height - 32
@@ -221,8 +257,7 @@ PanelWindow{
                 relativeX: -20
                 relativeY: layout.isNotificationVisible ? 12 : 0
                 radiusX: 18
-                radiusY: layout.isNotificationVisible ? 12 : 0
-
+                radiusY : layout.isNotificationVisible ? 12 : 0 
             }
 
             PathLine{
@@ -264,13 +299,13 @@ PanelWindow{
 
             PathLine{
                 x: appLauncher.x + 8 
-                y: appLauncher.y + appLauncher.container.height + 12
+                y: appLauncher.y + appLauncher.height + 12
             }
 
             PathArc{
-                x: appLauncher.x + 8 + Math.max(0, Math.min(20, (appLauncher.container.width - 8) / 292 * 20))
-                y: appLauncher.y + appLauncher.container.height 
-                radiusX: Math.max(0, Math.min(18, (appLauncher.container.width - 8) / 292 * 18))
+                x: appLauncher.x + 8 + Math.max(0, Math.min(20, (appLauncher.width - 8) / 292 * 20))
+                y: appLauncher.y + appLauncher.height 
+                radiusX: Math.max(0, Math.min(18, (appLauncher.width - 8) / 292 * 18))
                 radiusY: 12
             }
 
@@ -278,19 +313,19 @@ PanelWindow{
 
 
             PathLine{
-                x: appLauncher.x + 8 + Math.max(0, Math.min(20, (appLauncher.container.width - 8) / 292 * 20))
+                x: appLauncher.x + 8 + Math.max(0, Math.min(20, (appLauncher.width - 8) / 292 * 20))
                 y: appLauncher.y 
             }
-            
+
             PathArc{
                 x: appLauncher.x + 8
                 y: appLauncher.y - 12
-                radiusX: Math.max(0, Math.min(18, (appLauncher.container.width - 8) / 292 * 18))
+                radiusX: Math.max(0, Math.min(18, (appLauncher.width - 8) / 292 * 18))
                 radiusY: 12
             }
-            
 
-             PathLine{
+
+            PathLine{
                 x: workspaces.x + 8
                 y: workspaces.y + workspaces.container.height + 12
             }
@@ -323,15 +358,26 @@ PanelWindow{
         Utility{
             id: utility
         }
-        AppLauncher{
-            id: appLauncher
+        // AppLauncher{
+        //     id: appLauncher
+        // }
+
+        GlobalShortcut{
+            name: "appLauncher"
+
+            onPressed:{
+                if(Hyprland.focusedMonitor.name === layout.screen.name){
+                    layout.isAppLauncherClicked = !layout.isAppLauncherClicked
+
+                }
+            }
         }
 
         GlobalShortcut{
             name: "toolsWidget"
             onPressed:{
                 if(Hyprland.focusedMonitor.name === layout.screen.name){
-                   layout.isToolsWidgetClicked = !layout.isToolsWidgetClicked 
+                    layout.isToolsWidgetClicked = !layout.isToolsWidgetClicked 
                 }
             }
         }
@@ -340,10 +386,35 @@ PanelWindow{
             name: "clipboard"
             onPressed:{
                 if(Hyprland.focusedMonitor.name === layout.screen.name){
-                   layout.isClipboardClicked = !layout.isClipboardClicked
+                    layout.isClipboardClicked = !layout.isClipboardClicked
                 }
             }
         }
+
+        Loader{
+            id: appLauncher
+            active: width !== 8 //layout.isAppLauncherClicked
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            width: layout.isAppLauncherClicked ? 300 : 8
+            height: 600
+
+            Behavior on width{
+                NumberAnimation{
+                    duration: 300
+                    easing.type: Easing.OutQuad
+                }
+            }
+
+
+            sourceComponent: AppLauncher{
+                onClosed: {
+                    layout.isAppLauncherClicked = false
+                }
+            } 
+        }
+
+
 
         Loader{
             id: settingsLoader
@@ -374,6 +445,7 @@ PanelWindow{
             }
         }
 
+
         Loader{
             id: clipboardLoader
             active: height !== 8
@@ -397,7 +469,7 @@ PanelWindow{
 
         Loader{
             id: notificationLoader
-            active: screen.name === Hyprland.focusedMonitor.name
+            active: layout.isNotificationVisible
             anchors.bottom: parent.bottom
             anchors.right: parent.right
 
@@ -405,8 +477,8 @@ PanelWindow{
             property int displayCount: notificationCount
 
             height: displayCount > 0
-                    ? Math.min(600, 10 + (displayCount * 90))
-                    : 0
+            ? Math.min(600, 10 + (displayCount * 90))
+            : 8
             width: 300
 
             Timer {
@@ -434,13 +506,12 @@ PanelWindow{
             }
             Behavior on height{
                 NumberAnimation{
-                    duration: 200
+                    duration: 300
                     easing.type: Easing.OutQuad
                 }
             }
 
             sourceComponent:NotificationPanel{
-
             }
         }
     }

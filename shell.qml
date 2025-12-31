@@ -2,6 +2,8 @@ import Quickshell
 import QtQuick
 import Quickshell.Wayland
 import qs.modules.components.layout
+import qs.modules.components.LockScreen
+import qs.modules
 
 ShellRoot{
     Variants{
@@ -11,7 +13,13 @@ ShellRoot{
             Layout{
                 screen: modelData
             }
+     
         }
     }
-    
+
+
+
+
+    // Lock screen - responds to `loginctl lock-session`
+    LockScreen {}
 }

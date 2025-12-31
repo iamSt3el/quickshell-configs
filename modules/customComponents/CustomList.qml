@@ -1,5 +1,6 @@
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Layouts
 import qs.modules.utils
@@ -37,6 +38,9 @@ Rectangle{
         anchors.fill: parent
         anchors.margins: 5
         anchors.leftMargin: 10
+
+
+ 
         CustomText{
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
@@ -44,7 +48,7 @@ Rectangle{
             size: 12
             weight: 600
         }
-        
+
         CustomIconImage{
             icon: "drop-down"
             size: 20
@@ -61,6 +65,7 @@ Rectangle{
     }
 
     Loader{
+        id: listLoader
         active: root.isListClicked
         sourceComponent: PopupWindow{
             id: popup
@@ -69,6 +74,8 @@ Rectangle{
             implicitWidth: root.width
             implicitHeight: 200
             color: "transparent"
+
+
 
             property var windowPos: layout?.mapFromItem(root, 0, root.height) ?? Qt.point(0, 0)
 

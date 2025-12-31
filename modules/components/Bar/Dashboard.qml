@@ -10,11 +10,147 @@ import qs.modules.settings
 
 Item{
     id: root 
-    width: parent.width
-    height: col.implicitHeight + 20
+    anchors.fill: parent
     property bool isWifiClicked: false
     property bool isBluetoothClicked: false
-    opacity: 0
+    property bool isOverlayClicked: false
+
+
+    property var parentPos
+    property var wifiPos
+    property var bluetoothPos
+    property var pos
+
+
+    Timer{
+        id: rowTimer
+        interval: 300
+        onTriggered:{
+            colu.visible = true
+            root.isOverlayClicked = false
+        }
+    }
+
+    opacity:0
+
+    NumberAnimation on opacity{
+        from: 0
+        to: 1
+        duration: 400
+        running: true
+    }
+
+
+
+    Loader{
+        id: overlay
+        active: root.isOverlayClicked
+        anchors.fill: parent
+        z: 1
+        visible: active
+        sourceComponent: Item{
+            anchors.fill: parent
+            Rectangle{
+                anchors.fill: parent
+                radius: 20
+                color: Qt.alpha(Colors.surface, 0.7)
+                property bool active: root.isWifiClicked || root.isBluetoothClicked
+
+                opacity: active ? 1 : 0
+
+                Behavior on opacity{
+                    NumberAnimation{
+                        duration: 300
+                    }
+                }
+            }
+            Rectangle{
+                id: container
+                property bool active: root.isWifiClicked || root.isBluetoothClicked
+
+                x: active ? root.parentPos.x : root.pos.x
+                y: active ? root.parentPos.y : root.pos.y
+
+                implicitWidth: active ? controleRectangle.width : wifi.width
+                implicitHeight: active ? controleRectangle.height + 200 : 60
+                color: Colors.surfaceContainerHigh
+
+                radius: 20
+                opacity: active ? 1 : 0.9
+                Behavior on opacity{
+                    PropertyAnimation{
+                        duration: 300
+                    }
+                }
+
+                Timer{
+                    interval: 300
+                    running: container.active
+                    onTriggered:{
+                        if(root.isWifiClicked){
+                            wifiLoader.active = true
+                        }else{
+                            bluetoothLoader.active = true
+                        }
+                    }
+                }
+
+                Behavior on x{
+                    NumberAnimation{
+                        duration: 300
+                        easing.type: Easing.InOutCirc
+                    }
+                }
+                Behavior on y{
+                    NumberAnimation{
+                        duration: 300
+                        easing.type: Easing.InOutCirc
+                    }
+                }
+
+                Behavior on implicitWidth{
+                    NumberAnimation{
+                        duration: 300
+                        easing.type: Easing.InOutCirc
+                    }
+                }
+                Behavior on implicitHeight{
+                    NumberAnimation{
+                        duration: 300
+                        easing.type: Easing.InOutCirc
+                    }
+                }
+
+                Loader{
+                    id: wifiLoader
+                    active: false
+                    anchors.fill: parent
+                    visible: active
+                    sourceComponent: Wifi{
+                        onBackClicked: {
+                            root.isWifiClicked = false
+                            wifiLoader.active = false
+                            rowTimer.start()
+                        }
+                    }
+                }
+
+                Loader{
+                    id: bluetoothLoader
+                    active: false
+                    anchors.fill: parent
+                    visible: active
+                    sourceComponent: Bluetooth{
+                        onBackClicked: {
+                            root.isBluetoothClicked = false
+                            bluetoothLoader.active = false
+                            rowTimer.start()
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     NumberAnimation on opacity{
         from: 0
@@ -103,9 +239,10 @@ Item{
 
             }
         }
-        
+
         Rectangle{
-            Layout.preferredHeight: root.isWifiClicked || root.isBluetoothClicked ? row.implicitHeight + 20 + 200 : row.implicitHeight + 20
+            id: controleRectangle
+            Layout.preferredHeight: root.isWifiClicked || root.isBluetoothClicked ? colu.implicitHeight + 20 : colu.implicitHeight + 20
             Layout.fillWidth: true
             color: Colors.surfaceContainer
             radius: 20
@@ -117,167 +254,299 @@ Item{
                 }
             }
 
-            RowLayout{
-                id: row
+            ColumnLayout{
+                id: colu
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
-                visible: !root.isWifiClicked && !root.isBluetoothClicked
 
-                ColumnLayout{
-                    Layout.fillHeight: true
+                RowLayout{
+                    Layout.fillWidth: true
                     spacing: 10
-                    Rectangle{
-                        Layout.preferredHeight: 60
-                        Layout.fillWidth: true
-                        radius: 20
-                        color: Colors.surfaceContainerHighest
 
-                        RowLayout{
-                            anchors.fill: parent
-                            anchors.margins: 5
+                    ColumnLayout{
+                        Layout.fillHeight: true
+                        spacing: 10
+                        Rectangle{
+                            id: wifi
+                            Layout.preferredHeight: 60
+                            Layout.fillWidth: true
+                            radius: 20
+                            color: Colors.surfaceContainerHighest
+                            opacity: root.isWifiClicked ? 0 : 1
 
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.preferredWidth: 60
-                                radius: 15
-                                color: Colors.primary
-
-                                CustomIconImage{
-                                    anchors.centerIn: parent
-                                    size: 28
-                                    icon: ServiceWifi.icon
-                                    color: ServiceWifi.wifiEnabled ? Colors.primaryText : Colors.surfaceVariantText
-                                }
+                            Behavior on opacity {
+                                NumberAnimation { duration: 300 }
                             }
 
-                            ColumnLayout{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                                spacing: 5
-                                CustomText{
-                                    Layout.fillWidth: true
-                                    content: ServiceWifi.connectionType
-                                    size: 14
-                                    weight: 700
-                                }
-
-                                CustomText{
-                                    Layout.fillWidth: true
-                                    content: ServiceWifi.currentSSID || "no device"
-                                    size: 12
-                                    weight: 600
-                                    color: Colors.outline
-                                }
-                            }
-                        }
-                        MouseArea{
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-
-                            onClicked:{
-                                root.isWifiClicked = true
-                            }
-                        }
-                    
-                    }
-                    Rectangle{
-                        Layout.preferredHeight: 60
-                        Layout.fillWidth: true
-                        radius: 20
-                        color: Colors.surfaceContainerHighest
-
-                        RowLayout{
-                            anchors.fill: parent
-                            anchors.margins: 5
-
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.preferredWidth: 60
-                                radius: 15
-                                color: Colors.primary
-
-
-                                CustomIconImage{
-                                    anchors.centerIn: parent
-                                    size: 28
-                                    icon: ServiceBluetooth.connectedDevices > 0 ? "bluetooth-on" : "bluetooth-off"
-                                    color: Colors.primaryText
-                                }
-                            }
-
-                            ColumnLayout{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                                spacing: 5
-                                CustomText{
-                                    Layout.fillWidth: true
-                                    content: "Bluetooth"
-                                    size: 14
-                                    weight: 700
-                                }
-
-                                CustomText{
-                                    Layout.fillWidth: true
-                                    content: ServiceBluetooth.connectedDevices + " connected"
-                                    size: 12
-                                    weight: 600
-                                    color: Colors.outline
-                                }
-                            }
-                        }
-                        MouseArea{
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-
-                            onClicked:{
-                                root.isBluetoothClicked = true
-                            }
-                        }
-                    }
-
-                    Rectangle{
-                        Layout.preferredHeight: 40
-                        Layout.fillWidth: true
-                        radius: 20
-                        color: Colors.surfaceContainerHighest
-
-                        RowLayout{
-                            anchors.fill: parent
-                            anchors.margins: 5
-
-                            Repeater{
-                                model: ServiceUPower.powerProfiles
+                            RowLayout{
+                                anchors.fill: parent
+                                anchors.margins: 5
 
                                 Rectangle{
-                                    property bool active: ServiceUPower.powerProfile === index
                                     Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    radius: 20
-                                    color: active ? Colors.primary : profileArea.containsMouse ? Qt.alpha(Colors.primary, 0.5) :"transparent"
+                                    Layout.preferredWidth: 60
+                                    radius: 15
+                                    color: Colors.primary
 
                                     CustomIconImage{
                                         anchors.centerIn: parent
-                                        size: 20
-                                        icon: modelData.icon
-                                        color: parent.active ? Colors.primaryText : Colors.surfaceVariantText
+                                        size: 28
+                                        icon: ServiceWifi.icon
+                                        color: ServiceWifi.wifiEnabled ? Colors.primaryText : Colors.surfaceText
+                                    }
+                                }
+
+                                ColumnLayout{
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    spacing: 5
+                                    CustomText{
+                                        Layout.fillWidth: true
+                                        content: ServiceWifi.connectionType
+                                        size: 14
+                                        weight: 700
                                     }
 
-                                    Behavior on color{
-                                        ColorAnimation {
-                                            duration: 200
-                                        }
+                                    CustomText{
+                                        Layout.fillWidth: true
+                                        content: ServiceWifi.currentSSID || "no device"
+                                        size: 12
+                                        weight: 600
+                                        color: Colors.outline
+                                    }
+                                }
+                            }
+
+                            MouseArea{
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+
+                                onClicked:{
+                                    root.parentPos = controleRectangle.mapToItem(root, 0, 0)
+                                    root.pos = wifi.mapToItem(root, 0, 0)
+                                    root.isOverlayClicked = true
+                                    root.isWifiClicked = true
+                                }
+                            }
+                        }
+                        Rectangle{
+                            id: bluetooth
+                            Layout.preferredHeight: 60
+                            Layout.fillWidth: true
+                            radius: 20
+                            color: Colors.surfaceContainerHighest
+
+                            RowLayout{
+                                anchors.fill: parent
+                                anchors.margins: 5
+
+                                Rectangle{
+                                    Layout.fillHeight: true
+                                    Layout.preferredWidth: 60
+                                    radius: 15
+                                    color: Colors.primary
+
+
+                                    CustomIconImage{
+                                        anchors.centerIn: parent
+                                        size: 28
+                                        icon: ServiceBluetooth.connectedDevices > 0 ? "bluetooth-on" : "bluetooth-off"
+                                        color: Colors.primaryText
+                                    }
+                                }
+
+                                ColumnLayout{
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    spacing: 5
+                                    CustomText{
+                                        Layout.fillWidth: true
+                                        content: "Bluetooth"
+                                        size: 14
+                                        weight: 700
                                     }
 
-                                    MouseArea{
-                                        id: profileArea
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        hoverEnabled: true
-                                        onClicked:{
-                                            ServiceUPower.setPowerProfile(index)
+                                    CustomText{
+                                        Layout.fillWidth: true
+                                        content: ServiceBluetooth.connectedDevices + " connected"
+                                        size: 12
+                                        weight: 600
+                                        color: Colors.outline
+                                    }
+                                }
+                            }
+                            MouseArea{
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+
+                                onClicked:{
+                                    root.parentPos = controleRectangle.mapToItem(root, 0, 0)
+                                    root.pos = bluetooth.mapToItem(root, 0, 0)
+                                    root.isOverlayClicked = true
+                                    root.isBluetoothClicked = true
+                                    //colu.visible = false
+                                }
+                            }
+                        }
+
+                        Rectangle{
+                            Layout.preferredHeight: 40
+                            Layout.fillWidth: true
+                            radius: 20
+                            color: Colors.surfaceContainerHighest
+
+                            RowLayout{
+                                anchors.fill: parent
+                                anchors.margins: 5
+
+                                Repeater{
+                                    model: ServiceUPower.powerProfiles
+
+                                    Rectangle{
+                                        property bool active: ServiceUPower.powerProfile === index
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        radius: 20
+                                        color: active ? Colors.primary : profileArea.containsMouse ? Qt.alpha(Colors.primary, 0.5) :"transparent"
+
+                                        CustomIconImage{
+                                            anchors.centerIn: parent
+                                            size: 20
+                                            icon: modelData.icon
+                                            color: parent.active ? Colors.primaryText : Colors.surfaceText
+                                        }
+
+                                        Behavior on color{
+                                            ColorAnimation {
+                                                duration: 200
+                                            }
+                                        }
+
+                                        MouseArea{
+                                            id: profileArea
+                                            anchors.fill: parent
+                                            cursorShape: Qt.PointingHandCursor
+                                            hoverEnabled: true
+                                            onClicked:{
+                                                ServiceUPower.setPowerProfile(index)
+                                            }
                                         }
                                     }
+                                }
+
+                            }
+                        }
+                    }
+
+                    CustomSlider{
+                        Layout.fillHeight: true
+                        icon: "volume"
+                        progress: ServicePipewire.volume
+                        onProgressChanged:{
+                            ServicePipewire.updateVolume(progress)
+                        }
+
+                    }
+                    CustomSlider{
+                        Layout.fillHeight: true
+                        icon: "brightness"
+                        progress: ServiceBrightness.getBrightness(screen)
+                        // onProgressChanged:{
+                        //     ServiceBrightness.setBrightness(screen, progress)
+                        // }
+
+                    }
+                }
+            }
+        }
+
+        Rectangle{
+            Layout.fillWidth: true
+            Layout.preferredHeight: 100
+            color: Colors.surfaceContainer
+            radius: 20
+
+            ColumnLayout{
+                anchors.fill: parent
+                anchors.margins: 10
+                spacing: 10
+
+                RowLayout{
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    spacing: 4
+                    Repeater{
+                        model: Settings.themeModes
+
+                        delegate: Rectangle{
+                            id: themeIcon
+                            Layout.fillHeight: true
+                            Layout.preferredWidth: row.implicitWidth + 20
+                            required property int index
+                            required property var modelData
+                            property bool active: Settings.activeTheme === modelData.name
+                            property bool leftmost: index === 0
+                            property bool rightmost: index === Settings.themeModes.length - 1
+
+                            color: active ? Colors.primary : themeArea.containsMouse ? Qt.alpha(Colors.primary, 0.5) : Colors.surfaceContainerHighest
+
+
+                            onYChanged: {
+                                if (index === 0) {
+                                    button.leftmost = true
+                                } else {
+                                    var prev = flow.children[index - 1]
+                                    var thisIsOnNewLine = prev && prev.y !== button.y
+                                    button.leftmost = thisIsOnNewLine
+                                    prev.rightmost = thisIsOnNewLine
+                                }
+                            }
+
+
+                            topLeftRadius: (active || leftmost) ? height / 2 : 5
+                            topRightRadius: (active || rightmost) ? height / 2 : 5
+                            bottomLeftRadius: (active || leftmost) ? height / 2 : 5
+                            bottomRightRadius: (active || rightmost) ? height / 2 : 5
+
+
+                            Behavior on topLeftRadius {
+                                NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
+                            }
+                            Behavior on topRightRadius {
+                                NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
+                            }
+                            Behavior on bottomLeftRadius {
+                                NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
+                            }
+                            Behavior on bottomRightRadius {
+                                NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
+                            }
+                            Behavior on color {
+                                ColorAnimation { duration: 100 }
+                            }
+                            RowLayout{
+                                anchors.centerIn: parent
+                                id: row
+                                CustomIconImage{
+                                    icon: modelData.icon
+                                    size: 18
+                                    color: themeIcon.active ? Colors.primaryText : Colors.surfaceText
+                                }
+                                CustomText{
+                                    content: modelData.name
+                                    size: 13
+                                    color: themeIcon.active ? Colors.primaryText : Colors.surfaceText
+                                }
+                            }
+
+                            MouseArea{
+                                id: themeArea
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                hoverEnabled: true
+                                onClicked:{
+                                    Settings.setActiveTheme(modelData.name)
                                 }
                             }
 
@@ -285,40 +554,90 @@ Item{
                     }
                 }
 
-                CustomSlider{
-                    Layout.fillHeight: true
-                    icon: "volume"
-                    progress: ServicePipewire.volume
-                    onProgressChanged:{
-                        ServicePipewire.updateVolume(progress)
+                RowLayout{
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    spacing: 4
+                    Repeater{
+                        model: Settings.quickIcons
+                        delegate: Rectangle{
+                            property bool isMute:false
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: isMute ? Colors.primary : iconsArea.containsMouse ? Qt.alpha(Colors.primary, 0.5) : Colors.surfaceContainerHighest
+                            required property int index
+                            required property var modelData
+                            property bool active: isMute
+                            property bool leftmost: index === 0
+                            property bool rightmost: index === Settings.quickIcons.length - 1
+
+
+
+                            onYChanged: {
+                                if (index === 0) {
+                                    button.leftmost = true
+                                } else {
+                                    var prev = flow.children[index - 1]
+                                    var thisIsOnNewLine = prev && prev.y !== button.y
+                                    button.leftmost = thisIsOnNewLine
+                                    prev.rightmost = thisIsOnNewLine
+                                }
+                            }
+
+
+                            topLeftRadius: (active || leftmost) ? height / 2 : 5
+                            topRightRadius: (active || rightmost) ? height / 2 : 5
+                            bottomLeftRadius: (active || leftmost) ? height / 2 : 5
+                            bottomRightRadius: (active || rightmost) ? height / 2 : 5
+
+
+                            Behavior on topLeftRadius {
+                                NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
+                            }
+                            Behavior on topRightRadius {
+                                NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
+                            }
+                            Behavior on bottomLeftRadius {
+                                NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
+                            }
+                            Behavior on bottomRightRadius {
+                                NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
+                            }
+                            Behavior on color {
+                                ColorAnimation { duration: 100 }
+                            }
+
+
+                            CustomIconImage{
+                                anchors.centerIn: parent
+                                icon: parent.isMute ? modelData.iconActive : modelData.icon
+                                size: 18
+                                color: parent.isMute? Colors.primaryText : Colors.surfaceText
+                            }
+
+
+                            MouseArea{
+                                id: iconsArea
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                hoverEnabled: true
+                                onClicked:{
+                                    parent.isMute = !parent.isMute
+                                }
+                            }
+                        }
                     }
+                }
 
-                }
-                CustomSlider{
-                    Layout.fillHeight: true
-                    icon: "brightness"
-                    progress: 0.5
-                }
-            }
 
-            Loader{
-                active: root.isWifiClicked
-                anchors.fill: parent
-                sourceComponent: Wifi{
-                    onBackClicked: root.isWifiClicked = false
-                }
-            }
-
-            Loader{
-                active: root.isBluetoothClicked
-                anchors.fill: parent
-                sourceComponent: Bluetooth{
-                    onBackClicked: root.isBluetoothClicked = false
-                }
             }
         }
-    }
 
-    
-    
+        MusicPlayer{
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            //Layout.preferredHeight: 100
+        }
+
+    }
 }

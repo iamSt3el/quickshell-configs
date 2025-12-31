@@ -14,6 +14,15 @@ ColumnLayout{
     spacing: 0
     signal backClicked
 
+    opacity: 0
+
+    NumberAnimation on opacity{
+        from: 0
+        to: 1
+        duration: 200
+        running: true
+    }
+
     RowLayout{
         Layout.fillWidth: true
         Layout.margins: 5
@@ -140,7 +149,7 @@ ColumnLayout{
                     CustomIconImage {
                         implicitSize: 20
                         icon: modelData.icon
-                        color: modelData.state === 1 ? Colors.primaryText : Colors.surfaceVariantText
+                        color: modelData.state === 1 ? Colors.primaryText : Colors.surfaceText
                     }
 
 
@@ -153,7 +162,7 @@ ColumnLayout{
                             Layout.fillHeight: true
                             size: 12
                             content: modelData.name
-                            color: modelData.state === 1 ? Colors.primaryText : Colors.surfaceVariantText
+                            color: modelData.state === 1 ? Colors.primaryText : Colors.surfaceText
                         }
 
                         CustomText{
@@ -174,17 +183,17 @@ ColumnLayout{
                             let level = modelData.battery
                             if(level === 1){
                                 return "battery-full"
-                            }else if(level < 1 && level > 0.9){
+                            }else if(level < 1 && level >= 0.9){
                                 return "battery-6"
-                            }else if(level < 0.9 && level > 0.7){
+                            }else if(level < 0.9 && level >= 0.7){
                                 return "battery-5"
-                            }else if(level < 0.7 && level > 0.5){
+                            }else if(level < 0.7 && level >= 0.5){
                                 return "battery-4"
-                            }else if(level < 0.5 && level > 0.3){
+                            }else if(level < 0.5 && level >= 0.3){
                                 return "battery-3"
-                            }else if(level < 0.3 && level > 0.2){
+                            }else if(level < 0.3 && level >= 0.2){
                                 return "battery-2"
-                            }else if(level < 0.2 && level > 0){
+                            }else if(level < 0.2 && level >= 0){
                                 return "battery-1"
                             }
                             return "battery-0"
@@ -192,7 +201,7 @@ ColumnLayout{
                         sourceComponent: CustomIconImage {
                             size: 18
                             source: IconUtil.getSystemIcon(parent.icon)
-                            color: modelData.state === 1 ? Colors.primaryText : Colors.surfaceVariantText
+                            color: modelData.state === 1 ? Colors.primaryText : Colors.surfaceText
 
                         }
                     }

@@ -6,6 +6,7 @@ import Quickshell.Hyprland
 import qs.modules.utils
 import qs.modules.settings
 import qs.modules.services
+import qs.modules.customComponents
 
 
 Item{
@@ -28,7 +29,11 @@ Item{
             radius: width
             color: Settings.layoutColor
             anchors.centerIn: parent
+
+
+
             IconImage{
+                visible: !ServiceTools.isRecording
                 implicitSize: 30
                 source: IconUtil.getSystemIcon("close")
                 anchors.centerIn: parent
@@ -49,8 +54,13 @@ Item{
             MouseArea{
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                onClicked: toolWidgets.toogled()
-
+                onClicked: {
+                    if (ServiceTools.isRecording) {
+                        ServiceTools.stopRecording()
+                    } else {
+                        toolWidgets.toogled()
+                    }
+                }
             }
         }
         
@@ -146,20 +156,21 @@ Item{
                                     }
                                 }
 
-                                MouseArea{
+                                CustomMouseArea{
                                     id: optionIconArea
-                                    anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
-                                    onEntered:{
-                                        parent.scale = 1.2
-                                    }
-                                    onExited:{
-                                        parent.scale = 1
-                                    }
 
                                     onClicked:{
-                                        if(modelData.command){
+                                        // Handle recording options specially
+                                        var parentTool = ServiceTools.tools[icon.iconIndex]
+                                        if(parentTool.name === "Record"){
+                                            var withAudio = modelData.audio || false
+                                            ServiceTools.toggleRecording(modelData.name, withAudio)
+                                            toolWidgets.toogled()
+                                        }
+                                        // Handle other commands
+                                        else if(modelData.command){
                                             toolWidgets.toogled()
                                             Quickshell.execDetached(modelData.command)
                                         }
@@ -200,9 +211,8 @@ Item{
                     }
                 }
 
-                MouseArea{
+                CustomMouseArea{
                     id: iconArea
-                    anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
 

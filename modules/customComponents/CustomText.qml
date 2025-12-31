@@ -9,7 +9,7 @@ Text{
     property int size: 12
     verticalAlignment: Text.AlignVCenter
     property int weight: 800
-    property string customColor: Colors.surfaceVariantText
+    property string customColor: Colors.surfaceText
     property string family: Settings.defaultFont
     renderType: Text.NativeRendering
     elide: Text.ElideRight
@@ -17,4 +17,11 @@ Text{
     font.pixelSize: size
     font.weight: weight
     font.family: family
+
+
+    Behavior on color{
+        ColorAnimation{
+            duration: 200
+        }
+    }
 }
