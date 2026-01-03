@@ -102,8 +102,6 @@ PanelWindow{
         // }
     }
 
-    //Test{}
-    
     //
     // Rectangle{
     //     id: demo
@@ -143,8 +141,8 @@ PanelWindow{
     property bool isClipboardClicked: false
     property bool isNotificationVisible: !ServiceNotification.muted && !utility.isClicked && notificationLoader.displayCount > 0
 
-    Shape{
-        preferredRendererType: Shape.CurveRenderer   
+    Item{
+        anchors.fill: parent
         layer.enabled: true
         layer.effect: MultiEffect{
             shadowEnabled: true
@@ -153,201 +151,113 @@ PanelWindow{
             shadowColor: Qt.alpha(Colors.shadow, 1)
         }
 
-        ShapePath{
-            fillColor: Settings.layoutColor
-            //fillColor: "transparent"
-            strokeWidth: 0
-            //strokeColor: Colors.outline
-            startX: 0
-            startY: 0
-            PathLine{ x: layout.width; y: 0 }
-            PathLine{ x: layout.width; y: layout.height }
-            PathLine{ x: 0; y: layout.height }
-            PathLine{ x: 0; y: 0 }
+        Shape{
+            preferredRendererType: Shape.CurveRenderer   
 
-            PathMove{ x: workspaces.container.width; y: 20 }
+            ShapePath{
+                strokeWidth: 0
+                strokeColor: "transparent"
+                fillColor: Settings.layoutColor
+                //fillColor: "transparent"
+                startX: 0
+                startY: 0
 
-            PathArc{
-                relativeX: 20
-                relativeY: -12
-                radiusX: 18
-                radiusY: 12
+                PathLine{
+                    relativeX: 0
+                    relativeY: workspaces.implicitHeight + Appearance.size.arcHeight
+                }
+
+                PathArc{
+                    relativeX: Appearance.size.arcWidth
+                    relativeY: -Appearance.size.arcHeight
+                    radiusX: Appearance.rounding.arcX
+                    radiusY: Appearance.rounding.arcY
+                }
+
+                PathLine{
+                    relativeX: 0
+                    relativeY: -workspaces.implicitHeight + (Appearance.size.arcHeight + Appearance.size.lineWidth)
+                }
+
+                PathLine{
+                    relativeX: workspaces.implicitWidth - Appearance.size.arcWidth
+                    relativeY: 0
+                }
+
+                PathArc{
+                    relativeX: Appearance.size.arcWidth
+                    relativeY: -Appearance.size.arcHeight
+                    radiusX: Appearance.rounding.arcX
+                    radiusY: Appearance.rounding.arcY
+                }
+
+                PathLine{
+                    x: clock.x - Appearance.size.arcWidth
+                    y: clock.y + Appearance.size.lineWidth
+                }
+
+                PathArc{
+                    relativeX: Appearance.size.arcWidth
+                    relativeY: Appearance.size.arcHeight
+                    radiusX: Appearance.rounding.arcX
+                    radiusY: Appearance.rounding.arcY
+                }
+
+                PathLine{
+                    relativeX: clock.implicitWidth
+                    relativeY: 0
+                }
+
+                PathArc{
+                    relativeX: Appearance.size.arcWidth
+                    relativeY: -Appearance.size.arcHeight
+                    radiusX: Appearance.rounding.arcX
+                    radiusY: Appearance.rounding.arcY
+                }
+
+
+                PathLine{
+                    x: utility.x - Appearance.size.arcWidth
+                    y: utility.y + Appearance.size.lineWidth
+                }
+
+                PathArc{
+                    relativeX: Appearance.size.arcWidth
+                    relativeY: Appearance.size.arcHeight
+                    radiusX: Appearance.rounding.arcX
+                    radiusY: Appearance.rounding.arcY
+                }
+
+                PathLine{
+                    relativeX: utility.width - Appearance.size.arcWidth
+                    relativeY: 0
+                }
+
+                PathLine{
+                    relativeX: 0
+                    relativeY: utility.height - (Appearance.size.arcHeight + Appearance.size.lineWidth)
+                }
+
+                PathArc{
+                    relativeX: Appearance.size.arcWidth
+                    relativeY: Appearance.size.arcHeight
+                    radiusX: Appearance.rounding.arcX
+                    radiusY: Appearance.rounding.arcY
+                }
+
+                PathLine{
+                    relativeX: 0
+                    relativeY: -utility.height - (Appearance.size.arcHeight)
+                }
+
+                PathLine{
+                    x: 0
+                    y: 0
+                }
             }
-
-            PathLine{
-                x: clock.x - 20 
-                y: 8
-            }
-
-            PathArc{
-                relativeX: 20
-                relativeY: 12
-                radiusX: 18
-                radiusY: 12
-            }
-
-            PathLine{
-                relativeX: clock.container.width
-                relativeY: 0
-            }
-
-            PathArc{
-                relativeX: 20
-                relativeY: -12
-                radiusX: 18
-                radiusY: 12
-            }
-
-            PathLine{
-                x: utility.x - 20
-                relativeY: 0
-            }
-
-            PathArc{
-                relativeX: 20
-                relativeY: 12
-                radiusX: 18
-                radiusY: 12
-            }
-
-            PathLine{
-                relativeX: utility.width - 28
-                relativeY: 0
-            }
-            PathLine{
-                relativeX: 0
-                relativeY: utility.height - 20
-            }
-
-            PathArc{
-                relativeX: 20
-                relativeY: 12
-                radiusX: 18
-                radiusY: 12
-            }
-
-            // PathLine{
-            //     relativeX: 0
-            //     relativeY: layout.height - utility.height - 32
-            // }
-
-            PathLine{
-                relativeX: 0
-                relativeY: layout.isNotificationVisible ? layout.height - notificationLoader.height - utility.height - 24 : layout.height - utility.height - 32
-            }
-
-            PathArc{
-                relativeX: -20
-                relativeY: 12
-                radiusX: 18
-                radiusY: 12
-            }
-
-            PathLine{
-                relativeX: 0
-                relativeY: layout.isNotificationVisible ? notificationLoader.height - 20 : 0
-            }
-
-            PathLine{
-                relativeX: layout.isNotificationVisible ? -notificationLoader.width + 26 : 0
-                relativeY: 0
-            }
-
-            PathArc{
-                relativeX: -20
-                relativeY: layout.isNotificationVisible ? 12 : 0
-                radiusX: 18
-                radiusY : layout.isNotificationVisible ? 12 : 0 
-            }
-
-            PathLine{
-                x: clipboardLoader.x + clipboardLoader.width + 20
-                y: layout.height - 8
-            }
-            PathArc{
-                relativeX: -20
-                relativeY: - Math.max(0, Math.min(12, (clipboardLoader.height - 12) / 588 * 12))
-                radiusX: 18
-                radiusY: Math.max(0, Math.min(12, (clipboardLoader.height - 12) / 588 * 12))
-            }
-
-            PathLine{
-                relativeX: -clipboardLoader.width
-                relativeY: 0
-            }
-
-            PathArc{
-                relativeX: -20
-                relativeY: Math.max(0, Math.min(12, (clipboardLoader.height - 12) / 588 * 12))
-                radiusX: 18
-                radiusY: Math.max(0, Math.min(12, (clipboardLoader.height - 12) / 588 * 12))
-            }
-
-
-
-            PathLine{
-                x: 8 + 12 + 6
-                y: layout.height - 8
-            }
-
-            PathArc{
-                relativeX: -20
-                relativeY: -12
-                radiusX: 18
-                radiusY: 12
-            }
-
-            PathLine{
-                x: appLauncher.x + 8 
-                y: appLauncher.y + appLauncher.height + 12
-            }
-
-            PathArc{
-                x: appLauncher.x + 8 + Math.max(0, Math.min(20, (appLauncher.width - 8) / 292 * 20))
-                y: appLauncher.y + appLauncher.height 
-                radiusX: Math.max(0, Math.min(18, (appLauncher.width - 8) / 292 * 18))
-                radiusY: 12
-            }
-
-
-
-
-            PathLine{
-                x: appLauncher.x + 8 + Math.max(0, Math.min(20, (appLauncher.width - 8) / 292 * 20))
-                y: appLauncher.y 
-            }
-
-            PathArc{
-                x: appLauncher.x + 8
-                y: appLauncher.y - 12
-                radiusX: Math.max(0, Math.min(18, (appLauncher.width - 8) / 292 * 18))
-                radiusY: 12
-            }
-
-
-            PathLine{
-                x: workspaces.x + 8
-                y: workspaces.y + workspaces.container.height + 12
-            }
-
-            PathArc{
-                relativeX: 20
-                relativeY: -12
-                radiusX: 18
-                radiusY: 12
-            }
-
-            PathLine{
-                relativeX: 0
-                relativeY: -20
-            }
-
-            PathLine{
-                relativeX: workspaces.container.width - 30
-                relativeY: 0
-            }
-
         }
+
+
 
         Workspaces{
             id: workspaces

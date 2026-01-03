@@ -16,6 +16,7 @@ Item{
     property bool isMenuOpen: true
     property var currentPage: 0
     signal settingClosed
+    scale: 0.7
 
     opacity: 0
 
@@ -23,6 +24,12 @@ Item{
         from: 0
         to: 1
         duration: 200
+        running: true
+    }
+    NumberAnimation on scale{
+        from: 0.7
+        to: 1
+        duration: 100
         running: true
     }
 

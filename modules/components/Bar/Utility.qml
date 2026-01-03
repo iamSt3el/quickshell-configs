@@ -11,8 +11,8 @@ import qs.modules.customComponents
 
 Item{
     id: utility
-    width: utility.isClicked ? 300 : utility.isNotificationClicked ? 350 : row.width + 20
-    height: utility.isClicked ? 550 : utility.isNotificationClicked ? 600 : 40
+    implicitWidth: utility.isClicked ? 300 : utility.isNotificationClicked ? 350 : row.width + 20
+    implicitHeight: utility.isClicked ? 550 : utility.isNotificationClicked ? 600 : 40
     anchors.right: parent.right
     property alias container: container
     property bool isClicked: false 
@@ -21,13 +21,13 @@ Item{
     property bool isBluetoothClicked: false
     property bool isNotificationClicked: false 
 
-    Behavior on width{
+    Behavior on implicitWidth{
         NumberAnimation{
             duration: 300
             easing.type: Easing.OutQuad
         }
     }
-    Behavior on height{
+    Behavior on implicitHeight{
         NumberAnimation{
             duration: 300
             easing.type: Easing.OutQuad
@@ -93,6 +93,14 @@ Item{
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 10
+
+            Loader{
+                active: ServiceSystemTray.active
+                visible: active
+                Layout.fillWidth: true
+                sourceComponent:SystemTray{
+                }
+            }
 
             Rectangle{
                 radius: 10

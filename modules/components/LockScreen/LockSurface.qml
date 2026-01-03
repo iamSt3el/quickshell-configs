@@ -40,7 +40,7 @@ Rectangle {
         layer.enabled: true
         layer.effect: MultiEffect {
             blurEnabled: true
-            blur: 0.1
+            blur: 0.2
             blurMax: 40
             autoPaddingEnabled: false
         }
@@ -60,7 +60,6 @@ Rectangle {
                 style: Text.Raised
                 styleColor: Colors.outline
                 font.bold: false
-
 
             }
 

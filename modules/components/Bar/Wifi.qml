@@ -358,7 +358,7 @@ ColumnLayout{
 
 
                     Item{
-                        Layout.preferredWidth: wifiArea.containsMouse ? lockLoader.implicitWidth  + rightLoader.implicitWidth : lockLoader.implicitWidth
+                        Layout.preferredWidth: row.implicitWidth 
                         Layout.fillHeight: true
                         
                         Behavior on Layout.preferredWidth{
@@ -368,7 +368,9 @@ ColumnLayout{
                             }
                         }
                         RowLayout{
+                            id: row
                             anchors.fill: parent
+                            spacing: 10
                             Loader{
                                 id: lockLoader
                                 active: modelData.isSecure
@@ -385,25 +387,32 @@ ColumnLayout{
                                 active: wifiArea.containsMouse
                                 visible: active
 
-                                sourceComponent: CustomIconImage {
-                                    size: 18
-                                    icon: "right"
-                                    color: modelData.ssid === ServiceWifi.currentSSID ? Colors.primaryText : Colors.surfaceText
+                                sourceComponent: Rectangle{ 
+                                    implicitWidth: 20
+                                    implicitHeight: 20
+                                    radius: height / 2
+                                    color: modelData.ssid === ServiceWifi.currentSSID ? Colors.primaryText :  Qt.alpha(Colors.primaryText, 0.5)
+                                    CustomIconImage {
+                                        anchors.centerIn: parent
+                                        size: 18
+                                        icon: "right"
+                                        //color: modelData.ssid === ServiceWifi.currentSSID ? Colors.primaryText : Colors.surfaceText
 
-                                    NumberAnimation on opacity{
-                                        from: 0
-                                        to: 1
-                                        duration: 300
-                                        running: true
-                                    }
+                                        NumberAnimation on opacity{
+                                            from: 0
+                                            to: 1
+                                            duration: 300
+                                            running: true
+                                        }
 
-                                    MouseArea{
-                                        id: wifiDetails
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked:{
-                                            root.isWifiSettingClicked = true
-                                            root.wifiDetailsData = modelData
+                                        MouseArea{
+                                            id: wifiDetails
+                                            anchors.fill: parent
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked:{
+                                                root.isWifiSettingClicked = true
+                                                root.wifiDetailsData = modelData
+                                            }
                                         }
                                     }
                                 }

@@ -8,12 +8,13 @@ import qs.modules.utils
 
 
 IconImage {
+    property bool isColor: true
     property string icon
     property var color: Colors.surfaceText
     property var size
     implicitSize: size
     source: IconUtil.getSystemIcon(icon)
-    layer.enabled: true
+    layer.enabled: isColor
     layer.effect: MultiEffect {
         colorization: 1.0
         colorizationColor: color
@@ -22,7 +23,7 @@ IconImage {
                 duration: 200
             }
         }
-        brightness: 0
+        brightness: 0.2
     } 
 }
 

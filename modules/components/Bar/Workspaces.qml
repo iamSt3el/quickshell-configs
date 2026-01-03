@@ -11,6 +11,8 @@ import Quickshell.Widgets
 Item{
     id: workspaces
     property alias container: container
+    implicitWidth: container.width
+    implicitHeight: container.height
 
     // Get monitor-specific workspaces
     property var assignedWorkspaces: Settings.getWorkspacesForMonitor(Hyprland.monitorFor(layout.screen).name)

@@ -9,8 +9,8 @@ import qs.modules.customComponents
 
 Item{
     id: clock
-    width: container.width
-    height: container.height
+    implicitWidth: container.width
+    implicitHeight: container.height
     anchors.horizontalCenter: parent.horizontalCenter
     property alias container: container
 
