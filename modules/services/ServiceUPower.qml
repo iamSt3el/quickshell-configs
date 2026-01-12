@@ -26,11 +26,22 @@ Singleton{
     ]
     property var powerProfile: PowerProfiles.profile
     property string powerProfileIcon: powerProfile === 0 ? "leaf" : "balance" 
-    property var powerLevel: UPower.displayDevice.percentage
+    property real powerLevel: UPower.displayDevice.percentage
     property bool isCharging: UPowerDeviceState.Charging === UPower.displayDevice.state 
-
+    property real health: UPower.displayDevice.energyCapacity / 52.976
+    property string timeToFull: formatTime(UPower.displayDevice.timeToFull)
+    property real changeRate: UPower.displayDevice.changeRate
     function setPowerProfile(value){
         PowerProfiles.profile = value
+    }
+
+    function formatTime(seconds) {
+        var h = Math.floor(seconds / 3600);
+        var m = Math.floor((seconds % 3600) / 60);
+        if (h > 0)
+        return `${h}h, ${m}m`;
+        else
+        return `${m}m`;
     }
 }
 

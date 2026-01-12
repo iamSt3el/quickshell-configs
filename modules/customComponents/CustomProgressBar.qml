@@ -92,12 +92,12 @@ ProgressBar {
             radius: 20
             color: root.trackColor
         }
-        // Rectangle { // Stop point
-        //     anchors.right: parent.right
-        //     width: valueBarGap
-        //     height: valueBarGap
-        //     radius: 20 
-        //     color: root.highlightColor
-        // }
+        Rectangle { // Stop point
+            anchors.right: parent.right
+            width: valueBarGap
+            height: valueBarGap
+            radius: 20 
+            color: root.highlightColor
+        }
     }
 }

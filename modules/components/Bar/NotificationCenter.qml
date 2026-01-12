@@ -15,6 +15,25 @@ Rectangle{
 
     signal notificationCenterClosed
 
+
+    opacity:0
+    scale: 0.8
+
+    NumberAnimation on opacity{
+        from: 0
+        to: 1
+        duration: 400
+        running: true
+    }
+
+
+    NumberAnimation on scale{
+        from: 0.8
+        to: 1
+        duration: 400
+        running: true
+    }
+
     ColumnLayout{
         anchors.fill: parent
         anchors.margins: 10
@@ -139,7 +158,7 @@ Rectangle{
                 Layout.preferredHeight: 30
                 radius: 10
                 color: clearArea.containsMouse ? Colors.primary : Colors.surfaceContainerHigh
-                
+
                 Behavior on color{
                     ColorAnimation{
                         duration: 200

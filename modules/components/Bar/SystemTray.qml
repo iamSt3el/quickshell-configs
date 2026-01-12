@@ -36,7 +36,8 @@ Rectangle{
     RowLayout{
         id: row
         anchors.centerIn: parent
-        anchors.margins: 5
+        anchors.margins: 10
+        spacing: 10
         Repeater{
             model: ServiceSystemTray.items
             delegate:CustomIconImage{
@@ -44,9 +45,9 @@ Rectangle{
                 source: modelData.icon
                 size: 16
 
-                MouseArea{
+                CustomMouseArea{
                     id: iconArea
-                    anchors.fill: parent
+                    hoverEnabled: true
                     acceptedButtons: Qt.RightButton | Qt.LeftButton
                     cursorShape: Qt.PointingHandCursor
 
@@ -57,7 +58,7 @@ Rectangle{
                             //modelData.display(layout, utility.x, utility.height)
                         }
                         if(mouse.button === Qt.LeftButton){
-                            //modelData.activate()
+                            modelData.activate()
                         }
                     }
                 }

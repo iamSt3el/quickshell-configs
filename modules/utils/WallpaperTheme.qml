@@ -7,50 +7,50 @@ Item {
     id: colorProvider
     
     // Material You color properties (safe names to avoid QML conflicts)
-    property string primary: "#ffb4a9"
-    property string primaryText: "#690002"
-    property string primaryContainer: "#ff5545"
-    property string primaryContainerText: "#000000"
+    property string primary: "#ffcf72"
+    property string primaryText: "#412d00"
+    property string primaryContainer: "#ebb12d"
+    property string primaryContainerText: "#3d2a00"
     
-    property string secondary: "#ffb4a9"
-    property string secondaryText: "#690002"
-    property string secondaryContainer: "#901913"
-    property string secondaryContainerText: "#ffdcd7"
+    property string secondary: "#e3c287"
+    property string secondaryText: "#412d00"
+    property string secondaryContainer: "#5c4616"
+    property string secondaryContainerText: "#ffe0a9"
     
-    property string tertiary: "#ffb95d"
-    property string tertiaryText: "#462a00"
-    property string tertiaryContainer: "#c58321"
-    property string tertiaryContainerText: "#000000"
+    property string tertiary: "#c7e169"
+    property string tertiaryText: "#2a3400"
+    property string tertiaryContainer: "#acc550"
+    property string tertiaryContainerText: "#273100"
     
     property string error: "#ffb4ab"
     property string errorText: "#690005"
     property string errorContainer: "#93000a"
     property string errorContainerText: "#ffdad6"
     
-    property string surface: "#200f0c"
-    property string surfaceText: "#fedbd5"
-    property string surfaceVariant: "#5e3f3b"
-    property string surfaceVariantText: "#e8bcb6"
+    property string surface: "#17130a"
+    property string surfaceText: "#ece1d3"
+    property string surfaceVariant: "#4f4534"
+    property string surfaceVariantText: "#d3c5ae"
     
-    property string outline: "#ae8782"
-    property string outlineVariant: "#5e3f3b"
+    property string outline: "#9c8f7a"
+    property string outlineVariant: "#4f4534"
     property string shadow: "#000000"
     property string scrim: "#000000"
     
-    property string inverseSurface: "#fedbd5"
-    property string inverseSurfaceText: "#402b28"
-    property string inversePrimary: "#c00008"
+    property string inverseSurface: "#ece1d3"
+    property string inverseSurfaceText: "#353026"
+    property string inversePrimary: "#7b5900"
     
-    property string surfaceDim: "#200f0c"
-    property string surfaceBright: "#4a3430"
-    property string surfaceContainerLowest: "#1a0a08"
-    property string surfaceContainerLow: "#291714"
-    property string surfaceContainer: "#2e1b18"
-    property string surfaceContainerHigh: "#392522"
-    property string surfaceContainerHighest: "#452f2c"
+    property string surfaceDim: "#17130a"
+    property string surfaceBright: "#3e382e"
+    property string surfaceContainerLowest: "#120e06"
+    property string surfaceContainerLow: "#201b12"
+    property string surfaceContainer: "#241f16"
+    property string surfaceContainerHigh: "#2f2920"
+    property string surfaceContainerHighest: "#3a342a"
     
     // Wallpaper path
-    property string wallpaper: "/home/steel/wallpaper/cliff-edge.jpg"
+    property string wallpaper: "/home/steel/wallpaper/World-Map-Dark.png"
     
 
 }

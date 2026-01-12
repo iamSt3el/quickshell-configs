@@ -11,8 +11,8 @@ import qs.modules.customComponents
 
 Item{
     id: utility
-    implicitWidth: utility.isClicked ? 300 : utility.isNotificationClicked ? 350 : row.width + 20
-    implicitHeight: utility.isClicked ? 550 : utility.isNotificationClicked ? 600 : 40
+    implicitWidth: row.width + 20 
+    implicitHeight: 40
     anchors.right: parent.right
     property alias container: container
     property bool isClicked: false 
@@ -20,6 +20,38 @@ Item{
     property bool isWifiClicked: false
     property bool isBluetoothClicked: false
     property bool isNotificationClicked: false 
+    property bool isSoundPanelClicked: false
+    property bool isBatteryInfoClicked: false
+
+    onIsClickedChanged:{
+        if(utility.isClicked){
+            utility.implicitWidth = 300
+            utility.implicitHeight = 550
+        }else{
+            utility.implicitWidth = row.width + 20
+            utility.implicitHeight = 40
+        }
+    }
+
+    onIsNotificationClickedChanged:{
+        if(utility.isNotificationClicked){
+            utility.implicitWidth = 300
+            utility.implicitHeight = 600
+        }else{
+            utility.implicitWidth = row.width + 20
+            utility.implicitHeight = 40
+        }
+    }
+
+    onIsBatteryInfoClickedChanged:{
+        if(utility.isBatteryInfoClicked){
+            utility.implicitWidth = 240
+            utility.implicitHeight = 260
+        }else{
+            utility.implicitWidth = row.width + 20
+            utility.implicitHeight = 40
+        }
+    }
 
     Behavior on implicitWidth{
         NumberAnimation{
@@ -31,6 +63,14 @@ Item{
         NumberAnimation{
             duration: 300
             easing.type: Easing.OutQuad
+        }
+    }
+
+    Loader{
+        active: utility.isSoundPanelClicked
+        visible: active
+        sourceComponent: SoundPanel{
+            onClose: utility.isSoundPanelClicked = false
         }
     }
 
@@ -48,7 +88,7 @@ Item{
             anchors.margins: 10
             visible: false
             Timer{
-                interval: 200
+                interval: 300
                 running: utility.isNotificationClicked
                 onTriggered:{
                     notificationLoader.visible = true
@@ -59,6 +99,26 @@ Item{
                 onNotificationCenterClosed: {
                     utility.isNotificationClicked = false
                     notificationLoader.visible = false
+                }
+            }
+        }
+
+        Loader{
+            id: batteryInfo
+            active: utility.isBatteryInfoClicked
+            visible: false
+            anchors.fill: parent
+            Timer{
+                interval: 300
+                running: utility.isBatteryInfoClicked
+                onTriggered:{
+                    batteryInfo.visible = true
+                }
+            }
+            sourceComponent:BatteryInfo{
+                onClose: {
+                    utility.isBatteryInfoClicked = false
+                    batteryInfo.visible = false
                 }
             }
         }
@@ -101,6 +161,35 @@ Item{
                 sourceComponent:SystemTray{
                 }
             }
+
+            Weather{
+                Layout.preferredHeight: 25
+            }
+
+            Rectangle{
+                Layout.preferredWidth: speaker.implicitWidth + 10
+                Layout.preferredHeight: 25
+                radius: 10
+                color: Colors.surfaceContainerHigh
+
+                CustomIconImage{
+                    id: speaker
+                    anchors.centerIn: parent
+                    icon: "volume"
+                    size: 18
+                }
+
+                CustomMouseArea{
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked:{
+                        utility.isSoundPanelClicked = true
+                    }
+                }
+                
+            }
+
+
 
             Rectangle{
                 radius: 10
@@ -149,30 +238,18 @@ Item{
                         size: 17
                         icon: ServiceNotification.notificationsNumber > 0 ? "notification-active" : "notification"
 
-                        MouseArea{
+
+                        CustomMouseArea{
                             id: notificaitonArea
-                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
                             hoverEnabled: true
                             onClicked:{
                                 utility.isNotificationClicked = true
                             }
-
                         }
                         CustomToolTip{
                             content: ServiceNotification.notificationsNumber + " notifications"
                             visible: notificaitonArea.containsMouse
-                        }
-                    }
-
-
-                    CustomIconImage{
-                        size: 17
-                        icon: ServiceUPower.powerProfileIcon                    
-                        MouseArea{
-                            id: powerProfileArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-
                         }
                     }
                 }
@@ -180,6 +257,13 @@ Item{
 
             Battery{
                 Layout.preferredHeight: 40
+                MouseArea{
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked:{
+                        utility.isBatteryInfoClicked = true
+                    }
+                }
             }
 
             Rectangle{

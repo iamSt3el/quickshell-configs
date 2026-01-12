@@ -9,8 +9,9 @@ import qs.modules.customComponents
 
 Rectangle{
     anchors.fill: parent
-    color: Settings.layoutColor
-    topLeftRadius: 20
+    //color: Settings.layoutColor
+    //topLeftRadius: 20
+    color: "transparent"
     clip: true
 
     ListView{
@@ -22,7 +23,7 @@ Rectangle{
             values: [...ServiceNotification.popups].reverse()
         }
 
-        spacing: 10
+        spacing: 5
 
         add: Transition {
             NumberAnimation{
@@ -37,7 +38,7 @@ Rectangle{
         addDisplaced: Transition{
             NumberAnimation{
                 property: "y"
-                duration: 300
+                duration: 200
                 easing.type: Easing.OutQuad
             }
         }
@@ -45,7 +46,7 @@ Rectangle{
         move: Transition {
             NumberAnimation {
                 property: "y"
-                duration: 350
+                duration: 200
                 easing.type: Easing.OutQuad
             }
         }
@@ -53,7 +54,7 @@ Rectangle{
         displaced: Transition {
             NumberAnimation {
                 property: "y"
-                duration: 350
+                duration: 200
                 easing.type: Easing.OutQuad
             }
         }
@@ -65,10 +66,6 @@ Rectangle{
             color: Colors.surfaceContainer
             radius: 10
 
-            border{
-                width: 1
-                color: Colors.outline
-            }
 
             SequentialAnimation {
                 id: removeAnimation
@@ -82,7 +79,7 @@ Rectangle{
                     property: "x"
                     from: 0
                     to: list.width
-                    duration: 350
+                    duration: 300
                     easing.type: Easing.InQuad
                 }
                 PropertyAction { 

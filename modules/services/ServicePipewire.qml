@@ -8,35 +8,65 @@ import QtQuick
 import Quickshell.Services.Pipewire
 
 Singleton{
-    id: root    
+    id: root   
 
-    property var volume : Pipewire.defaultAudioSink && Pipewire.defaultAudioSink.audio ? Pipewire.defaultAudioSink.audio.volume : 0.0
+    readonly property var nodes: Pipewire.nodes.values.reduce((acc, node) => {
+        if(!node.isStream){
+            if(node.isSink)
+            acc.sinks.push(node);
+            else if(node.audio)
+            acc.sources.push(node);
+        }else{
+            acc.playbacks.push(node)
+        }
+        return acc;
+    },{
+        sources: [],
+        sinks: [],
+        playbacks: []
+    })
 
-    property bool isMuted: Pipewire.defaultAudioSink.audio.muted
+    readonly property list<PwNode> sinks: nodes.sinks
+    readonly property list<PwNode> sources: nodes.sources
+    readonly property list<PwNode> playbacks: nodes.playbacks
+
+    readonly property PwNode sink: Pipewire.defaultAudioSink
+    readonly property PwNode source: Pipewire.defaultAudioSource
     
-    // Track pipewire objects to ensure they're loaded
-    PwObjectTracker {
-        objects: [
-            Pipewire.defaultAudioSource,
-            Pipewire.defaultAudioSink
-        ]
-    }
-    
-    Component.onCompleted:{
-        console.log("volume: " + (Pipewire.defaultAudioSink?.audio?.volume ?? "not ready"))
+    readonly property bool muted: !!sink?.audio?.muted
+    readonly property real volume: sink?.audio?.volume ?? 0
 
-        console.log(Pipewire.nodes)
-    }
-    function updateVolume(volume): void{
-        if (Pipewire.defaultAudioSink?.ready && Pipewire.defaultAudioSink?.audio) {
-            Pipewire.defaultAudioSink.audio.volume = volume
+    function setVolume(newVolume: real): void{
+        if(sink?.ready && sink?.audio){
+            sink.audio.muted = false;
+            sink.audio.volume = Math.max(0, Math.min(1, newVolume))
         }
     }
 
-    function updateState(): void{
-        if (Pipewire.defaultAudioSink?.ready && Pipewire.defaultAudioSink?.audio) {
-            Pipewire.defaultAudioSink.audio.muted = !Pipewire.defaultAudioSink.audio.muted
-        }
+    function getName(value: PwAudioChannel): void{
+         PwAudioChannel.toString(value)
     }
+
+    function incrementVolume(amount: real): void{
+        setVolume(volume + (amount))
+    }
+
+    function decrementVolume(amount: real): void{
+        setVolume(volume - (amount))
+    }
+
+    function setAudioSink(newSink: PwNode): void{
+        console.log("Sink: " + newSink)
+        Pipewire.preferredDefaultAudioSink = newSink;
+    }
+
+    function setAudioSource(newSource: PwNode): void{
+        Pipewire.preferredDefaultAudioSource = newSource
+    }
+
+    PwObjectTracker{
+        objects: [...root.sinks, ...root.sources, ...root.playbacks]
+    }
+
 }
 

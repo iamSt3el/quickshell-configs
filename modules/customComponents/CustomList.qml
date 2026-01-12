@@ -11,36 +11,28 @@ Rectangle{
     property bool isListClicked: false
     property var currentVal
     property var list: []
-    color: Colors.surface
+    color: Colors.surfaceContainerHighest
     radius: 10
     z: isListClicked ? 1000 : 0
     signal listClicked
-    signal listChildClicked(string font)
+    signal listChildClicked(var child)
     height: 30
-    border{
-        width: 1
-        color: Colors.outline
-    }
 
-    Behavior on height{
-        NumberAnimation{
-            duration: 200
-            easing.type: Easing.OutQuad
+    MouseArea{
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked:{
+            root.isListClicked = true
+            root.listClicked()
         }
     }
 
-    onCurrentValChanged:{
-        console.log("Height: " + height)
-    }
 
     RowLayout{
-        visible: !root.isListClicked && root.height === 30
+        //visible: !root.isListClicked && root.height === 30
         anchors.fill: parent
         anchors.margins: 5
         anchors.leftMargin: 10
-
-
- 
         CustomText{
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
@@ -52,16 +44,8 @@ Rectangle{
         CustomIconImage{
             icon: "drop-down"
             size: 20
-
-            MouseArea{
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked:{
-                    root.isListClicked = true
-                    root.listClicked()
-                }
-            }
         } 
+
     }
 
     Loader{
@@ -72,8 +56,15 @@ Rectangle{
             anchor.window: layout
             visible: true
             implicitWidth: root.width
-            implicitHeight: 200
+            implicitHeight: child.implicitHeight
             color: "transparent"
+
+
+            HyprlandFocusGrab {
+                active: true
+                windows: [QsWindow.window]
+                onCleared: root.isListClicked = false
+            }
 
 
 
@@ -84,84 +75,58 @@ Rectangle{
                 rect.y: windowPos.y - root.height
             }
 
-
-
             Rectangle{
-                anchors.fill: parent
+                id: child
+                implicitWidth: parent.width
+                implicitHeight: Math.min(listView.contentHeight + 10, 250)
                 radius: 10
-                color: Colors.surface
+                color: root.color
+
                 border{
                     width: 1
                     color: Colors.outline
                 }
 
-                ColumnLayout{
-                    anchors.fill: parent
-                    anchors.margins: 10
 
-                    Rectangle{
-                        Layout.preferredWidth: parent.width
-                        Layout.preferredHeight: 30
-                        radius: 10
-                        color: Colors.surfaceContainerHigh
 
-                        RowLayout{
-                            anchors.fill: parent
-                            anchors.margins: 5
-                            CustomIconImage{
-                                icon: "search"
-                                size: 14
-                            }
 
-                            TextInput{
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                                verticalAlignment: TextInput.AlignVCenter
-                                focus: true
-                                clip: true
-                                text: root.currentVal
-                                font.pixelSize: 12
-                                color: Colors.inverseSurface
-                            }
-                        }
+                ListView{
+                    id: listView
+                    anchors{
+                        fill: parent
+                        margins: 5
                     }
+                    orientation: Qt.Vertical
+                    model: root.list
+                    spacing: 5
+                    clip: true
 
-                    ListView{
-                        Layout.fillHeight: true
-                        Layout.topMargin: 5
-                        orientation: Qt.Vertical
-                        Layout.preferredWidth: parent.width
-                        model: root.list
-                        spacing: 5
-                        clip: true
+                    delegate: Rectangle{
+                        implicitWidth: ListView.view.width
+                        implicitHeight: 20
+                        radius: 5
+                        color: root.currentVal === modelData.description ? Colors.primary : area.containsMouse ? Qt.alpha(Colors.primary, 0.5) : "transparent"
+                        CustomText{
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.leftMargin: 5
+                            content: modelData.description
+                            width: parent.width
+                            size: 12
+                            weight: 600
+                            color: root.currentVal === modelData.description ? Colors.primaryText : Colors.surfaceVariantText
+                        }
 
-                        delegate: Rectangle{
-                            implicitWidth: ListView.view.width
-                            implicitHeight: 20
-                            radius: 5
-                            color: root.currentVal === modelData.name ? Colors.primary : area.containsMouse ? Qt.alpha(Colors.primary, 0.5) : "transparent"
-                            CustomText{
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.leftMargin: 5
-                                content: modelData.name
-                                width: text.width
-                                size: 12
-                                weight: 600
-                                color: root.currentVal === modelData.name ? Colors.primaryText : Colors.surfaceVariantText
-                            }
+                        MouseArea{
+                            id: area
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
 
-                            MouseArea{
-                                id: area
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                hoverEnabled: true
-
-                                onClicked:{
-                                    root.isListClicked = false
-                                    root.currentVal = modelData.name
-                                    root.listChildClicked(modelData.name)
-                                }
+                            onClicked:{
+                                root.isListClicked = false
+                                root.currentVal = modelData.description
+                                root.listChildClicked(modelData)
                             }
                         }
                     }

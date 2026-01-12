@@ -36,7 +36,7 @@ ColumnLayout{
     Rectangle{
         Layout.fillWidth: true
         Layout.preferredHeight: 50
-        color: Colors.surfaceContainerHigh
+        color: Colors.surfaceContainer
         radius: 20
 
         RowLayout{
@@ -134,7 +134,7 @@ ColumnLayout{
             Rectangle{
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                color: Colors.surfaceContainerHigh
+                color: Colors.surfaceContainer
                 radius: 20
                 clip: true
 

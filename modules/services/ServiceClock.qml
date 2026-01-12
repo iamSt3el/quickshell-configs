@@ -14,7 +14,7 @@ Singleton{
         precision: SystemClock.Seconds
     }
 
-    property var time : Qt.formatDateTime(clock.date, "h:mm A")
+    property var time : Qt.formatDateTime(clock.date, "h:mm a")
     property var hour : Qt.formatDateTime(clock.date, "h")
     property var minute: Qt.formatDateTime(clock.date, "mm")
     property var seconds: Qt.formatDateTime(clock.date, "ss")

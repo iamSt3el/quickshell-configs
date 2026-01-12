@@ -15,11 +15,13 @@ Item{
     property var filteredApps:ServiceApps.filteredApps 
 
     Component.onCompleted:{
+        timer.start()
         searchInput.forceActiveFocus()
     }
     signal closed
 
     onClosed: {
+        col.visible = false
         searchInput.text = ""
         ServiceApps.reset()
         appList.activeIndex = 0
@@ -34,17 +36,39 @@ Item{
         bottomRightRadius: 20
         clip: true
 
-        Behavior on implicitWidth{
-            NumberAnimation{
-                duration: 400
-                easing.type: Easing.OutQuad
+        Timer{
+            id: timer
+            interval: 300
+            onTriggered:{
+                col.visible = true
             }
         }
 
+
         ColumnLayout{
+            id: col
             anchors.fill: parent
             anchors.margins: 10
             spacing: 10
+            visible: false
+            
+            opacity: 0
+            scale: 0.8
+                
+            NumberAnimation on opacity{
+                from: 0
+                to: 1
+                duration: 100
+                running: col.visible
+            }
+
+            NumberAnimation on scale{
+                from: 0.8
+                to: 1
+                duration: 100
+                running: col.visible
+            }
+
             Rectangle{
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
@@ -72,15 +96,14 @@ Item{
                         font.pixelSize: 16
                         font.weight: 800
                         color: Colors.inverseSurface
-
-                        Connections{
-                            target: container
-                            function onIsClickedChanged(){
-                                if(!container.isClicked){
-                                    searchInput.text = ""
-                                }
-                            }
-                        }
+                        // Connections{
+                        //     target: container
+                        //     function onIsClickedChanged(){
+                        //         if(!container.isClicked){
+                        //             searchInput.text = ""
+                        //         }
+                        //     }
+                        // }
 
                         onTextChanged: {
                             ServiceApps.updateSearch(text) 
@@ -144,7 +167,7 @@ Item{
                             properties: "opacity,scale"
                             from: 0
                             to: 1
-                            duration: 300
+                            duration: 400
                             easing.type: Easing.OutQuad
                         }
                     }
@@ -156,7 +179,7 @@ Item{
                             properties: "opacity,scale"
                             from: 1
                             to: 0
-                            duration: 300
+                            duration: 400
                             easing.type: Easing.OutQuad
                         }
                     }
@@ -164,13 +187,27 @@ Item{
                     move: Transition {
                         NumberAnimation {
                             property: "y"
-                            duration: 300
+                            duration: 400
                             easing.type: Easing.OutQuad
                         }
                         NumberAnimation {
                             properties: "opacity,scale"
                             to: 1
-                            duration: 300
+                            duration: 400
+                            easing.type: Easing.OutQuad
+                        }
+                    }
+
+                    addDisplaced: Transition {
+                        NumberAnimation {
+                            property: "y"
+                            duration: 400
+                            easing.type: Easing.OutQuad
+                        }
+                        NumberAnimation {
+                            properties: "opacity,scale"
+                            to: 1
+                            duration: 400
                             easing.type: Easing.OutQuad
                         }
                     }
@@ -178,13 +215,13 @@ Item{
                     displaced: Transition {
                         NumberAnimation {
                             property: "y"
-                            duration: 300
+                            duration: 400
                             easing.type: Easing.OutQuad
                         }
                         NumberAnimation {
                             properties: "opacity,scale"
                             to: 1
-                            duration: 300
+                            duration: 400
                             easing.type: Easing.OutQuad
                         }
                     }
@@ -240,7 +277,7 @@ Item{
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onEntered:{
-                                appList.selectedIndex = index
+                                appList.activeIndex = index
                             }
                             onClicked: {
                                 if(modelData){
@@ -256,3 +293,4 @@ Item{
         }
     }
 }
+

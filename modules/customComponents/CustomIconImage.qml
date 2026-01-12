@@ -12,6 +12,7 @@ IconImage {
     property string icon
     property var color: Colors.surfaceText
     property var size
+    property real bright : 0.1
     implicitSize: size
     source: IconUtil.getSystemIcon(icon)
     layer.enabled: isColor
@@ -23,7 +24,7 @@ IconImage {
                 duration: 200
             }
         }
-        brightness: 0.2
+        brightness: bright
     } 
 }
 

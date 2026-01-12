@@ -32,9 +32,18 @@ Item{
     }
 
     opacity:0
+    scale: 0.8
 
     NumberAnimation on opacity{
         from: 0
+        to: 1
+        duration: 400
+        running: true
+    }
+
+    
+    NumberAnimation on scale{
+        from: 0.8
         to: 1
         duration: 400
         running: true
@@ -444,7 +453,7 @@ Item{
                         icon: "volume"
                         progress: ServicePipewire.volume
                         onProgressChanged:{
-                            ServicePipewire.updateVolume(progress)
+                            ServicePipewire.setVolume(progress)
                         }
 
                     }
@@ -452,9 +461,9 @@ Item{
                         Layout.fillHeight: true
                         icon: "brightness"
                         progress: ServiceBrightness.getBrightness(screen)
-                        // onProgressChanged:{
-                        //     ServiceBrightness.setBrightness(screen, progress)
-                        // }
+                        onProgressChanged:{
+                            //ServiceBrightness.setBrightness(screen, progress)
+                        }
 
                     }
                 }

@@ -52,14 +52,14 @@ PanelWindow{
             height: isToolsWidgetClicked ? loader.height : 0;
             intersection: Intersection.Subtract
         }
-
-        Region{
-            x: isSettingClicked ? settingsLoader.x : 0;
-            y: isSettingClicked ? settingsLoader.y : 0;
-            width: isSettingClicked ? settingsLoader.width : 0;
-            height: isSettingClicked ? settingsLoader.height : 0;
-            intersection: Intersection.Subtract
-        }
+        //
+        // Region{
+        //     x: isSettingClicked ? settingsLoader.x : 0;
+        //     y: isSettingClicked ? settingsLoader.y : 0;
+        //     width: isSettingClicked ? settingsLoader.width : 0;
+        //     height: isSettingClicked ? settingsLoader.height : 0;
+        //     intersection: Intersection.Subtract
+        // }
 
         Region{
             x: utility.x
@@ -92,7 +92,7 @@ PanelWindow{
             height: clock.height
             intersection: Intersection.Subtract
         } 
-
+        //
         // Region{
         //     x: demo.x
         //     y: demo.y
@@ -102,7 +102,7 @@ PanelWindow{
         // }
     }
 
-    //
+
     // Rectangle{
     //     id: demo
     //     implicitHeight: 100
@@ -123,14 +123,15 @@ PanelWindow{
         implicitHeight: parent.height
         implicitWidth: parent.width
         anchors.bottom: parent.bottom
-        color: isToolsWidgetClicked ? Qt.alpha(Colors.outline, 0.5) : "transparent"
-        layer.enabled: true
-        layer.effect: MultiEffect{
-            saturation: 0.2
-            blurEnabled: true
-            blurMax: 7
-            blur: 1
-        }
+        //color: isToolsWidgetClicked ? Qt.alpha(Colors.outline, 0.8) : "transparent"
+       color: "transparent"
+        // layer.enabled: true
+        // layer.effect: MultiEffect{
+        //     saturation: 0.5
+        //     blurEnabled: true
+        //     blurMax: 47
+        //     blur: 1
+        // }
     }
 
 
@@ -268,9 +269,7 @@ PanelWindow{
         Utility{
             id: utility
         }
-        // AppLauncher{
-        //     id: appLauncher
-        // }
+
 
         GlobalShortcut{
             name: "appLauncher"
@@ -278,7 +277,6 @@ PanelWindow{
             onPressed:{
                 if(Hyprland.focusedMonitor.name === layout.screen.name){
                     layout.isAppLauncherClicked = !layout.isAppLauncherClicked
-
                 }
             }
         }
@@ -303,10 +301,11 @@ PanelWindow{
 
         Loader{
             id: appLauncher
-            active: width !== 8 //layout.isAppLauncherClicked
+            active: width !== 0
+            visible: active
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-            width: layout.isAppLauncherClicked ? 300 : 8
+            width: layout.isAppLauncherClicked ? 300 : 0
             height: 600
 
             Behavior on width{
@@ -326,17 +325,17 @@ PanelWindow{
 
 
 
-        Loader{
-            id: settingsLoader
-            active: layout.isSettingClicked
-            width: 600
-            height: 600
-            anchors.centerIn: parent
-            sourceComponent: SettingWindow{
-                id: settingsWindow
-                onSettingClosed: layout.isSettingClicked = false
-            }
-        }
+        // Loader{
+        //     id: settingsLoader
+        //     active: layout.isSettingClicked
+        //     width: 600
+        //     height: 600
+        //     anchors.centerIn: parent
+        //     sourceComponent: SettingWindow{
+        //         id: settingsWindow
+        //         onSettingClosed: layout.isSettingClicked = false
+        //     }
+        // }
 
 
         Loader{
