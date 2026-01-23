@@ -64,11 +64,11 @@ Singleton{
     property var tools: [
         {
             name: "Record",
-            icon: "video",
+            icon: "videocam",
             options:[
                 {
                     name: "Screen",
-                    icon: "screen",
+                    icon: "screenshot_frame_2",
                     audio: false
                 },
 
@@ -87,11 +87,11 @@ Singleton{
         },
         {
             name: "Screenshot",
-            icon: "camera",
+            icon: "photo_camera",
             options:[
                 {
                     name: "Screen",
-                    icon: "screen",
+                    icon: "screenshot_frame_2",
                     command: ["sh", "-c", "sleep 0.5 && grimblast --notify copysave output"]
 
                 },
@@ -111,22 +111,22 @@ Singleton{
         },
         {
             name: "Setting",
-            icon: "setting"
+            icon: "settings"
         },
         {
             name: "Power",
-            icon: "power",
+            icon: "power_settings_new",
             options:[
                 {
                     name: "Shutdown",
-                    icon: "power",
+                    icon: "power_settings_new",
                     command: ["systemctl", "poweroff"]
 
 
                 },
                 {
                     name: "Restart",
-                    icon: "restart",
+                    icon: "refresh",
                     command: ["systemctl", "reboot"]
 
                 },

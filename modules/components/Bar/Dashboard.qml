@@ -227,17 +227,25 @@ Item{
                     }
                 }
 
-                CustomIconImage{
-                    icon: "setting"
-                    size: 18
+                MaterialIconSymbol{
+                    content: "settings"
+                    iconSize: 20 
+                    MouseArea{
+                        cursorShape: Qt.PointingHandCursor
+                        anchors.fill: parent
+                        onClicked: {
+                            GlobalStates.settingsOpen = true
+                            root.toggleDashboard()
+                        }
+                    }
                 }
-                CustomIconImage{
-                    icon: "power"
-                    size: 18
+                MaterialIconSymbol{
+                    content: "power_settings_new"
+                    iconSize: 20
                 }
-                CustomIconImage{
-                    icon: "close"
-                    size: 18
+                MaterialIconSymbol{
+                    content: "close"
+                    iconSize: 20
                     MouseArea{
                         cursorShape: Qt.PointingHandCursor
                         anchors.fill: parent
@@ -298,10 +306,10 @@ Item{
                                     radius: 15
                                     color: Colors.primary
 
-                                    CustomIconImage{
+                                    MaterialIconSymbol{
                                         anchors.centerIn: parent
-                                        size: 28
-                                        icon: ServiceWifi.icon
+                                        iconSize: 28
+                                        content: ServiceWifi.icon
                                         color: ServiceWifi.wifiEnabled ? Colors.primaryText : Colors.surfaceText
                                     }
                                 }
@@ -357,10 +365,10 @@ Item{
                                     color: Colors.primary
 
 
-                                    CustomIconImage{
+                                    MaterialIconSymbol{
                                         anchors.centerIn: parent
-                                        size: 28
-                                        icon: ServiceBluetooth.connectedDevices > 0 ? "bluetooth-on" : "bluetooth-off"
+                                        iconSize: 28
+                                        content: ServiceBluetooth.connectedDevices > 0 ? "bluetooth" : "bluetooth_disabled"
                                         color: Colors.primaryText
                                     }
                                 }
@@ -419,11 +427,12 @@ Item{
                                         radius: 20
                                         color: active ? Colors.primary : profileArea.containsMouse ? Qt.alpha(Colors.primary, 0.5) :"transparent"
 
-                                        CustomIconImage{
+                                        MaterialIconSymbol{
                                             anchors.centerIn: parent
-                                            size: 20
-                                            icon: modelData.icon
+                                            iconSize: 20
+                                            content: modelData.icon
                                             color: parent.active ? Colors.primaryText : Colors.surfaceText
+                                            fill: 1
                                         }
 
                                         Behavior on color{
@@ -450,7 +459,7 @@ Item{
 
                     CustomSlider{
                         Layout.fillHeight: true
-                        icon: "volume"
+                        icon: "volume_up"
                         progress: ServicePipewire.volume
                         onProgressChanged:{
                             ServicePipewire.setVolume(progress)
@@ -458,11 +467,12 @@ Item{
 
                     }
                     CustomSlider{
+                        property var brightnessMonitor: ServiceBrightness.getMonitorForScreen(screen)
                         Layout.fillHeight: true
-                        icon: "brightness"
-                        progress: ServiceBrightness.getBrightness(screen)
-                        onProgressChanged:{
-                            //ServiceBrightness.setBrightness(screen, progress)
+                        icon: "brightness_7"
+                        progress: brightnessMonitor.brightness
+                        onChange:{
+                            brightnessMonitor.setBrightness(progress)
                         }
 
                     }
@@ -537,8 +547,8 @@ Item{
                             RowLayout{
                                 anchors.centerIn: parent
                                 id: row
-                                CustomIconImage{
-                                    icon: modelData.icon
+                                MaterialIconSymbol{
+                                    content: modelData.icon
                                     size: 18
                                     color: themeIcon.active ? Colors.primaryText : Colors.surfaceText
                                 }
@@ -617,10 +627,10 @@ Item{
                             }
 
 
-                            CustomIconImage{
+                            MaterialIconSymbol{
                                 anchors.centerIn: parent
-                                icon: parent.isMute ? modelData.iconActive : modelData.icon
-                                size: 18
+                                content: parent.isMute ? modelData.iconActive : modelData.icon
+                                iconSize: 20
                                 color: parent.isMute? Colors.primaryText : Colors.surfaceText
                             }
 

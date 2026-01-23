@@ -12,7 +12,7 @@ import qs.modules.customComponents
 Item{
     id: utility
     implicitWidth: row.width + 20 
-    implicitHeight: 40
+    implicitHeight: Appearance.size.barHeight
     anchors.right: parent.right
     property alias container: container
     property bool isClicked: false 
@@ -25,43 +25,43 @@ Item{
 
     onIsClickedChanged:{
         if(utility.isClicked){
-            utility.implicitWidth = 300
-            utility.implicitHeight = 550
+            utility.implicitWidth = Appearance.size.dashboardPanelWidth
+            utility.implicitHeight = Appearance.size.dashboardPanelHeight
         }else{
             utility.implicitWidth = row.width + 20
-            utility.implicitHeight = 40
+            utility.implicitHeight = Appearance.size.barHeight
         }
     }
 
     onIsNotificationClickedChanged:{
         if(utility.isNotificationClicked){
-            utility.implicitWidth = 300
-            utility.implicitHeight = 600
+            utility.implicitWidth = Appearance.size.notificationPanelWidth
+            utility.implicitHeight = Appearance.size.notificationPanelHeight
         }else{
             utility.implicitWidth = row.width + 20
-            utility.implicitHeight = 40
+            utility.implicitHeight = Appearance.size.barHeight
         }
     }
 
     onIsBatteryInfoClickedChanged:{
         if(utility.isBatteryInfoClicked){
-            utility.implicitWidth = 240
-            utility.implicitHeight = 260
+            utility.implicitWidth = Appearance.size.batteryPanelWidth
+            utility.implicitHeight = Appearance.size.batteryPanelHeight
         }else{
             utility.implicitWidth = row.width + 20
-            utility.implicitHeight = 40
+            utility.implicitHeight = Appearance.size.barHeight
         }
     }
 
     Behavior on implicitWidth{
         NumberAnimation{
-            duration: 300
+            duration: Appearance.duration.normal
             easing.type: Easing.OutQuad
         }
     }
     Behavior on implicitHeight{
         NumberAnimation{
-            duration: 300
+            duration: Appearance.duration.normal
             easing.type: Easing.OutQuad
         }
     }
@@ -79,16 +79,16 @@ Item{
         id: container 
         anchors.fill: parent
         color: Settings.layoutColor
-        bottomLeftRadius: 20 
+        bottomLeftRadius: Appearance.radius.extraLarge
 
         Loader{
             id: notificationLoader
             active: utility.isNotificationClicked
             anchors.fill: parent
-            anchors.margins: 10
+            anchors.margins: Appearance.margin.medium
             visible: false
             Timer{
-                interval: 300
+                interval: Appearance.duration.normal 
                 running: utility.isNotificationClicked
                 onTriggered:{
                     notificationLoader.visible = true
@@ -109,7 +109,7 @@ Item{
             visible: false
             anchors.fill: parent
             Timer{
-                interval: 300
+                interval: Appearance.duration.normal
                 running: utility.isBatteryInfoClicked
                 onTriggered:{
                     batteryInfo.visible = true
@@ -129,7 +129,7 @@ Item{
             anchors.fill: parent
             visible: false
             Timer{
-                interval: 300
+                interval: Appearance.duration.normal
                 running: utility.isClicked
                 onTriggered:{
                     dashboardLoader.visible = true
@@ -149,10 +149,10 @@ Item{
         RowLayout{
             id: row
             visible: !utility.isClicked && utility.height === 40
-            spacing: 10
+            spacing: Appearance.spacing.medium
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: 10
+            anchors.rightMargin: Appearance.margin.medium
 
             Loader{
                 active: ServiceSystemTray.active
@@ -163,20 +163,21 @@ Item{
             }
 
             Weather{
-                Layout.preferredHeight: 25
+                Layout.preferredHeight: Appearance.size.widgetHeight
             }
 
             Rectangle{
                 Layout.preferredWidth: speaker.implicitWidth + 10
-                Layout.preferredHeight: 25
-                radius: 10
+                Layout.preferredHeight: Appearance.size.widgetHeight
+                radius: Appearance.radius.medium
                 color: Colors.surfaceContainerHigh
 
-                CustomIconImage{
+
+                MaterialIconSymbol{
                     id: speaker
                     anchors.centerIn: parent
-                    icon: "volume"
-                    size: 18
+                    content: "volume_up"
+                    iconSize: Appearance.size.iconSizeNormal - 2
                 }
 
                 CustomMouseArea{
@@ -192,17 +193,17 @@ Item{
 
 
             Rectangle{
-                radius: 10
+                radius: Appearance.radius.medium
                 Layout.preferredWidth: child.width + child.spacing * 2
-                Layout.preferredHeight: 25
+                Layout.preferredHeight: Appearance.size.widgetHeight
                 color: Colors.surfaceContainerHigh
                 RowLayout{
                     id: child
-                    spacing: 10
+                    spacing: Appearance.spacing.medium
                     anchors.centerIn: parent
-                    CustomIconImage{
-                        size: 17
-                        icon: ServiceWifi.wifiEnabled ? ServiceWifi.icon : "wifi-off"                    
+                    MaterialIconSymbol{
+                        iconSize: Appearance.size.iconSizeNormal
+                        content: ServiceWifi.wifiEnabled ? ServiceWifi.icon : "signal_wifi_off"                    
                         MouseArea{
                             id: wifiArea
                             anchors.fill: parent
@@ -216,9 +217,9 @@ Item{
                         }
                     }
 
-                    CustomIconImage{
-                        size: 17
-                        icon: ServiceBluetooth.state ? "bluetooth-on" : "bluetooth-off"
+                    MaterialIconSymbol{
+                        iconSize: Appearance.size.iconSizeNormal - 1
+                        content: ServiceBluetooth.state ? "bluetooth" : "bluetooth_disabled"
 
                         MouseArea{
                             id: bluetoothArea
@@ -234,9 +235,9 @@ Item{
                     }
 
 
-                    CustomIconImage{
-                        size: 17
-                        icon: ServiceNotification.notificationsNumber > 0 ? "notification-active" : "notification"
+                    MaterialIconSymbol{
+                        iconSize: Appearance.size.iconSizeNormal - 1
+                        content: ServiceNotification.notificationsNumber > 0 ? "notifications_active" : "notifications"
 
 
                         CustomMouseArea{
@@ -256,7 +257,7 @@ Item{
             }
 
             Battery{
-                Layout.preferredHeight: 40
+                Layout.preferredHeight: Appearance.size.batteryWidgetHeight
                 MouseArea{
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
@@ -270,19 +271,18 @@ Item{
                 Layout.preferredHeight: dashboardIcon.height + 4
                 Layout.preferredWidth: dashboardIcon.width + 10
                 color: Colors.surfaceContainerHighest
-                radius: 8
+                radius: Appearance.radius.medium
 
                 Behavior on scale{
                     NumberAnimation{
-                        duration: 100
+                        duration: Appearance.duration.small
                     }
                 }
-                CustomIconImage{
+                MaterialIconSymbol{
                     id: dashboardIcon
-                    size: 17
-                    icon: "dashboard"
+                    iconSize: Appearance.size.iconSizeNormal - 3
+                    content: "dashboard"
                     anchors.centerIn: parent
-  
                 }
 
                 CustomMouseArea{

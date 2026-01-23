@@ -49,11 +49,11 @@ ColumnLayout{
                 //color: Colors.surfaceContainerHighest
                 color: leftArea.containsMouse ? Colors.surfaceContainerHighest : "transparent"
 
-                CustomIconImage{
+                MaterialIconSymbol{
                     id: left
                     anchors.centerIn: parent
-                    icon: "left"
-                    size: 20
+                    content: "chevron_backward"
+                    iconSize: 20
                 }
 
                 Behavior on color{
@@ -92,11 +92,11 @@ ColumnLayout{
                 //color: Colors.surfaceContainerHighest
                 color: rightArea.containsMouse ? Colors.surfaceContainerHighest : "transparent"
 
-                CustomIconImage{
+                MaterialIconSymbol{
                     id: right
                     anchors.centerIn: parent
-                    icon: "right"
-                    size: 20
+                    content: "chevron_forward"
+                    iconSize: 20
                 }
                 Behavior on color{
                     ColorAnimation{

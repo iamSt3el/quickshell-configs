@@ -18,14 +18,14 @@ Singleton {
 
     property string icon: {
         if(signalStrength >= 90){
-            return "wifi-full"
+            return "signal_wifi_4_bar"
         }
         else if(signalStrength < 90 && signalStrength >=60){
-            return "wifi-3"
+            return "network_wifi_3_bar"
         }else if(signalStrength < 60 && signalStrength >= 30){
-            return "wifi-2"
+            return "network_wifi_2_bar"
         }
-        return "wifi-1"
+        return "network_wifi_1_bar"
     }
 
     // Connect to a network

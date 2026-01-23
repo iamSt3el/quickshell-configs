@@ -94,6 +94,7 @@ Rectangle {
                 font.bold: false
             }
         }
+    
 
         RowLayout{
             Layout.leftMargin: 20

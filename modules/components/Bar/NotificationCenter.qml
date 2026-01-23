@@ -40,9 +40,9 @@ Rectangle{
         RowLayout{
             Layout.margins: 5
             spacing: 5
-            CustomIconImage{
-                icon: "notification"
-                size: 18
+            MaterialIconSymbol{
+                content: "notifications"
+                iconSize: 18
             }
             CustomText{
                 Layout.fillWidth: true
@@ -50,9 +50,9 @@ Rectangle{
                 size: 16
                 weight: 600
             }
-            CustomIconImage{
-                icon: "close"
-                size: 20
+            MaterialIconSymbol{
+                content: "close"
+                iconSize: 20
                 MouseArea{
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor

@@ -11,6 +11,7 @@ Singleton{
   
     property real scoreThreshold: 0.2
     property var allApplications: DesktopEntries.applications
+    property real totalApps: allApplications.values.length
     readonly property list<DesktopEntry> list: Array.from(DesktopEntries.applications.values)
     .sort((a, b) => a.name.localeCompare(b.name))
 

@@ -11,6 +11,7 @@ Item {
     property var progress
     property string icon
     property bool isDragging: handleArea.drag.active
+    signal change
     
     Rectangle {
         id: wrapper
@@ -34,19 +35,14 @@ Item {
             // Handle center is at the progress point
             y: (wrapper.height - handler.height) * (1 - root.progress)
             
-            IconImage {
+            MaterialIconSymbol {
                 visible: !root.isDragging
                 anchors.centerIn: parent
-                implicitSize: 24
-                source: IconUtil.getSystemIcon(root.icon)
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    colorization: 1.0
-                    colorizationColor: Colors.primaryText
-                    brightness: 0
-                }
-            }
+                iconSize: 26
+                content: root.icon
+                color: Colors.primaryText
             
+            }
             CustomText {
                 visible: root.isDragging
                 anchors.centerIn: parent
@@ -66,6 +62,7 @@ Item {
                 
                 onPositionChanged: {
                     if (drag.active) {
+                        root.change()
                         let percentage = 1 - (handler.y / (wrapper.height - handler.height))
                         root.progress = Math.max(0, Math.min(1, percentage))
                     }

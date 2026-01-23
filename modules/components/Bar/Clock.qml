@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Shapes
 import QtQuick.Layouts
@@ -17,13 +18,24 @@ Item{
 
     Rectangle{
         id: container
-        property bool isClicked : hoverHandler.hovered
-        implicitWidth: isClicked ? 400 : clockText.width + 30
-        implicitHeight: isClicked ? 400 : 40
+        property bool isClicked:hoverHandler.hovered
+        implicitWidth: clockText.width + 30
+        implicitHeight: Appearance.size.clockHeight
         anchors.horizontalCenter: parent.horizontalCenter
         color: Settings.layoutColor
-        bottomRightRadius: 20
-        bottomLeftRadius: 20
+        bottomRightRadius: Appearance.radius.extraLarge
+        bottomLeftRadius: Appearance.radius.extraLarge
+
+        onIsClickedChanged:{
+            if(isClicked){
+                container.implicitWidth = Appearance.size.calanderWidth
+                container.implicitHeight = Appearance.size.calanderHeight
+            }else{
+                container.implicitWidth = clockText.width + 30
+                container.implicitHeight = Appearance.size.clockHeight
+            }
+        }
+
 
         HoverHandler{
             id: hoverHandler
@@ -31,14 +43,14 @@ Item{
 
         Behavior on implicitWidth{
             NumberAnimation{
-                duration: 400
+                duration: Appearance.duration.large
                 easing.type: Easing.OutQuad
             }
         }
 
         Behavior on implicitHeight{
             NumberAnimation{
-                duration: 400
+                duration: Appearance.duration.large
                 easing.type: Easing.OutQuad
             }
         }
@@ -79,7 +91,7 @@ Item{
             }
             Timer{
                 id: showTimer
-                interval: 400
+                interval: Appearance.duration.large
                 running: container.isClicked
                 onTriggered:{
                     calanderLoader.visible = true
@@ -87,7 +99,7 @@ Item{
             }
             Timer{
                 id: hideTimer
-                interval: 100
+                interval: Appearance.duration.small
                 running: !container.isClicked && calanderLoader.visible
                 onTriggered:{
                     calanderLoader.visible = false
@@ -98,4 +110,5 @@ Item{
             }
         }
     }
+
 }

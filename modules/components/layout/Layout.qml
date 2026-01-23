@@ -13,6 +13,7 @@ import qs.modules.components.Setting
 import qs.modules.components.Clipboard
 import qs.modules.components.Notification
 import qs.modules.components.Dock
+import qs.modules.components.Osd
 import qs.modules.services
 import qs.modules.customComponents
 
@@ -27,7 +28,10 @@ PanelWindow{
         bottom: true
     }
 
-    WlrLayershell.keyboardFocus: isAppLauncherClicked || isClipboardClicked ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus:WlrKeyboardFocus.None
+
+
+ 
     mask: Region{
         item: maskRect;
         intersection: Intersection.Xor;
@@ -39,27 +43,13 @@ PanelWindow{
             intersection: Intersection.Subtract
         } 
         Region{
-            x: appLauncher.x;
-            y: appLauncher.y;
-            width: appLauncher.width;
-            height: appLauncher.height;
-            intersection: Intersection.Subtract
-        }
-        Region{
             x: isToolsWidgetClicked ? loader.x : 0;
             y: isToolsWidgetClicked ? loader.y : 0;
             width: isToolsWidgetClicked ? loader.width : 0;
             height: isToolsWidgetClicked ? loader.height : 0;
             intersection: Intersection.Subtract
         }
-        //
-        // Region{
-        //     x: isSettingClicked ? settingsLoader.x : 0;
-        //     y: isSettingClicked ? settingsLoader.y : 0;
-        //     width: isSettingClicked ? settingsLoader.width : 0;
-        //     height: isSettingClicked ? settingsLoader.height : 0;
-        //     intersection: Intersection.Subtract
-        // }
+
 
         Region{
             x: utility.x
@@ -69,13 +59,7 @@ PanelWindow{
             intersection: Intersection.Subtract
         }
 
-        Region{
-            x: (layout.width - clipboardLoader.width) / 2
-            y: layout.height - clipboardLoader.height
-            width: clipboardLoader.width
-            height: clipboardLoader.height
-            intersection: Intersection.Subtract
-        }
+
 
         Region{
             x: notificationLoader.x
@@ -135,12 +119,25 @@ PanelWindow{
     }
 
 
+    //CustomClock{}
+
+    //
+    // Loader{
+    //     id: osd
+    //     active: layout.showOsd
+    //     visible: active
+    //     sourceComponent:Osd{
+    //         onClose: layout.showOsd = false
+    //     }
+    // }
+
+
+
 
     property bool isToolsWidgetClicked: false
     property bool isSettingClicked: false
-    property bool isAppLauncherClicked: false
-    property bool isClipboardClicked: false
     property bool isNotificationVisible: !ServiceNotification.muted && !utility.isClicked && notificationLoader.displayCount > 0
+    property bool showOsd: false
 
     Item{
         anchors.fill: parent
@@ -272,16 +269,6 @@ PanelWindow{
 
 
         GlobalShortcut{
-            name: "appLauncher"
-
-            onPressed:{
-                if(Hyprland.focusedMonitor.name === layout.screen.name){
-                    layout.isAppLauncherClicked = !layout.isAppLauncherClicked
-                }
-            }
-        }
-
-        GlobalShortcut{
             name: "toolsWidget"
             onPressed:{
                 if(Hyprland.focusedMonitor.name === layout.screen.name){
@@ -290,52 +277,7 @@ PanelWindow{
             }
         }
 
-        GlobalShortcut{
-            name: "clipboard"
-            onPressed:{
-                if(Hyprland.focusedMonitor.name === layout.screen.name){
-                    layout.isClipboardClicked = !layout.isClipboardClicked
-                }
-            }
-        }
 
-        Loader{
-            id: appLauncher
-            active: width !== 0
-            visible: active
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-            width: layout.isAppLauncherClicked ? 300 : 0
-            height: 600
-
-            Behavior on width{
-                NumberAnimation{
-                    duration: 300
-                    easing.type: Easing.OutQuad
-                }
-            }
-
-
-            sourceComponent: AppLauncher{
-                onClosed: {
-                    layout.isAppLauncherClicked = false
-                }
-            } 
-        }
-
-
-
-        // Loader{
-        //     id: settingsLoader
-        //     active: layout.isSettingClicked
-        //     width: 600
-        //     height: 600
-        //     anchors.centerIn: parent
-        //     sourceComponent: SettingWindow{
-        //         id: settingsWindow
-        //         onSettingClosed: layout.isSettingClicked = false
-        //     }
-        // }
 
 
         Loader{
@@ -348,33 +290,13 @@ PanelWindow{
                 ToolsWidget{
                     id: toolsWidget
                     onToogled: layout.isToolsWidgetClicked = false
-                    onSettingClicked: layout.isSettingClicked = true
 
                 }
             }
         }
 
 
-        Loader{
-            id: clipboardLoader
-            active: height !== 8
-            anchors.bottom: parent.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: 400
-            height: layout.isClipboardClicked ? 600 : 8
-            Behavior on height{
-                NumberAnimation{
-                    duration: 300
-                    easing.type: Easing.OutQuad
-                }
-            }
 
-            sourceComponent: Clipboard{
-                id: clipboard
-                isClicked: layout.isClipboardClicked
-                onToClose: layout.isClipboardClicked = false
-            }
-        }
 
         Loader{
             id: notificationLoader

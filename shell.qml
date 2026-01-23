@@ -4,7 +4,12 @@ import QtQuick
 import Quickshell.Wayland
 import qs.modules.components.layout
 import qs.modules.components.LockScreen
-import qs.modules
+import qs.modules.components.AppLauncher
+import qs.modules.components.Clipboard
+import qs.modules.components.Setting
+import qs.modules.components.Osd
+import qs.modules.components.WallpaperSelector
+//import qs.modules.components.MangaReader
 
 ShellRoot{
     Variants{
@@ -14,9 +19,22 @@ ShellRoot{
             Layout{
                 screen: modelData
             }
-     
+
+            // AppLauncherOld{
+            //     screen: modelData
+            // }
         }
     }
+
+
+    AppLauncher{}
+    Clipboard{}
+    SettingsPanel{}
+    Osd{}
+    Wallpaper{}
+
+    //Reader{}
+
 
 
 

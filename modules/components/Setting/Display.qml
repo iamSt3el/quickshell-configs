@@ -47,21 +47,10 @@ Item{
 
             RowLayout{
                 Layout.margins: 5
-                IconImage {
-                    implicitSize: 26
+                MaterialIconSymbol {
+                    iconSize: 26
                     Layout.alignment: Qt.AlignVCenter
-                    source: IconUtil.getSystemIcon("display")
-                    layer.enabled: true
-                    layer.effect: MultiEffect {
-                        colorization: 1.0
-                        colorizationColor: Colors.primary
-                        Behavior on colorizationColor{
-                            ColorAnimation{
-                                duration: 200
-                            }
-                        }
-                        brightness: 0
-                    } 
+                    content:"monitor"
                 }
 
                 CustomText{
@@ -215,9 +204,9 @@ Item{
                                     anchors.margins: 10
                                     spacing: 10
 
-                                    CustomIconImage{
-                                        icon: modelData.icon
-                                        size: 20
+                                    MaterialIconSymbol{
+                                        content: modelData.icon
+                                        iconSize: 20
                                         color: active ? Colors.primaryText : Colors.surfaceVariantText
                                     }
 

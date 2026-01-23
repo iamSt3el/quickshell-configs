@@ -12,13 +12,13 @@ import qs.modules.customComponents
 
 Scope{
     Loader{
-        id: clipLoader
-        active: GlobalStates.clipboardOpen
+        id: loader
+        active: GlobalStates.wallpaperOpen
         property bool animation: false
         sourceComponent:PanelWindow{
-            id: clipboardPanel
-            implicitWidth: 400
-            implicitHeight: 600
+            id: panelWindow
+            implicitWidth: Appearance.size.wallpaperPanelWidth
+            implicitHeight: Appearance.size.wallpaperPanelHeight
             anchors.bottom: true
             WlrLayershell.layer: WlrLayer.Top
             exclusionMode: ExclusionMode.Normal
@@ -26,46 +26,43 @@ Scope{
             color: "transparent"
                 
             HyprlandFocusGrab{
-                id: grab2
-                windows: [clipboardPanel]
-                active: clipLoader.active
+                id: grab
+                windows: [panelWindow]
+                active: loader.active
                 onCleared: () => {
-                    if(!active) {
-                        clipLoader.animation = false
+                     if(!active) {
+                        loader.animation = false
                         animationTimer.start()
                     }
                 }
             }
 
-            ClipboardContent{
-                implicitHeight: clipLoader.animation ? parent.height : 0
-                onClosed:{
-                    clipLoader.animation = false
-                    animationTimer.start();
-                }
-
-
+            WallpaperContent{
+                implicitHeight:loader.animation ?  parent.height : 0
             }
+
+            
         }
     }
 
     Timer{
         id: animationTimer
-        interval: 300
+        interval: Appearance.duration.normal
         onTriggered:{
-            if(GlobalStates.clipboardOpen) GlobalStates.clipboardOpen = false
+            if(GlobalStates.wallpaperOpen) GlobalStates.wallpaperOpen = false
         }
     }
 
+
     GlobalShortcut{
-        name: "clipboard"
+        name: "wallpaperLauncher"
         onPressed:{
-            if(GlobalStates.clipboardOpen){
-                clipLoader.animation = false
+            if(GlobalStates.wallpaperOpen){
+                loader.animation = false
                 animationTimer.start();
             }else{
-                GlobalStates.clipboardOpen = true
-                clipLoader.animation = true
+                GlobalStates.wallpaperOpen = true
+                loader.animation = true
             }
         }
     }

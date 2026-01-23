@@ -28,9 +28,9 @@ ColumnLayout{
     RowLayout{
         Layout.fillWidth: true
         Layout.margins: 5
-        CustomIconImage {
-            size: 24
-            icon: "back"
+        MaterialIconSymbol {
+            iconSize: 24
+            content: "chevron_backward"
             MouseArea{
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
@@ -42,11 +42,11 @@ ColumnLayout{
             Layout.fillWidth: true
         }
 
-        CustomIconImage {
+        MaterialIconSymbol {
             id: scanButton
             property bool isScanning
-            size: 20
-            icon: "refresh"
+            iconSize: 20
+            content: "cached"
 
 
             NumberAnimation on rotation {
@@ -94,10 +94,10 @@ ColumnLayout{
                 radius: height / 2
                 color: Qt.alpha(Colors.primary, 0.3)
 
-                CustomIconImage{
+                MaterialIconSymbol{
                     anchors.centerIn: parent
-                    icon: root.bluetoothData ? root.bluetoothData.icon : "bluetooth"
-                    size: 20
+                    content: "bluetooth"
+                    iconSize: 20
                     color: Colors.primary
                 }
             }
@@ -383,10 +383,10 @@ ColumnLayout{
                                     implicitWidth: 20
                                     radius: height / 2
                                     color: modelData.state === 1 ? Colors.primaryText : Qt.alpha(Colors.primary, 0.5)
-                                    CustomIconImage {
+                                    MaterialIconSymbol {
                                         anchors.centerIn: parent
-                                        size: 18
-                                        icon: "right"
+                                        iconSize: 18
+                                        content: "chevron_forward"
 
                                         NumberAnimation on opacity{
                                             from: 0

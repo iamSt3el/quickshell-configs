@@ -18,25 +18,38 @@ Singleton {
     property var locationData: null
     property var astronomy: null
 
+    // Aqi data
+    property var currentAqi: null
+
     // Convenient properties
     readonly property string temperature: currentCondition ?
-        (useMetric ? currentCondition.temp_C + "°C" : currentCondition.temp_F + "°F") : "0°C"
+    (useMetric ? currentCondition.temp_C + "°C" : currentCondition.temp_F + "°F") : "0°C"
     readonly property string feelsLike: currentCondition ?
-        (useMetric ? currentCondition.FeelsLikeC + "°C" : currentCondition.FeelsLikeF + "°F") : "N/A"
+    (useMetric ? currentCondition.FeelsLikeC + "°C" : currentCondition.FeelsLikeF + "°F") : "N/A"
     readonly property string humidity: currentCondition ? currentCondition.humidity + "%" : "N/A"
     readonly property string description: currentCondition ? currentCondition.weatherDesc[0].value : "No data"
     readonly property string weatherCode: currentCondition ? currentCondition.weatherCode : "113"
     readonly property string cityName: locationData ? locationData.areaName[0].value : "Unknown"
     readonly property string windSpeed: currentCondition ? currentCondition.windspeedKmph + " km/h" : "N/A"
     readonly property string cloudcover: currentCondition ? currentCondition.cloudcover + "%" : "N/A"
+    readonly property string uvindex: currentCondition ? currentCondition.uvIndex : "N/A";
+    readonly property string visibility: currentCondition ? currentCondition.visibility + " km" : "N/A";
+    readonly property real aqi: currentAqi ? calculateAQI(currentAqi) : 0 ;
 
     Timer {
         id: refreshTimer
         interval: root.refreshInterval
         running: true
         repeat: true
-        onTriggered: root.fetchWeather()
-        Component.onCompleted: root.fetchWeather()
+        onTriggered: {
+            root.fetchWeather()
+            root.fetchAqi()
+        }
+        Component.onCompleted:{
+            root.fetchWeather()
+            root.fetchAqi()
+
+        }
     }
 
     function fetchWeather() {
@@ -47,6 +60,55 @@ Singleton {
 
         weatherProcess.command[2] = command
         weatherProcess.running = true
+    }
+
+    function fetchAqi() {
+        root.isLoading = true
+        root.hasError = false
+
+        let command = `curl -s 'http://api.openweathermap.org/data/2.5/air_pollution?lat=31.2206734&lon=75.7696463&appid=30cf8519d65a1be0f9fa1ba838a4eac2'`
+
+        aqiProcess.command[2] = command
+        aqiProcess.running = true
+    }
+
+
+    Process{
+        id: aqiProcess
+        command: ["bash", "-c", ""]
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                root.isLoading = false
+                if (text.length === 0) {
+                    //root.hasError = true
+                    return
+                }
+
+                try {
+                    const data = JSON.parse(text)
+
+
+                    if (data.list) {
+                        root.currentAqi = data.list[0].components
+                    }
+
+                    //root.hasError = false
+                } catch (e) {
+                    //root.hasError = true
+                    console.error("Weather data parse error:", e.message)
+                }
+            }
+        }
+
+        stderr: StdioCollector {
+            onStreamFinished: {
+                if (text.length > 0) {
+                    //root.hasError = true
+                }
+            }
+        }
+
     }
 
     Process {
@@ -242,6 +304,32 @@ Singleton {
         const iconMap = isNight ? nightIconMap : dayIconMap
         return iconMap[code] || (isNight ? "wi-night-clear" : "wi-day-sunny")
     }
+    function calculateAQI(c) {
+        var r = {
+            "pm2_5": [[0,30,0,50],[30.1,60,51,100],[60.1,90,101,200],[90.1,120,201,300],[120.1,250,301,400],[250.1,380,401,500]],
+            "pm10": [[0,50,0,50],[51,100,51,100],[101,250,101,200],[251,350,201,300],[351,430,301,400],[431,550,401,500]],
+            "no2": [[0,40,0,50],[41,80,51,100],[81,180,101,200],[181,280,201,300],[281,400,301,400],[401,800,401,500]],
+            "o3": [[0,50,0,50],[51,100,51,100],[101,168,101,200],[169,208,201,300],[209,748,301,400],[749,1000,401,500]],
+            "co": [[0,1000,0,50],[1001,2000,51,100],[2001,10000,101,200],[10001,17000,201,300],[17001,34000,301,400],[34001,50000,401,500]],
+            "so2": [[0,40,0,50],[41,80,51,100],[81,380,101,200],[381,800,201,300],[801,1600,301,400],[1601,2400,401,500]],
+            "nh3": [[0,200,0,50],[201,400,51,100],[401,800,101,200],[801,1200,201,300],[1201,1800,301,400],[1801,2400,401,500]]
+        };
+        var max = 0;
+        for (var p in r) {
+            if (!c[p]) continue;
+            for (var i = 0; i < r[p].length; i++) {
+                var b = r[p][i];
+                if (c[p] >= b[0] && c[p] <= b[1]) {
+                    var aqi = Math.round(((b[3] - b[2]) / (b[1] - b[0])) * (c[p] - b[0]) + b[2]);
+                    if (aqi > max) max = aqi;
+                    break;
+                }
+            }
+        }
+        return max;
+    }
+
+
 
     readonly property string weatherIconPath: {
         return getWeatherIcon(weatherCode)

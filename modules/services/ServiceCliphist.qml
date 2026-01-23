@@ -4,6 +4,7 @@ pragma ComponentBehavior: Bound
 import Quickshell
 import Quickshell.Io
 import QtQuick
+import qs.modules.utils
 
 Singleton {
     id: root
@@ -11,9 +12,50 @@ Singleton {
     // Clipboard history entries (raw strings from cliphist)
     property list<string> entries: []
     property bool isLoading: false
+    property real items: entries.length
 
     // Temp directory for decoded images
     property string cliphistDecodeDir: `${Quickshell.env("HOME")}/.cache/cliphist-decode`
+
+    property var filteredEntries: [...entries]
+    property string currentSearchText: ""
+
+    readonly property var preppedEntries: entries.map(a => ({
+        content: Fuzzy.prepare(`${getEntryText(a)}`),
+        entry: a
+    }))
+
+    function fuzzyQuery(search: string): var { 
+        if (root.sloppySearch) {
+            const results = entries.map(obj => ({
+                entry: obj,
+                score: Levendist.computeScore(getEntryText(obj).toLowerCase(), search.toLowerCase())
+            })).filter(item => item.score > root.scoreThreshold)
+            .sort((a, b) => b.score - a.score)
+            return results
+            .map(item => item.entry)
+        }
+
+        return Fuzzy.go(search, preppedEntries, {
+            all: true,
+            key: "content"
+        }).map(r => {
+            return r.obj.entry
+        });
+    }
+
+    function updateSearch(searchText){
+        currentSearchText = searchText
+       // selectedIndex = 0
+
+        if (searchText.length > 0) {
+            filteredEntries = fuzzyQuery(searchText)
+        } else {
+            filteredEntries = [...entries]
+        }
+    }
+    
+
 
     // Check if entry is an image
     function entryIsImage(entry) {

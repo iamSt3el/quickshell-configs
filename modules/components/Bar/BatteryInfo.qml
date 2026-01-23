@@ -67,9 +67,9 @@ Item{
                     Layout.fillWidth: true
                 }
 
-                CustomIconImage{
-                    icon: "close"
-                    size: 18
+                MaterialIconSymbol{
+                    content: "close"
+                    iconSize: 18
 
                     CustomMouseArea{
                         cursorShape: Qt.PointingHandCursor    

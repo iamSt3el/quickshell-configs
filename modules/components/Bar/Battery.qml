@@ -15,40 +15,29 @@ Item{
         property string icon:{
             let level = ServiceUPower.powerLevel
             if(ServiceUPower.isCharging){
-                return "battery-charging"
+                return "battery_android_bolt"
             }
             if(level === 1){
-                return "battery-full"
+                return "battery_android_full"
             }else if(level < 1 && level > 0.9){
-                return "battery-6"
+                return "battery_android_6"
             }else if(level <= 0.9 && level > 0.7){
-                return "battery-5"
+                return "battery_android_5"
             }else if(level <= 0.7 && level > 0.5){
-                return "battery-4"
+                return "battery_android_4"
             }else if(level <= 0.5 && level > 0.3){
-                return "battery-3"
+                return "battery_android_3"
             }else if(level <= 0.3 && level > 0.2){
-                return "battery-2"
+                return "battery_android_2"
             }else if(level <= 0.2 && level > 0){
-                return "battery-1"
+                return "battery_android_1"
             }
-            return "battery-0"
+            return "battery_android_0"
         }
 
-        IconImage {
-            implicitSize: 20
-            source: IconUtil.getSystemIcon(parent.icon)
-            layer.enabled: true
-            layer.effect: MultiEffect {
-                colorization: 1.0
-                colorizationColor: Colors.surfaceText
-                Behavior on colorizationColor{
-                    ColorAnimation{
-                        duration: 200
-                    }
-                }
-                brightness: 0
-            }
+        MaterialIconSymbol {
+            iconSize: 20
+            content: parent.icon
         } 
 
         CustomText{

@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import qs.modules.utils
 import qs.modules.customComponents
 import qs.modules.services
+import qs.modules.settings
 import QtQuick.Effects
 
 ColumnLayout{
@@ -30,9 +31,9 @@ ColumnLayout{
     RowLayout{
         Layout.fillWidth: true
         Layout.margins: 5
-        CustomIconImage{
-            size: 24
-            icon: "back"
+        MaterialIconSymbol{
+            iconSize: 24
+            content: "chevron_backward"
 
             MouseArea{
                 anchors.fill: parent
@@ -51,10 +52,10 @@ ColumnLayout{
             Layout.fillWidth: true
         }
 
-        CustomIconImage {
+        MaterialIconSymbol {
             visible: !root.isWifiSettingClicked
-            size: 20
-            icon: "refresh"
+            iconSize: 20
+            content: "cached"
             NumberAnimation on rotation {
                 from: 0
                 to: 360
@@ -85,10 +86,10 @@ ColumnLayout{
                 radius: height / 2
                 color: Qt.alpha(Colors.primary, 0.3)
 
-                CustomIconImage {
+                MaterialIconSymbol {
                     anchors.centerIn: parent
-                    icon: "wifi-full"
-                    size: 20
+                    content: "signal_wifi_4_bar"
+                    iconSize: 20
                     color: Colors.primary
                 }
             }
@@ -313,22 +314,22 @@ ColumnLayout{
                     spacing: 10
 
  
-                    CustomIconImage {
+                    MaterialIconSymbol {
                         property string batteryIcon: {
                             let signal = modelData.signal
                             if(signal >= 90){
-                                return "wifi-full"
+                                return "signal_wifi_4_bar"
                             }
                             else if(signal < 90 && signal >=60){
-                                return "wifi-3"
+                                return "network_wifi_3_bar"
                             }else if(signal < 60 && signal >= 30){
-                                return "wifi-2"
+                                return "network_wifi_2_bar"
                             }
-                            return "wifi-1"
+                            return "network_wifi_1_bar"
                         }
 
-                        implicitSize: 20
-                        icon: batteryIcon
+                        iconSize: 20
+                        content: batteryIcon
                         color: modelData.active ? Colors.primaryText : Colors.surfaceText
                     }
 
@@ -375,9 +376,9 @@ ColumnLayout{
                                 id: lockLoader
                                 active: modelData.isSecure
 
-                                sourceComponent: CustomIconImage {
-                                    size: 18
-                                    icon: "lock"
+                                sourceComponent: MaterialIconSymbol {
+                                    iconSize: Appearance.size.iconSizeNormal - 5
+                                    content: "lock"
                                     color: modelData.ssid === ServiceWifi.currentSSID ? Colors.primaryText : Colors.surfaceText
                                 }
                             }
@@ -392,10 +393,10 @@ ColumnLayout{
                                     implicitHeight: 20
                                     radius: height / 2
                                     color: modelData.ssid === ServiceWifi.currentSSID ? Colors.primaryText :  Qt.alpha(Colors.primaryText, 0.5)
-                                    CustomIconImage {
+                                    MaterialIconSymbol {
                                         anchors.centerIn: parent
-                                        size: 18
-                                        icon: "right"
+                                        iconSize: 18
+                                        content: "chevron_forward"
                                         //color: modelData.ssid === ServiceWifi.currentSSID ? Colors.primaryText : Colors.surfaceText
 
                                         NumberAnimation on opacity{

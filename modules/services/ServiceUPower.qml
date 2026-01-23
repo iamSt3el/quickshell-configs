@@ -13,7 +13,7 @@ Singleton{
     property var powerProfiles:[
         {
             name: "Save",
-            icon: "leaf"
+            icon: "energy_savings_leaf"
         },
         {
             name: "Balance",
@@ -21,7 +21,7 @@ Singleton{
         },
         {
             name: "Performance",
-            icon: "performace"
+            icon: "rocket_launch"
         }
     ]
     property var powerProfile: PowerProfiles.profile

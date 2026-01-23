@@ -62,9 +62,9 @@ PopupWindow{
             spacing: 10
 
             RowLayout{
-                CustomIconImage{
-                    icon: "volume"
-                    size: 18
+                MaterialIconSymbol{
+                    content: "volume_up"
+                    iconSize: 18
                 }
                 CustomText{
                     Layout.fillWidth: true
@@ -91,9 +91,9 @@ PopupWindow{
             }
 
             RowLayout{
-                CustomIconImage{
-                    icon: "mic"
-                    size: 18
+               MaterialIconSymbol{
+                    content: "mic"
+                    iconSize: 18
                 }
                 CustomText{
                     Layout.fillWidth: true

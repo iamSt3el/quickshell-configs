@@ -32,23 +32,11 @@ Item{
 
 
 
-            IconImage{
+            MaterialIconSymbol{
                 visible: !ServiceTools.isRecording
-                implicitSize: 30
-                source: IconUtil.getSystemIcon("close")
+                iconSize: 30
+                content: "close"
                 anchors.centerIn: parent
-
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    colorization: 1.0
-                    colorizationColor: Colors.surfaceVariantText
-                    Behavior on colorizationColor{
-                        ColorAnimation{
-                            duration: 200
-                        }
-                    }
-                    brightness: 0
-                }
             }
 
             MouseArea{
@@ -89,22 +77,10 @@ Item{
                 x: pos.x
                 y: pos.y
 
-                IconImage{
-                    implicitSize: 30
+                MaterialIconSymbol{
+                    iconSize: 30
                     anchors.centerIn: parent
-                    source: IconUtil.getSystemIcon(modelData.icon)
-
-                    layer.enabled: true
-                    layer.effect: MultiEffect {
-                        colorization: 1.0
-                        colorizationColor: Colors.surfaceVariantText
-                        Behavior on colorizationColor{
-                            ColorAnimation{
-                                duration: 200
-                            }
-                        }
-                        brightness: 0
-                    }
+                    content: modelData.icon
                 }
 
                 Item{
@@ -138,22 +114,10 @@ Item{
 
                               
 
-                                IconImage{
-                                    implicitSize: 25
+                                MaterialIconSymbol{
+                                    iconSize: 30
                                     anchors.centerIn: parent
-                                    source: IconUtil.getSystemIcon(modelData.icon)
-
-                                    layer.enabled: true
-                                    layer.effect: MultiEffect {
-                                        colorization: 1.0
-                                        colorizationColor: Colors.surfaceVariantText
-                                        Behavior on colorizationColor{
-                                            ColorAnimation{
-                                                duration: 200
-                                            }
-                                        }
-                                        brightness: 0
-                                    }
+                                    content: modelData.icon
                                 }
 
                                 CustomMouseArea{

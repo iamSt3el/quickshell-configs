@@ -112,10 +112,10 @@ Rectangle{
                             duration: 100
                         }
                     }
-                    CustomIconImage{
+                    MaterialIconSymbol{
                         anchors.centerIn: parent
-                        icon: "loop"
-                        size: 24
+                        content: "all_inclusive"
+                        iconSize: 24
                         color: loopArea.containsMouse ? Colors.primaryText : Colors.surfaceText
                     }
          
@@ -145,10 +145,10 @@ Rectangle{
                             duration: 100
                         }
                     }
-                    CustomIconImage{
+                    MaterialIconSymbol{
                         anchors.centerIn: parent
-                        icon: "shuffle"
-                        size: 24
+                        content: "shuffle"
+                        iconSize: 24
                         color: sArea.containsMouse ? Colors.primaryText : Colors.surfaceText
                     }
       
@@ -179,10 +179,10 @@ Rectangle{
                             duration: 100
                         }
                     }
-                    CustomIconImage{
+                   MaterialIconSymbol {
                         anchors.centerIn: parent
-                        icon: "last"
-                        size: 24
+                        content: "fast_rewind"
+                        iconSize: 24
                         color: lArea.containsMouse ? Colors.primaryText : Colors.surfaceText
                     }
                     CustomMouseArea{
@@ -209,10 +209,10 @@ Rectangle{
                             duration: 200
                         }
                     }
-                    CustomIconImage{
+                    MaterialIconSymbol{
                         anchors.centerIn: parent
-                        icon: ServiceMusic.isPlaying ? "pause" : "play"
-                        size: 24
+                        content: ServiceMusic.isPlaying ? "pause" : "play_arrow"
+                        iconSize: 24
                         color: pArea.containsMouse ? Colors.primaryText : Colors.surfaceText
                     }
 
@@ -244,12 +244,11 @@ Rectangle{
                         }
                     }
 
-                    CustomIconImage{
+                    MaterialIconSymbol{
                         anchors.centerIn: parent
-                        icon: "next"
-                        size: 24
+                        content: "fast_forward"
+                        iconSize: 24
                         color: nArea.containsMouse ? Colors.primaryText : Colors.surfaceText
-
 
                     }
 

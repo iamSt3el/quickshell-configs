@@ -33,35 +33,35 @@ Item{
     property var quickIcons:[
         {
             name: "Airplane",
-            icon: "airplane",
-            iconActive: "airplane-mute"
+            icon: "travel",
+            iconActive: "airplanemode_inactive"
 
         },
         {
             name: "Notification",
-            icon: "notification",
-            iconActive: "notification-mute"
+            icon: "notifications",
+            iconActive: "notifications_off"
         },
         {
             name: "Speaker",
-            icon: "volume",
-            iconActive: "volume-mute"
+            icon: "volume_up",
+            iconActive: "volume_off"
         },
         {
             name: "Mic",
             icon: "mic",
-            iconActive: "mic-mute"
+            iconActive: "mic_off"
         }
 
     ]
     property var themeModes:[
         {
             name: "Dark",
-            icon: "moon"
+            icon: "bedtime"
         },
         {
             name: "Light",
-            icon: "sun"
+            icon: "sunny"
         },
         {
             name: "Wallpaper",
@@ -72,34 +72,34 @@ Item{
     property var pages:[
         {
             name: "General",
-            icon: "general",
+            icon: "tune",
         },
         {
             name: "Theme",
-            icon: "color",
+            icon: "palette",
         },
         {
             name: "Display",
-            icon: "display"
+            icon: "monitor"
         },
         {
             name: "About",
-            icon: 'about'
+            icon: 'info'
         }
     ]
 
     property var displayModes:[
         {
             name: "Extended",
-            icon: "extend"
+            icon: "pan_zoom"
         },
         {
             name: "Mirror",
-            icon: "mirror"
+            icon: "tv_displays"
         },
         {
             name: "Single",
-            icon: "display"
+            icon: "monitor"
         }
     ]
 

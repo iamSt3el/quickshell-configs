@@ -18,6 +18,8 @@ Item {
         }
     }
 
+
+
     Rectangle {
         id: track
         anchors.centerIn: parent
@@ -34,11 +36,11 @@ Item {
             x: (track.width - handle.width) * root.progress
             anchors.verticalCenter: parent.verticalCenter
             z: 2
-            color: Colors.primary
-            border {
-                width: 3
-                color: Colors.inverseSurface
-            }
+            color: Colors.primaryContainer
+            // border {
+            //     width: 3
+            //     color: Colors.inverseSurface
+            // }
 
             scale: handleMouseArea.pressed ? 1.2 : (handleMouseArea.containsMouse ? 1.1 : 1.0)
 

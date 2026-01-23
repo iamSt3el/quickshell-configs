@@ -41,9 +41,9 @@ Rectangle{
             weight: 600
         }
 
-        CustomIconImage{
-            icon: "drop-down"
-            size: 20
+        MaterialIconSymbol{
+            content: "keyboard_arrow_down"
+            iconSize: 20
         } 
 
     }

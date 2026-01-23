@@ -15,8 +15,8 @@ Singleton{
     }
 
     property var time : Qt.formatDateTime(clock.date, "h:mm a")
-    property var hour : Qt.formatDateTime(clock.date, "h")
-    property var minute: Qt.formatDateTime(clock.date, "mm")
+    property string hour : Qt.formatDateTime(clock.date, "hh")
+    property string minute: Qt.formatDateTime(clock.date, "mm")
     property var seconds: Qt.formatDateTime(clock.date, "ss")
     property var day : Qt.formatDateTime(clock.date, "dddd")
     property var month: Qt.formatDateTime(clock.date, "MMMM")

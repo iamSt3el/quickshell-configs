@@ -7,7 +7,6 @@ import QtQuick.Effects
 Text{
     id: root
     property alias content: root.text
-    property bool shadow: false
     property int size: 12
     verticalAlignment: Text.AlignVCenter
     property int weight: 800
@@ -21,13 +20,6 @@ Text{
     font.family: family
 
 
-    layer.enabled: shadow
-    layer.effect: MultiEffect{
-        shadowEnabled: true
-        shadowBlur: 0.4
-        shadowOpacity: 1.0
-        shadowColor: Qt.alpha(Colors.shadow, 1)
-    }
 
 
     Behavior on color{
