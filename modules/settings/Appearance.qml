@@ -34,7 +34,7 @@ Singleton{
         property int calanderHeight: 400
         property int clockHeight: 40
         property int wallpaperPanelWidth: 1200
-        property int wallpaperPanelHeight: 460
+        property int wallpaperPanelHeight: 520
     }
 
     rounding : QtObject{

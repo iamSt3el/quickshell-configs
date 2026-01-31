@@ -93,175 +93,175 @@ PopupWindow{
                 } 
             }
 
-            Rectangle{
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: Colors.outline
-            }
+            // Rectangle{
+            //     Layout.fillWidth: true
+            //     Layout.preferredHeight: 1
+            //     color: Colors.outline
+            // }
 
-            RowLayout{
-                Layout.fillWidth: true
-                spacing: 4
+            // RowLayout{
+            //     Layout.fillWidth: true
+            //     spacing: 4
+            //
+            //     ColumnLayout{
+            //         Layout.fillWidth: true
+            //         CustomIconImage{
+            //             Layout.alignment: Qt.AlignCenter
+            //             icon: "wi-humidity"
+            //             size: 20
+            //             bright: 1
+            //         }
+            //
+            //         CustomText{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: ServiceWeather.humidity
+            //             size: 14
+            //         }
+            //         CustomText{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: "Humidity"
+            //             size: 12
+            //             color: Colors.outline
+            //             weight: 600
+            //         }
+            //     }
+            //
+            //
+            //     Item{
+            //         Layout.fillWidth: true
+            //     }
+            //
+            //
+            //
+            //     ColumnLayout{
+            //         Layout.fillWidth: true
+            //         CustomIconImage{
+            //             Layout.alignment: Qt.AlignCenter
+            //             icon: "wi-cloudy"
+            //             size: 20
+            //             bright: 1
+            //         }
+            //
+            //         CustomText{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: ServiceWeather.cloudcover
+            //             size: 14
+            //         }
+            //         CustomText{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: "Cloud Cover"
+            //             size: 12
+            //             color: Colors.outline
+            //             weight: 600
+            //         }
+            //     }
+            //     Item{
+            //         Layout.fillWidth: true
+            //     }
+            //
+            //     ColumnLayout{
+            //         Layout.fillWidth: true
+            //         CustomIconImage{
+            //             Layout.alignment: Qt.AlignCenter
+            //             icon: "wi-windy"
+            //             size: 20
+            //             bright: 1
+            //         }
+            //
+            //         CustomText{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: ServiceWeather.windSpeed
+            //             size: 14
+            //         }
+            //         CustomText{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: "Wind Speed"
+            //             size: 12
+            //             color: Colors.outline
+            //             weight: 600
+            //         }
+            //     }
+            // }
 
-                ColumnLayout{
-                    Layout.fillWidth: true
-                    CustomIconImage{
-                        Layout.alignment: Qt.AlignCenter
-                        icon: "wi-humidity"
-                        size: 20
-                        bright: 1
-                    }
 
-                    CustomText{
-                        Layout.alignment: Qt.AlignCenter
-                        content: ServiceWeather.humidity
-                        size: 14
-                    }
-                    CustomText{
-                        Layout.alignment: Qt.AlignCenter
-                        content: "Humidity"
-                        size: 12
-                        color: Colors.outline
-                        weight: 600
-                    }
-                }
-
-
-                Item{
-                    Layout.fillWidth: true
-                }
-
-
-
-                ColumnLayout{
-                    Layout.fillWidth: true
-                    CustomIconImage{
-                        Layout.alignment: Qt.AlignCenter
-                        icon: "wi-cloudy"
-                        size: 20
-                        bright: 1
-                    }
-
-                    CustomText{
-                        Layout.alignment: Qt.AlignCenter
-                        content: ServiceWeather.cloudcover
-                        size: 14
-                    }
-                    CustomText{
-                        Layout.alignment: Qt.AlignCenter
-                        content: "Cloud Cover"
-                        size: 12
-                        color: Colors.outline
-                        weight: 600
-                    }
-                }
-                Item{
-                    Layout.fillWidth: true
-                }
-
-                ColumnLayout{
-                    Layout.fillWidth: true
-                    CustomIconImage{
-                        Layout.alignment: Qt.AlignCenter
-                        icon: "wi-windy"
-                        size: 20
-                        bright: 1
-                    }
-
-                    CustomText{
-                        Layout.alignment: Qt.AlignCenter
-                        content: ServiceWeather.windSpeed
-                        size: 14
-                    }
-                    CustomText{
-                        Layout.alignment: Qt.AlignCenter
-                        content: "Wind Speed"
-                        size: 12
-                        color: Colors.outline
-                        weight: 600
-                    }
-                }
-            }
-
-
-            RowLayout{
-                Layout.fillWidth: true
-                spacing: 0
-                ColumnLayout{
-                    Layout.fillWidth: true
-                    MaterialIconSymbol{
-                        Layout.alignment: Qt.AlignCenter
-                        content: "skull"
-                        iconSize: 22
-                    }
-
-                    CustomText{
-                        Layout.alignment: Qt.AlignCenter
-                        content: ServiceWeather.aqi
-                        size: 14
-                    }
-                    CustomText{
-                        Layout.alignment: Qt.AlignCenter
-                        content: "     AQI     "
-                        size: 12
-                        color: Colors.outline
-                        weight: 600
-                    }
-                }
-
-                Item{
-                    Layout.fillWidth: true
-                }
-
-                ColumnLayout{
-                    Layout.fillWidth: true
-                    MaterialIconSymbol{
-                        Layout.alignment: Qt.AlignCenter
-                        content: "visibility"
-                        iconSize: 22
-                    }
-
-                    CustomText{
-                        Layout.alignment: Qt.AlignCenter
-                        content: ServiceWeather.visibility
-                        size: 14
-                    }
-                    CustomText{
-                        Layout.alignment: Qt.AlignCenter
-                        content: "Visibility"
-                        size: 12
-                        color: Colors.outline
-                        weight: 600
-                    }
-                }
-
-                Item{
-                    Layout.fillWidth: true
-                }
-
-                ColumnLayout{
-                    Layout.fillWidth: true
-                    CustomIconImage{
-                        Layout.alignment: Qt.AlignCenter
-                        icon: "wi-day-sunny"
-                        size: 22
-                        bright: 1
-                    }
-
-                    CustomText{
-                        Layout.alignment: Qt.AlignCenter
-                        content: ServiceWeather.uvindex
-                        size: 14
-                    }
-                    CustomText{
-                        Layout.alignment: Qt.AlignCenter
-                        content: "UV Index"
-                        size: 12
-                        color: Colors.outline
-                        weight: 600
-                    }
-                }
-            }
+            // RowLayout{
+            //     Layout.fillWidth: true
+            //     spacing: 0
+            //     ColumnLayout{
+            //         Layout.fillWidth: true
+            //         MaterialIconSymbol{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: "skull"
+            //             iconSize: 22
+            //         }
+            //
+            //         CustomText{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: ServiceWeather.aqi
+            //             size: 14
+            //         }
+            //         CustomText{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: "     AQI     "
+            //             size: 12
+            //             color: Colors.outline
+            //             weight: 600
+            //         }
+            //     }
+            //
+            //     Item{
+            //         Layout.fillWidth: true
+            //     }
+            //
+            //     ColumnLayout{
+            //         Layout.fillWidth: true
+            //         MaterialIconSymbol{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: "visibility"
+            //             iconSize: 22
+            //         }
+            //
+            //         CustomText{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: ServiceWeather.visibility
+            //             size: 14
+            //         }
+            //         CustomText{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: "Visibility"
+            //             size: 12
+            //             color: Colors.outline
+            //             weight: 600
+            //         }
+            //     }
+            //
+            //     Item{
+            //         Layout.fillWidth: true
+            //     }
+            //
+            //     ColumnLayout{
+            //         Layout.fillWidth: true
+            //         CustomIconImage{
+            //             Layout.alignment: Qt.AlignCenter
+            //             icon: "wi-day-sunny"
+            //             size: 22
+            //             bright: 1
+            //         }
+            //
+            //         CustomText{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: ServiceWeather.uvindex
+            //             size: 14
+            //         }
+            //         CustomText{
+            //             Layout.alignment: Qt.AlignCenter
+            //             content: "UV Index"
+            //             size: 12
+            //             color: Colors.outline
+            //             weight: 600
+            //         }
+            //     }
+            // }
         }
     }
 }

@@ -270,12 +270,13 @@ Rectangle {
                 Rectangle{
                     Layout.preferredWidth: 60
                     Layout.preferredHeight: 60
-                    color: Colors.surfaceContainerHigh
+                    //color: Colors.surfaceContainerHigh
+                    color: "transparent"
                     radius: 20
-                    CustomIconImage{
+                    MaterialIconSymbol{
                         anchors.centerIn: parent
-                        icon: "lock"
-                        size: 26
+                        content: "lock"
+                        iconSize: 26
                     }
                 }
 
@@ -355,10 +356,10 @@ Rectangle {
             Layout.preferredWidth: 50
             radius: 10
             background: background
-            CustomIconImage{
+            MaterialIconSymbol{
                 anchors.centerIn: parent
-                icon: "restart"
-                size: 20
+                content: "restart_alt"
+                iconSize: 18
             }
         }
 
@@ -367,10 +368,10 @@ Rectangle {
             Layout.preferredWidth: 50
             radius: 10
             background: background
-            CustomIconImage{
+            MaterialIconSymbol{
                 anchors.centerIn: parent
-                icon: "power"
-                size: 20
+                content: "power_settings_new"
+                iconSize: 20
             }
         }
     }

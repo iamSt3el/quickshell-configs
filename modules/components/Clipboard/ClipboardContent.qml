@@ -33,6 +33,25 @@ Rectangle{
     //     shadowOpacity: 1.0
     //     shadowColor: Qt.alpha(Colors.shadow, 1)
     // }
+    Connections{
+        target: clipLoader
+        function onAnimationChanged(){
+            if(clipLoader.animation){
+                timer.start()
+            }else{
+                col.visible = false
+            }
+        }
+    }
+
+
+    Timer{
+        id: timer
+        interval: 300
+        onTriggered:{
+            col.visible = true
+        }
+    }
 
 
     Component.onCompleted: {
@@ -40,9 +59,25 @@ Rectangle{
     }
 
     ColumnLayout{
+        id: col
         anchors.fill: parent
         anchors.margins: 10
         spacing: 10
+        visible: false
+
+        NumberAnimation on opacity{
+            from: 0
+            to: 1
+            duration: 100
+            running: col.visible
+        }
+
+        NumberAnimation on scale{
+            from: 0.8
+            to: 1
+            duration: 100
+            running: col.visible
+        }
 
         Rectangle{
             Layout.fillWidth: true

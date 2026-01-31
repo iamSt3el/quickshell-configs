@@ -25,104 +25,179 @@ Rectangle{
         }
     }
 
-    ColumnLayout{
-        anchors.fill: parent
-        anchors.margins: 10
-        spacing: 10
+    Connections{
+        target: loader
+        function onAnimationChanged(){
+            if(loader.animation){
+                timer.start();
+            }else{
+                colLoader.active = false
+            }
+        }
+    }
 
-        RowLayout{
-            SearchBar{
-                Layout.preferredHeight: 50
-                Layout.preferredWidth: 400
+    Timer{
+        id: timer
+        interval: 300
+        onTriggered:{
+            colLoader.active = true
+        }
+    }
+    Loader{
+        id: colLoader
+        active: false
+        visible: active
+        anchors.fill: parent
+        sourceComponent:ColumnLayout{
+            id: col
+            anchors.fill: parent
+            anchors.margins: 10
+            spacing: 10
+            NumberAnimation on opacity{
+                from: 0
+                to: 1
+                duration: 100
+                running: col.visible
             }
-            Item{
-                Layout.fillWidth: true
+
+            NumberAnimation on scale{
+                from: 0.8
+                to: 1
+                duration: 100
+                running: col.visible
             }
+            
             Rectangle{
+                Layout.fillWidth: true
                 Layout.preferredHeight: 50
-                Layout.preferredWidth: row.implicitWidth + 30
-                radius: 20
-                color: Colors.surfaceContainerHigh
+                radius: Appearance.radius.extraLarge
+                color: Colors.surfaceContainer
                 RowLayout{
-                    id: row
                     anchors.fill: parent
-                    anchors.leftMargin: 10
                     anchors.rightMargin: 10
                     spacing: 10
-                    MaterialIconSymbol{
-                        content: "wallpaper"
-                        iconSize: 30
+                    SearchBar{
+                        Layout.preferredHeight: 50
+                        Layout.preferredWidth: 400
+                    }
+                    Item{
+                        Layout.fillWidth: true
+                    }
+                    Rectangle{
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: 40
+                        radius: 20
+                        color: Colors.surfaceContainerHigh
+
+                        MaterialIconSymbol{
+                            anchors.centerIn: parent
+                            content: "refresh"
+                            iconSize: 20
+                        }
+
+                        CustomMouseArea{
+                            cursorShape: Qt.PointingHandCursor
+                            anchors.fill: parent
+                            onClicked:{
+                                ServiceWallpaper.refresh()
+                            }
+                        }
                     } 
-                    CustomText{
-                        content: ServiceWallpaper.folderModel.count + " wallpapers"
-                        size: 16
-                    }
-                }
-            }
-        }
-
-
-        GridView{
-            id: grid
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            cellWidth: width / 4
-            cellHeight: height / 2
-            model: ServiceWallpaper.folderModel
-            clip: true
-
-            interactive: true
-            //keyNavigationWraps: true
-            boundsBehavior: Flickable.StopAtBounds
-            ScrollBar.vertical: CustomScrollBar{}
-
-
-            delegate: Rectangle{
-                id: wallpaperItemImageContainer
-                required property var modelData
-                width: grid.cellWidth
-                height: grid.cellHeight
-                radius: 10
-                color: "transparent"
-
-                Image{
-                    id: thumbnail
-                    anchors.fill: parent
-                    anchors.margins: 5
-                    sourceSize: Qt.size(width, height)
-                    //asynchronous: true
-                    smooth: true
-                    source: modelData.filePath
-
-                    Behavior on anchors.margins{
-                        NumberAnimation{
-                            duration: 200
-                            easing.type: Easing.OutQuad
-                        }
-                    }
-
-                    layer.enabled: true
-                    layer.effect: OpacityMask {
-                        maskSource: Rectangle {
-                            width: wallpaperItemImageContainer.width
-                            height: wallpaperItemImageContainer.height
-                            radius: 10
+                    Rectangle{
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: row.implicitWidth + 30
+                        radius: 20
+                        color: Colors.surfaceContainerHigh
+                        RowLayout{
+                            id: row
+                            anchors.fill: parent
+                            anchors.leftMargin: 10
+                            anchors.rightMargin: 10
+                            spacing: 10
+                            MaterialIconSymbol{
+                                content: "wallpaper"
+                                iconSize: 18
+                            } 
+                            CustomText{
+                                content: ServiceWallpaper.cacheModel.count + " wallpapers"
+                                size: 12
+                            }
                         }
                     }
                 }
+            }
 
-                MouseArea{
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onEntered:{
-                        thumbnail.anchors.margins = 0;
+
+            GridView{
+                id: grid
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                cellWidth: width / 4
+                cellHeight: height / (4 / 2)
+                model: ScriptModel{
+                    values: ServiceWallpaper.wallpapers
+                }
+                clip: true
+
+                interactive: true
+                //keyNavigationWraps: true
+                boundsBehavior: Flickable.StopAtBounds
+                ScrollBar.vertical: CustomScrollBar{}
+
+
+                delegate: Rectangle{
+                    id: wallpaperItemImageContainer
+                    required property var modelData
+                    width: grid.cellWidth
+                    height: grid.cellHeight
+                    radius: 10
+                    color: area.containsMouse ? Colors.primary : "transparent"
+
+                    // border{
+                    //     width: 2
+                    //     color: area.containsMouse ? Colors.primary : "transparent"
+                    // }
+
+                    Image{
+                        id: thumbnail
+                        anchors.fill: parent
+                        anchors.margins: 5
+                        sourceSize: Qt.size(width, height)
+                        asynchronous: true
+                        anchors.centerIn: parent
+                        smooth: true
+                        cache: false
+                        source: "file://" + modelData
+                        fillMode: Image.PreserveAspectCrop
+                        Behavior on anchors.margins{
+                            NumberAnimation{
+                                duration: 200
+                                easing.type: Easing.OutQuad
+                            }
+                        }
+
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                            maskSource: Rectangle {
+                                width: thumbnail.width
+                                height: thumbnail.height
+                                radius: 10
+                            }
+                        }
                     }
-                    onExited:{
-                        thumbnail.anchors.margins = 5;
+
+                    MouseArea{
+                        id: area
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked:{
+                            ServiceWallpaper.setWallpaper(modelData) 
+                        }
                     }
                 }
             }
-        }
 
+        }
     }
 }

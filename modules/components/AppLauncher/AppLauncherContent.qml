@@ -16,7 +16,6 @@ Item{
     property var filteredApps:ServiceApps.filteredApps 
 
     Component.onCompleted:{
-        timer.start()
         searchInput.forceActiveFocus()
     }
     signal closed
@@ -38,6 +37,17 @@ Item{
         ServiceApps.reset()
         appList.activeIndex = 0
         appList.animationsEnabled = false
+    }
+
+    Connections{
+        target: loader
+        function onAnimationChanged(){
+            if(loader.animation){
+                timer.start()
+            }else{
+                col.visible = false
+            }
+        }
     }
 
     Rectangle{
@@ -64,8 +74,6 @@ Item{
             spacing: 10
             visible: false
             
-            opacity: 0
-            scale: 0.8
                 
             NumberAnimation on opacity{
                 from: 0

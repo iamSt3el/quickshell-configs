@@ -19,10 +19,6 @@ ShellRoot{
             Layout{
                 screen: modelData
             }
-
-            // AppLauncherOld{
-            //     screen: modelData
-            // }
         }
     }
 
@@ -32,11 +28,6 @@ ShellRoot{
     SettingsPanel{}
     Osd{}
     Wallpaper{}
-
-    //Reader{}
-
-
-
 
 
     // Lock screen - responds to `loginctl lock-session`

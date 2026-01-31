@@ -115,7 +115,7 @@ Item{
                               
 
                                 MaterialIconSymbol{
-                                    iconSize: 30
+                                    iconSize: 20
                                     anchors.centerIn: parent
                                     content: modelData.icon
                                 }

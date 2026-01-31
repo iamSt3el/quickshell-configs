@@ -19,7 +19,7 @@ Item{
     Rectangle{
         id: container
         property bool isClicked:hoverHandler.hovered
-        implicitWidth: clockText.width + 30
+        implicitWidth: clockText.width + 20
         implicitHeight: Appearance.size.clockHeight
         anchors.horizontalCenter: parent.horizontalCenter
         color: Settings.layoutColor
@@ -55,29 +55,32 @@ Item{
             }
         }
 
-        RowLayout{
+        // RowLayout{
+        //     id: clockText
+        //     visible: container.height === 40
+        //     anchors.centerIn: parent
+        //     CustomText{
+        //         size: 18
+        //         weight: 600
+        //         content: ServiceClock.time
+        //     }
+        //
+        //     CustomText{
+        //         size: 18
+        //         weight: 600
+        //         content: ServiceClock.day
+        //     }
+        //
+        //     CustomText{
+        //         size: 18
+        //         weight: 600
+        //         content: ServiceClock.date
+        //     }
+        // }
+        CustomClock{
             id: clockText
             visible: container.height === 40
-            anchors.centerIn: parent
-            CustomText{
-                size: 18
-                weight: 600
-                content: ServiceClock.time
-            }
-
-            CustomText{
-                size: 18
-                weight: 600
-                content: ServiceClock.day
-            }
-
-            CustomText{
-                size: 18
-                weight: 600
-                content: ServiceClock.date
-            }
         }
-
         Loader{
             id: calanderLoader
             active: container.isClicked

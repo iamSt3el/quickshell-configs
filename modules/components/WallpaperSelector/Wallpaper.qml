@@ -11,14 +11,17 @@ import qs.modules.settings
 import qs.modules.customComponents
 
 Scope{
+    id: root
     Loader{
         id: loader
         active: GlobalStates.wallpaperOpen
         property bool animation: false
         sourceComponent:PanelWindow{
             id: panelWindow
-            implicitWidth: Appearance.size.wallpaperPanelWidth
+            //anchors.left: true
+            //anchors.right: true
             implicitHeight: Appearance.size.wallpaperPanelHeight
+            implicitWidth: Appearance.size.wallpaperPanelWidth
             anchors.bottom: true
             WlrLayershell.layer: WlrLayer.Top
             exclusionMode: ExclusionMode.Normal
