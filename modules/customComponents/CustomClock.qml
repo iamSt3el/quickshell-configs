@@ -15,14 +15,15 @@ Item{
     implicitWidth: row.implicitWidth
 
     property string hourDigit1: {
-        if(ServiceClock.hour > 12) return 0;
-        else if(ServiceClock.hour >= 10) return ServiceClock.hour[0];
-        return ServiceClock.hour[0];
+        var h = ServiceClock.hour > 12 ? ServiceClock.hour - 12 : ServiceClock.hour;
+        if(h === 0) h = 12; 
+        return Math.floor(h / 10).toString();
     }
+
     property string hourDigit2: {
-        if(ServiceClock.hour > 12) return ServiceClock.hour - 12;
-        else if(ServiceClock.hour >= 10) return ServiceClock.hour[1];
-        return ServiceClock.hour[1];
+        var h = ServiceClock.hour > 12 ? ServiceClock.hour - 12 : ServiceClock.hour;
+        if(h === 0) h = 12;
+        return (h % 10).toString();
     }
     property string minuteDigit1: ServiceClock.minute[0];
     property string minuteDigit2: ServiceClock.minute[1];
