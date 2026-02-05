@@ -47,8 +47,9 @@ Item{
 
             RowLayout{
                 Layout.margins: 5
+                spacing: 10
                 MaterialIconSymbol {
-                    iconSize: 26
+                    iconSize: 20
                     Layout.alignment: Qt.AlignVCenter
                     content:"monitor"
                 }

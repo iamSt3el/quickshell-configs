@@ -15,8 +15,9 @@ Rectangle{
     anchors.fill: parent 
     scale: 0.8
     opacity: 0
-    radius: 20
     color: Settings.layoutColor
+    radius: 20
+
 
     NumberAnimation on opacity{
         from: 0
@@ -34,18 +35,19 @@ Rectangle{
 
 
     RowLayout{
-        anchors.fill: parent
         anchors.margins: 10
-        spacing: 10
+        anchors.fill: parent
+        spacing: 10       
         MaterialIconSymbol{
-            content: "volume_up"
+            content: ServicePipewire.muted ? "volume_off" :"volume_up"
             iconSize: Appearance.size.iconSizeNormal
         }
         CustomSliderNew{
             id: slider
-            Layout.fillWidth: true
             Layout.preferredHeight: 10
+            Layout.fillWidth: true
             progress: Math.min(ServicePipewire.sink?.audio?.volume, 1)
         }
+
     }
 }

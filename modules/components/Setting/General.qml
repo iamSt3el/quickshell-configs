@@ -34,21 +34,10 @@ Item{
             spacing: 15
             RowLayout{
                 Layout.margins: 5
-                IconImage {
-                    implicitSize: 26
-                    Layout.alignment: Qt.AlignVCenter
-                    source: IconUtil.getSystemIcon("general")
-                    layer.enabled: true
-                    layer.effect: MultiEffect {
-                        colorization: 1.0
-                        colorizationColor: Colors.primary
-                        Behavior on colorizationColor{
-                            ColorAnimation{
-                                duration: 200
-                            }
-                        }
-                        brightness: 0
-                    } 
+                spacing: 10
+                MaterialIconSymbol{
+                    content: "tune"
+                    iconSize: 20
                 }
 
                 CustomText{

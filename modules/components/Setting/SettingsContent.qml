@@ -100,13 +100,7 @@ Item{
                             Layout.preferredWidth: parent.width
                             Layout.preferredHeight: 29
 
-                            Rectangle{
-                                anchors.bottom: parent.bottom
-                                implicitWidth: parent.width
-                                implicitHeight: 1
-                                radius: 20
-                                color: Colors.outline
-                            }
+
                             MaterialIconSymbol {
                                 id: collapse
                                 anchors.right: parent.right

@@ -9,6 +9,7 @@ import qs.modules.components.Clipboard
 import qs.modules.components.Setting
 import qs.modules.components.Osd
 import qs.modules.components.WallpaperSelector
+import qs.modules.components.MusicVis
 //import qs.modules.components.MangaReader
 
 ShellRoot{
@@ -28,6 +29,14 @@ ShellRoot{
     SettingsPanel{}
     Osd{}
     Wallpaper{}
+    Vis{
+        anchors {
+            left: true
+            right: true
+            bottom: true
+        }
+    }
+
 
 
     // Lock screen - responds to `loginctl lock-session`

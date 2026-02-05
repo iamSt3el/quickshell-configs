@@ -23,33 +23,32 @@ Scope{
             WlrLayershell.layer: WlrLayer.Top
             exclusionMode: ExclusionMode.Normal
             WlrLayershell.keyboardFocus:WlrKeyboardFocus.None
-            anchors{
-                top: true
-            }
-            margins{
-                top: 50
-            }
+
 
             OsdContent{
 
             }
-            Timer{
-                id: timer
-                interval: 4000
-                running: true
-                onTriggered:{
-                    GlobalStates.osdOpen = false
-                }
-            }
+
+        }
+    }
+    Timer{
+        id: timer
+        interval: 2000
+        onTriggered:{
+            GlobalStates.osdOpen = false
         }
     }
 
     Connections {
         target: ServicePipewire.sink?.audio ?? null
         function onVolumeChanged() {
-            //if (!ServicePipewire.ready) return
             GlobalStates.osdOpen = true
+            timer.restart()
             //root.triggerOsd()
+        }
+        function onMutedChanged(){
+            GlobalStates.osdOpen = true
+            timer.restart()
         }
         // function onMutedChanged() {
         //     if (!ServicePipewire.ready) return

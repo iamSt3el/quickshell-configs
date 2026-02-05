@@ -25,22 +25,11 @@ Item{
             
             RowLayout{
                 Layout.margins: 5
-                IconImage {
-                    implicitSize: 26
-                    Layout.alignment: Qt.AlignVCenter
-                    source: IconUtil.getSystemIcon("color")
-                    layer.enabled: true
-                    layer.effect: MultiEffect {
-                        colorization: 1.0
-                        colorizationColor: Colors.primary
-                        Behavior on colorizationColor{
-                            ColorAnimation{
-                                duration: 200
-                            }
-                        }
-                        brightness: 0
-                    } 
-                }
+                spacing: 10
+                MaterialIconSymbol{
+                    content: "palette"
+                    iconSize: 20
+                } 
 
                 CustomText{
                     content: "Theme"
@@ -113,9 +102,9 @@ Item{
                                 spacing: 60
                                 anchors.fill: parent
                                 anchors.margins: 5
-                                CustomIconImage{
-                                    icon: "wallpaper"
-                                    size: 20
+                                MaterialIconSymbol{
+                                    content: "wallpaper"
+                                    iconSize: 20
                                 }
 
                                 CustomText{
@@ -134,10 +123,10 @@ Item{
                                 color: Settings.matugenSetting === "Light" ? Colors.primary : Colors.surfaceContainerHigh
                                 radius: 10
 
-                                CustomIconImage{
+                                MaterialIconSymbol{
                                     anchors.centerIn: parent
-                                    icon: "sun"
-                                    size: 24
+                                    content: "sunny"
+                                    iconSize: 24
                                     color: Settings.matugenSetting === "Light" ? Colors.primaryText : Colors.surfaceVariantText
                                     
                                 }
@@ -168,11 +157,11 @@ Item{
                                     }
                                 }
                                 radius: 10
-                                CustomIconImage{
+                                MaterialIconSymbol{
                                     anchors.centerIn: parent
                                     color: Settings.matugenSetting === "Dark" ? Colors.primaryText : Colors.surfaceVariantText
-                                    icon: "moon"
-                                    size: 24
+                                    content: "bedtime"
+                                    iconSize: 24
                                 }
 
                                 MouseArea{

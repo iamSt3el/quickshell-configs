@@ -37,6 +37,12 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             z: 2
             color: Colors.primaryContainer
+            Behavior on x{
+                NumberAnimation{
+                    duration: 100
+                    easing.type: Easing.OutQuad
+                }
+            }
             // border {
             //     width: 3
             //     color: Colors.inverseSurface
@@ -78,6 +84,13 @@ Item {
             height: parent.height
             width: (track.width - handle.width) * root.progress + handle.width / 2
             color: Colors.primary
+
+            Behavior on width{
+                NumberAnimation{
+                    duration: 100
+                    easing.type: Easing.OutQuad
+                }
+            }
         }
 
         MouseArea {
