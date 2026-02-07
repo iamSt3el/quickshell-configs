@@ -7,6 +7,7 @@ Item {
     clip: true
     property var background
     property var radius
+
     
     Rectangle {
         id: mask
@@ -16,33 +17,33 @@ Item {
         layer.enabled: true
     }
     
-    ShaderEffectSource {
-        id: backgroundCapture
-        anchors.fill: parent
-        sourceItem: root.background
-        sourceRect: Qt.rect(
-            root.x, 
-            root.y, 
-            root.width, 
-            root.height
-        )
-        visible: false
-    }
+    // ShaderEffectSource {
+    //     id: backgroundCapture
+    //     anchors.fill: parent
+    //     sourceItem: root.background
+    //     sourceRect: Qt.rect(
+    //         root.x, 
+    //         root.y, 
+    //         root.width, 
+    //         root.height
+    //     )
+    //     visible: false
+    // }
     
-    MultiEffect {
-        anchors.fill: parent
-        source: backgroundCapture
-        
-        blurEnabled: true
-        blur: 1.0
-        blurMax: 40
-        autoPaddingEnabled: false
-        
-        maskEnabled: true
-        maskSource: mask
-        maskThresholdMin: 0.5
-        maskSpreadAtMin: 0.1
-    }
+    // MultiEffect {
+    //     anchors.fill: parent
+    //     source: backgroundCapture
+    //     
+    //     blurEnabled: true
+    //     blur: 1.0
+    //     blurMax: 40
+    //     autoPaddingEnabled: false
+    //     
+    //     maskEnabled: true
+    //     maskSource: mask
+    //     maskThresholdMin: 0.5
+    //     maskSpreadAtMin: 0.1
+    // }
     
     Rectangle {
         anchors.fill: parent

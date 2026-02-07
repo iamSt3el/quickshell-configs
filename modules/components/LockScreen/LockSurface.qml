@@ -24,9 +24,9 @@ Rectangle {
         if(!inputExpanded){
             inputExpanded = true
             input.forceActiveFocus();
-            if(event.text.length > 0 && !event.modifiers){
-                input.text = event.text;
-            }
+            // if(event.text.length > 0 && !event.modifiers){
+            //     input.text = event.text;
+            // }
         }
     }
 
@@ -165,16 +165,17 @@ Rectangle {
 
 
     RowLayout{
-        anchors.left: parent.left
-        anchors.right: parent.right
         anchors.margins: 20
         spacing: 10
         anchors{
+            left: parent.left
+            right: parent.right
             bottom: parent.bottom
             bottomMargin: 20
         }
 
         CustomRectangle{
+            id: test
             Layout.preferredWidth: 160
             Layout.preferredHeight: 80
             radius: 20
@@ -313,36 +314,25 @@ Rectangle {
                     }
                 } 
 
-                Rectangle{
-                    Layout.preferredWidth: 60
-                    Layout.preferredHeight: 60
-                    radius: 20
-                    visible: input.text.length > 0
-
-                    color: Colors.primary
-
-                    Loader{
-                        active: !root.context.unlockInProgress
-                        anchors.centerIn: parent
-                        sourceComponent:CustomIconImage{
-                            anchors.centerIn: parent
-                            icon: "rightArrow"
-                            size: 26
-                            color: Colors.primaryText
-                        }
-                    }
-
-                    Loader{
-                        active: root.context.unlockInProgress
-                        anchors.centerIn: parent
-                        sourceComponent: CustomLoader{
-                            anchors.centerIn: parent
-                            size: 40
-                            running: true
-                        }
-                    }
-
-                }
+                // Rectangle{
+                //     Layout.preferredWidth: 60
+                //     Layout.preferredHeight: 60
+                //     radius: 20
+                //     visible: input.text.length > 0
+                //
+                //     color: Colors.primary
+                //
+                //     // Loader{
+                //     //     active: root.context.unlockInProgress
+                //     //     anchors.centerIn: parent
+                //     //     sourceComponent: CustomLoader{
+                //     //         anchors.centerIn: parent
+                //     //         size: 40
+                //     //         running: true
+                //     //     }
+                //     // }
+                //
+                // }
             }
         }
 

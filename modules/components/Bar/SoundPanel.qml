@@ -86,9 +86,9 @@ PopupWindow{
                 }
 
                 onListChildClicked: (child) => ServicePipewire.setAudioSink(child)
-
-
             }
+
+
 
             RowLayout{
                MaterialIconSymbol{

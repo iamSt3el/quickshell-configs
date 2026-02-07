@@ -46,6 +46,7 @@ Rectangle{
             id: slider
             Layout.preferredHeight: 10
             Layout.fillWidth: true
+            interactive: false
             progress: Math.min(ServicePipewire.sink?.audio?.volume, 1)
         }
 

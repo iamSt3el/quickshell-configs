@@ -123,7 +123,7 @@ Singleton {
     function deleteEntry(entry) {
         deleteProc.entry = entry
         deleteProc.running = true
-    }
+    } 
 
     // Wipe all clipboard history
     function wipe() {
@@ -143,7 +143,7 @@ Singleton {
     }
 
     // Process to read clipboard list
-    Process {
+    Process { 
         id: readProc
         property list<string> buffer: []
         command: ["cliphist", "list"]

@@ -11,6 +11,7 @@ Item {
     property real minimum: 0.0
     property real maximum: 1.0
     property real value: minimum + (maximum - minimum) * progress
+    property bool interactive: true
 
     onValueChanged: {
         if (value !== minimum + (maximum - minimum) * progress) {
@@ -96,6 +97,7 @@ Item {
         MouseArea {
             id: trackMouseArea
             anchors.fill: parent
+            visible: root.interactive
             onClicked: (mouse) => {
                 var newProgress = Math.max(0, Math.min(1, mouse.x / width))
                 root.progress = newProgress

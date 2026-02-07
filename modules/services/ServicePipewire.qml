@@ -43,6 +43,13 @@ Singleton{
         }
     }
 
+    function setSinkVolume(node: PwNode, newVolume: real){
+        if(node?.ready && node?.audio){
+            node.audio.muted = false;
+            node.audio.volume = Math.max(0, Math.min(1, newVolume));
+        }
+    }
+
     function getName(value: PwAudioChannel): void{
          PwAudioChannel.toString(value)
     }

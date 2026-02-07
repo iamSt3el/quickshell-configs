@@ -133,7 +133,7 @@ Singleton{
                 {
                     name: "Logout",
                     icon: "logout",
-                    command: ["hyprctl", "dispatch", "exit"]
+                    command: ["loginctl", "lock-session"]
 
                 }
             ]

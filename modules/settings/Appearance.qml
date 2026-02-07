@@ -18,7 +18,7 @@ Singleton{
         property int barHeight: 40
         property int arcHeight: 10
         property int arcWidth: 20
-        property int lineWidth: 8
+        property int lineWidth: 6
         property int notificationPanelWidth: 300
         property int notificationPanelHeight: 550
         property int dashboardPanelWidth: 300

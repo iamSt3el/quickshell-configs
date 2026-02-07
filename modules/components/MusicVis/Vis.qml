@@ -8,7 +8,7 @@ import qs.modules.utils
 
 PanelWindow {
     id: panelWindow
-    implicitHeight: 100
+    implicitHeight: 200
     visible: true
     color: "transparent"
     WlrLayershell.layer: WlrLayer.Bottom
@@ -102,16 +102,14 @@ EOF
        
         function drawMountainWave(ctx, data, isShadow) {
             if (data.length < 2) return
-
-            var gradient = ctx.createLinearGradient(0, 0, width, 0)
-            gradient.addColorStop(0.0, '#4158D0')
-            gradient.addColorStop(0.3, '#C850C0')
-            gradient.addColorStop(0.6, '#FFCC70')
-            gradient.addColorStop(1.0, '#ffe53b')
-            // gradient.addColorStop(0.0, Colors.surface)
-            // gradient.addColorStop(0.3, Colors.surfaceContainer)
-            // gradient.addColorStop(0.6, Colors.surfaceContainerHigh)
-            // gradient.addColorStop(1.0, Colors.surfaceContainerHighest)
+            var gradient = ctx.createLinearGradient(0, 0, width, height);
+            gradient.addColorStop(0.0, '#833ab4'); // Deep Purple
+            gradient.addColorStop(0.5, '#fd1d1d'); // Bright Red
+            gradient.addColorStop(1.0, '#fcb045'); // Orange
+            // gradient.addColorStop(0.0, Colors.primary)
+            // gradient.addColorStop(0.3, Colors.secondary)
+            // gradient.addColorStop(0.6, Colors.primaryContainer)
+            // gradient.addColorStop(1.0, Colors.secondaryContainer)
 
             ctx.beginPath()
 
@@ -123,7 +121,7 @@ EOF
             } else {
                 ctx.globalAlpha = 1.0  // Full opacity
             }
-            
+
             ctx.fillStyle = gradient
 
             ctx.moveTo(0, height)
@@ -147,12 +145,12 @@ EOF
 
             var lastX = (data.length - 1) * barWidth
             var lastY = height - (data[data.length - 1] * height)
-           
+
             ctx.lineTo(lastX, lastY)
             ctx.lineTo(width, height)
             ctx.closePath()
             ctx.fill()
-            
+
             // Clean up shadow settings
             if (isShadow) {
                 ctx.restore()
