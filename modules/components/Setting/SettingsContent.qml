@@ -40,207 +40,175 @@ Item{
         radius: 20
         color: Settings.layoutColor
 
-        ColumnLayout{
+        Rectangle{
             anchors.fill: parent
             anchors.margins: 10
-            spacing: 10
-
-            Item{
-                Layout.preferredWidth: parent.width
-                Layout.preferredHeight: 40
-
-                CustomText{
-                    anchors.centerIn: parent
-                    content: "Settings"
-                    size: 18
-                }
-
-                MaterialIconSymbol {
-                    id: close
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.rightMargin: 10
-                    iconSize: 18
-                    content: "close"
-                 
-                    MouseArea{
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked:root.settingClosed()
-
-                    }
-                }
-
-            }
+            radius: 20
+            color: Colors.surfaceContainer
             RowLayout{
-                Layout.preferredHeight: parent.height
-                Layout.preferredWidth: parent.width
-                spacing: 10 
+                anchors.fill: parent
 
                 Rectangle{
-                    Layout.minimumWidth: 0
-                    Layout.preferredWidth: root.isMenuOpen ? 130 : 55
-                    Layout.preferredHeight: parent.height
-                    color: Colors.surfaceContainer
-                    radius: 10
-
-                    Behavior on Layout.preferredWidth{
-                        NumberAnimation{
-                            duration: 200
-                            easing.type: Easing.OutQuad
-                        }
-                    }
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 150
+                    radius:20
+                    color: Colors.surfaceContainerHigh
 
                     ColumnLayout{
+                        // anchors.top: parent.top
+                        // anchors.left: parent.left
+                        // anchors.right: parent.right
+                        // anchors.topMargin: 10
+                        // anchors.leftMargin: 10
+                        // anchors.rightMargin: 10
                         anchors.fill: parent
                         anchors.margins: 10
-                        spacing: 20
+
+                        CustomText{
+                            //Layout.alignment: Qt.AlignHCenter
+                            content: "Nebula"
+                            size: 22
+                            weight: 700
+                        }
+                        CustomText{
+                            content: "v0.1.0-beta"
+                            size: 12
+                            color: Colors.outline
+                        }
 
                         Item{
-                            Layout.preferredWidth: parent.width
-                            Layout.preferredHeight: 29
+                            Layout.preferredHeight: 20
+                        }
 
+                        Item{
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: navColumn.implicitHeight
 
-                            MaterialIconSymbol {
-                                id: collapse
-                                anchors.right: parent.right
-                                anchors.rightMargin: root.isMenuOpen ? 0 : 5
-                                iconSize: 18
-                                content: "menu"
+                            Rectangle{
+                                id: navHighlight
+                                width: parent.width
+                                height: 40
+                                radius: 10
+                                color: Colors.primary
+                                y: root.currentPage * (40 + navColumn.spacing)
 
-                                MouseArea{
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-
-                                    onClicked:{
-                                        root.isMenuOpen = !root.isMenuOpen
+                                Behavior on y{
+                                    NumberAnimation{
+                                        duration: 200
+                                        easing.type: Easing.OutQuad
                                     }
+                                }
+                            }
 
+                            Column{
+                                id: navColumn
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                spacing: 5
+
+                                Repeater{
+                                    model: Settings.pages
+
+                                    delegate: Item{
+                                        property bool active: root.currentPage === index
+                                        width: navColumn.width
+                                        height: 40
+
+                                        RowLayout{
+                                            anchors.fill: parent
+                                            anchors.margins: 5
+                                            spacing: 10
+                                            MaterialIconSymbol{
+                                                content: modelData.icon
+                                                iconSize: 20
+                                                color: active ? Colors.primaryText : Colors.surfaceVariantText
+                                            }
+                                            CustomText{
+                                                Layout.fillWidth: true
+                                                content: modelData.name
+                                                size: 14
+                                                color: active ? Colors.primaryText : Colors.surfaceVariantText
+                                            }
+                                        }
+
+                                        MouseArea{
+                                            anchors.fill: parent
+                                            cursorShape: Qt.PointingHandCursor
+                                            hoverEnabled: true
+
+                                            onClicked:{
+                                                root.currentPage = index
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
 
                         Item{
                             Layout.fillHeight: true
-                            Layout.preferredWidth: parent.width
+                        }
 
-                            ListView{
-                                orientation: Qt.Vertical
-                                height: contentHeight 
-                                width: parent.width
-                                interactive: false
-                                spacing: 10
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 40
+                            radius: 15
+                            color: Colors.tertiary
 
-                                model: Settings.pages
-
-                                delegate: Rectangle{
-                                    implicitWidth: parent.width
-                                    implicitHeight: 40
-                                    color: root.currentPage === index ? Colors.primary : area.containsMouse ? Qt.alpha(Colors.primary, 0.5) : "transparent" 
-                                    radius: 10
-
-
-                                    Behavior on color{
-                                        ColorAnimation{
-                                            duration: 400
-                                            easing.type: Easing.OutQuad
-                                        }
-                                    }
-
-                                    Row{
-                                        anchors.fill: parent
-                                        anchors.margins: 5
-                                        spacing: 10
-
-                                        MaterialIconSymbol {
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            iconSize: 24
-                                            content: modelData.icon
-                                            color: root.currentPage === index ? Colors.primaryText: Colors.surfaceVariantText
-                                           
-                                        }
-
-                                        CustomText{
-                                            visible: root.isMenuOpen
-                                            weight: 600
-                                            size: 14
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            content: modelData.name
-                                            color: root.currentPage === index ? Colors.primaryText: Colors.surfaceVariantText
-                                        }
-                                    }
-
-                                    MouseArea{
-                                        id: area
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked:{
-                                            root.currentPage = index
-                                        }
-                                    }
-                                    layer.enabled: root.currentPage === index
-                                    layer.effect: MultiEffect{
-                                        shadowEnabled: true
-                                        shadowBlur: 0.4
-                                        shadowOpacity: 1.0
-                                        shadowColor: Qt.alpha(Colors.shadow, 1)
-                                    }
-
-
+                            RowLayout{
+                                anchors.centerIn: parent
+                                MaterialIconSymbol{
+                                    content: "edit"
+                                    size: 20
+                                    color: Colors.tertiaryText
                                 }
-
+                                CustomText{
+                                    content: "Edit Config"
+                                    size: 14
+                                    color: Colors.tertiaryText
+                                }
                             }
-
                         }
-
                     }
                 }
-
-                Rectangle{
+                Item{
+                    Layout.fillHeight: true
                     Layout.fillWidth: true
-                    Layout.preferredHeight: parent.height
-                    color: Colors.surfaceContainer
-                    radius: 10
-                    Behavior on Layout.preferredWidth{
-                        NumberAnimation{
-                            duration: 200
-                            easing.type: Easing.OutQuad
-                        }
-                    }
 
                     Loader{
+                        anchors.fill: parent
                         active: root.currentPage === 0
-                        anchors.fill: parent
-                        sourceComponent: General{
-
-                        }
+                        sourceComponent:General{}
                     }
                     Loader{
+                        anchors.fill: parent
                         active: root.currentPage === 1
-                        anchors.fill: parent
-                        sourceComponent: Theme{
-
-                        }
+                        sourceComponent: Theme{}
                     }
 
                     Loader{
+                        anchors.fill: parent
                         active: root.currentPage === 2
-                        anchors.fill: parent
-                        sourceComponent: Display{
-
-                        }
+                        sourceComponent: Display{}
                     }
 
                     Loader{
-                        active: root.currentPage === 3
                         anchors.fill: parent
-                        sourceComponent: About{
-
-                        }
+                        active: root.currentPage === 3
+                        sourceComponent: Keybindings{}
                     }
+
+                    Loader{
+                        anchors.fill: parent
+                        active: root.currentPage === 4
+                        sourceComponent: About{}
+                    }
+
+
                 }
+
             }
         }
+
     }
 }

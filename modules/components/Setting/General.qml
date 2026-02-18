@@ -7,12 +7,12 @@ import qs.modules.utils
 import qs.modules.settings
 import qs.modules.services
 import qs.modules.customComponents
+import Qt.labs.platform
 
 Item{
     id: root
     anchors.fill: parent
     anchors.margins: 5
-    
     Flickable{
         id: flickable
         anchors.fill: parent  
@@ -20,20 +20,25 @@ Item{
         contentWidth: width   
         clip: true
 
-        MouseArea{
-            anchors.fill: parent
-            onClicked:{
-                list.isListClicked = false
-                flickable.clip = true
-            }
-        }
+        // MouseArea{
+        //     anchors.fill: parent
+        //     onClicked:{
+        //         list.isListClicked = false
+        //         flickable.clip = true
+        //     }
+        // }
 
         ColumnLayout{
             id: column
             width: parent.width
-            spacing: 15
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 5
+            anchors.rightMargin: 5
+            anchors.topMargin: 5
+            spacing: 0
             RowLayout{
-                Layout.margins: 5
                 spacing: 10
                 MaterialIconSymbol{
                     content: "tune"
@@ -45,154 +50,280 @@ Item{
                     size: 20
                     color: Colors.primary
                 }
-
             }
 
-            ColumnLayout{
-                Layout.margins: 5
-                spacing: 0
-
-                CustomText{
-                    content: "Profile"
-                    size: 18
-                    color: Colors.secondary
-                }
-                CustomText{
-                    content: "Edit your profile details"
-                    size: 12
-                    color: Colors.outline
-                    weight: 600
-                }
-
-                RowLayout{
-                    Layout.topMargin: 10
-                    ClippingRectangle{
-                        Layout.preferredHeight: 80
-                        Layout.preferredWidth: 80
-                        radius: 10
-                        color: "transparent"
-
-                        Image{
-                            anchors.fill: parent
-                            fillMode: Image.PreserveAspectCrop
-                            source: Settings.profile
-                            sourceSize: Qt.size(width, height)
-
-                        }
-                    }
-                    ColumnLayout{
-                        Layout.fillHeight: true
-                        Layout.margins: 5
-                        spacing: 5
-                        CustomText{
-                            content: "St3el"
-                            size: 16
-                            weight: 700
-                            color: Colors.tertiary
-                        }
-
-                        CustomText{
-                            content: "Choose your profile picture"
-                            size: 12
-                            color: Colors.outline
-                            weight: 600
-
-                        }
-
-                        RowLayout{
-                            spacing: 10
-                            Layout.fillHeight: true
-
-                            Rectangle{
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 30
-                                radius: 10
-                                color: Colors.surface
-                                border{
-                                    width: 1
-                                    color: Colors.outline
-                                }
-
-                                CustomText{
-                                    anchors.left: parent.left
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    anchors.leftMargin: 5
-                                    content: Settings.profile
-                                    size: 12
-                                    weight: 600
-                                }
-                            }
-                            IconImage {
-                                Layout.preferredWidth: width
-                                Layout.preferredHeight: height
-                                implicitSize: 22
-                                Layout.alignment: Qt.AlignVCenter
-                                source: IconUtil.getSystemIcon("wallpaper")
-                                layer.enabled: true
-                                layer.effect: MultiEffect {
-                                    colorization: 1.0
-                                    colorizationColor: Colors.primary
-                                    Behavior on colorizationColor{
-                                        ColorAnimation{
-                                            duration: 200
-                                        }
-                                    }
-                                    brightness: 0
-                                } 
-                            }
-
-
-                        }
-                    }
-                }
+            CustomText{
+                Layout.topMargin: 30
+                content: "Profile"
+                size: 18
+                color: Colors.primary
+            }
+            CustomText{
+                content: "Edit your profile details"
+                size: 14
+                color: Colors.outline
             }
 
 
-            ColumnLayout{
-                Layout.margins: 5
-                spacing: 0
-                CustomText{
-                    content: "Fonts"
-                    size: 18
-                    color: Colors.secondary
-                }
-                CustomText{
-                    content: "Choose your fonts"
-                    size: 12
-                    color: Colors.outline
-                    weight: 600
+            RowLayout{
+                Layout.topMargin: 10
+                Layout.fillWidth: true
+                Layout.preferredHeight: 90
+                spacing: 10
+                ClippingWrapperRectangle{
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 90
+                    radius: 20
+                    Image{
+                        anchors.fill: parent
+                        sourceSize: Qt.size(width, height)
+                        source: Settings.profile
+                    }
                 }
 
-                RowLayout{
-                    Layout.topMargin: 10
+                ColumnLayout{
+                    Layout.alignment: Qt.AlignLeft
+                    Layout.fillHeight: true
                     CustomText{
+                        content: "St3el"
+                        size: 18
+                    }
+                    Item{
+                        Layout.fillHeight: true
+                    }
+                    CustomText{
+                        content: "Choose your profile picture"
+                        size: 12
+                        color: Colors.outline
+                    }
+
+                    Rectangle{
                         Layout.fillWidth: true
-                        content: "Default font"
-                        size: 14
-                        weight: 700
+                        Layout.preferredHeight: 30
+                        radius: 10
+                        color: Colors.surfaceContainerHighest
+                        CustomText{
+                            anchors.left: parent.left
+                            anchors.leftMargin: 5
+                            anchors.verticalCenter: parent.verticalCenter
+                            content: Settings.profile
+                            size: 12
+                        }
                     }
-
-                    CustomList{
-                        id: list
-                        Layout.preferredWidth: 200
-                        onListClicked: flickable.clip = false
-                        onListChildClicked: (font) => Settings.setDefaultFont(font)
-                        list: Settings.fonts
-                        currentVal: Settings.defaultFont
-
-                    }
-
                 }
-                // RowLayout{
-                //    Layout.topMargin: 30 
-                //     CustomText{
-                //         content: "Default font size"
-                //         size: 14
-                //     }
-                // }
 
+                Item{
+                    Layout.fillWidth: true
+                }
+            }
+            Rectangle{
+                Layout.topMargin: 10
+                Layout.bottomMargin: 10
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: Colors.outline
             }
 
+            CustomText{
+                content: "Fonts"
+                size: 18
+                color: Colors.primary
+            }
+            CustomText{
+                content: "Choose your fonts"
+                size: 14
+                color: Colors.outline
+            }
+
+
+
+            RowLayout{
+                Layout.topMargin: 10
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
+
+                ColumnLayout{
+                    Layout.fillHeight: true
+                    spacing: 0
+                    CustomText{
+                        content: "Default Font"
+                        size: 16
+                    }
+                    CustomText{
+                        content: "Choose default font"
+                        size: 13
+                        color: Colors.outline
+                    }
+                }
+                Item{
+                    Layout.fillWidth: true
+                }
+
+                CustomListNew{
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 200
+                    currentVal: Settings.defaultFont
+                    list: Settings.fonts
+
+                    onIsListClickedChanged:{
+                        if(isListClicked)
+                        grab.active = false
+                        else 
+                        grab.active = true
+                    }
+                }
+
+            } 
+            Rectangle{
+                Layout.topMargin: 10
+                Layout.bottomMargin: 10
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: Colors.outline
+            }
+
+            CustomText{
+                content: "Music Visualizer"
+                size: 18
+                color: Colors.primary
+            }
+            CustomText{
+                content: "Edit music visualizer settings"
+                size: 14
+                color: Colors.outline
+            }
+
+            RowLayout{
+                Layout.topMargin: 10
+                Layout.fillWidth: true
+                ColumnLayout{
+                    spacing: 0
+                    CustomText{
+                        content: "Visualizer"
+                        size: 16
+                    }
+                    CustomText{
+                        content: "Turn Visualizer on/off"
+                        size: 13
+                        color: Colors.outline
+                    }
+                }
+
+                Item{
+                    Layout.fillWidth: true
+                }
+
+                CustomToogle{
+                    isToggleOn: GlobalStates.musicVis
+                    onToggled: function(state) {
+                        GlobalStates.musicVis = state 
+                    }
+                }
+            }
+
+            RowLayout{
+                Layout.topMargin: 10
+                ColumnLayout{
+                    spacing: 0
+                    CustomText{
+                        content: "Music Visualizer Colors"
+                        size: 16
+                    }
+                    CustomText{
+                        content: "Choose colors for visualizer"
+                        size: 13
+                        color: Colors.outline
+                    }
+                }
+                Item{
+                    Layout.fillWidth: true
+                }
+
+
+                Rectangle{
+                    Layout.preferredWidth: 40
+                    Layout.preferredHeight: 30
+                    radius: 10
+                    color: Colors.tertiary
+                    
+                    MaterialIconSymbol{
+                        anchors.centerIn: parent
+                        content: "palette"
+                        iconSize: 20
+                        color: Colors.tertiaryText
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: colorPicker.active = true
+                    }
+                }
+            }
+            RowLayout{
+                Layout.topMargin: 10
+                Layout.fillWidth: true
+                
+                ColumnLayout{
+                    CustomText{
+                        content: "Music Visualizer Bars"
+                        size: 16
+                    }
+
+                    CustomText{
+                        content: "Choose visualizer bars"
+                        size: 13
+                        color: Colors.outline
+                    }
+                }
+
+                Item{
+                    Layout.fillWidth: true
+                }
+
+                CustomSpinBox{
+                    Layout.preferredWidth: 120
+                    Layout.preferredHeight: 30
+                    val: Settings.musicVisBars
+
+                    onValChanged:{
+                        Settings.musicVisBars = val
+                    }
+                }
+
+
+            }
+            Rectangle{
+                Layout.topMargin: 10
+                Layout.bottomMargin: 10
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: Colors.outline
+            }
         }
+    }  
+
+    Loader{
+        id: colorPicker
+        active: false
+
+        onActiveChanged:{
+            if(active){
+                grab.active = false
+            }else{
+                grab.active = true
+            }
+        }
+        sourceComponent: CustomCircularColorPicker{
+            onClose:{
+                colorPicker.active = false
+            }
+            onColorsChanged: (first, second, third) => {
+                Settings.firstColor = first.toString()
+                Settings.secondColor = second.toString()
+                Settings.thirdColor = third.toString()
+            }
+        }
+
     }
+
 }

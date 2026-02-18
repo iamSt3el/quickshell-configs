@@ -16,8 +16,10 @@ Item{
     property string matugenTheme: "Default"
     property string matugenSetting: "Light"
     property string currentDisplayMode: "Extended"
+    property string currentMatugenStyle: "default"
+    property int musicVisBars: 60
 
-    // Workspace configuration per monitor
+    // Workspace configur ation per monitor
     property var monitorWorkspaces: ({
         "eDP-1": { // Your HDMI monitor name - adjust this
             workspaces: [1, 2, 3, 4, 5],
@@ -29,6 +31,10 @@ Item{
         //     type: "laptop"
         // }
     })
+
+    property string firstColor:"#833ab4"
+    property string secondColor:"#fd1d1d"
+    property string thirdColor:"#fcb045"
 
     property var quickIcons:[
         {
@@ -81,6 +87,10 @@ Item{
         {
             name: "Display",
             icon: "monitor"
+        },
+        {
+            name: "Keybindings",
+            icon: "keyboard"
         },
         {
             name: "About",

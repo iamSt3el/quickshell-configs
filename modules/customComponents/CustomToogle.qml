@@ -5,7 +5,7 @@ import qs.modules.utils
 
 Item{
     id: root
-    property bool isToggleOn: true
+    property bool isToggleOn: false
     signal toggled(bool state)
 
     implicitHeight: 22
@@ -18,7 +18,7 @@ Item{
         implicitWidth: parent.width
         implicitHeight: parent.height
         radius: 12
-        color: root.isToggleOn ? Colors.primary : Colors.surfaceVariant
+        color: root.isToggleOn ? Colors.tertiary : Colors.surfaceVariant
 
         Behavior on color{
             ColorAnimation{

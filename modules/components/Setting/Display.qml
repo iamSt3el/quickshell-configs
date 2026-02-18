@@ -74,7 +74,7 @@ Item{
                 RowLayout{
                     spacing: 5
                     Rectangle{
-                        Layout.preferredWidth: 300
+                        Layout.preferredWidth: 350
                         Layout.preferredHeight: 150
                         radius: 10
                         color: Colors.surfaceContainerHigh
@@ -184,7 +184,7 @@ Item{
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 property bool active: Settings.currentDisplayMode === modelData.name
-                                color: active ? Colors.primary : Colors.surfaceContainerHigh
+                                color: active ? Colors.tertiary : Colors.surfaceContainerHigh
                                 radius: active ? 20 : 10
 
                                 Behavior on radius{
@@ -201,21 +201,20 @@ Item{
                                 }
 
                                 RowLayout{
-                                    anchors.fill: parent
-                                    anchors.margins: 10
+                                    anchors.centerIn: parent
                                     spacing: 10
 
                                     MaterialIconSymbol{
                                         content: modelData.icon
                                         iconSize: 20
-                                        color: active ? Colors.primaryText : Colors.surfaceVariantText
+                                        color: active ? Colors.tertiaryText : Colors.surfaceVariantText
                                     }
 
                                     CustomText{
                                         Layout.fillWidth: true
                                         content: modelData.name
                                         size: 14
-                                        color: active ? Colors.primaryText : Colors.surfaceVariantText
+                                        color: active ? Colors.tertiaryText : Colors.surfaceVariantText
                                     }
                                 }
 
@@ -279,12 +278,18 @@ Item{
                                     size: 12
                                 }
 
-                                CustomList{
+                                CustomListNew{
                                     id: list1
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: 30
                                     currentVal: root.selectedMonitorData ? root.selectedMonitorData.resolution : ""
                                     list: root.selectedMonitorData ? root.selectedMonitorData.availableResolutions : []
+                                    onIsListClickedChanged:{
+                                        if(isListClicked)
+                                        grab.active = false
+                                        else 
+                                        grab.active = true
+                                    }
                                 }
                             }
 
@@ -296,12 +301,18 @@ Item{
                                     size: 12
                                 }
 
-                                CustomList{
+                                CustomListNew{
                                     id: list2
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: 30                                    
                                     currentVal: root.selectedMonitorData ? root.selectedMonitorData.refreshRate : ""
                                     list: root.selectedMonitorData ? root.selectedMonitorData.availableRefreshRates : []
+                                    onIsListClickedChanged:{
+                                        if(isListClicked)
+                                        grab.active = false
+                                        else 
+                                        grab.active = true
+                                    }
                                 }
                             }
                         }
@@ -309,9 +320,9 @@ Item{
                         ColumnLayout{
                             spacing: 10
                             RowLayout{
-                                CustomIconImage{
-                                    icon: "sun"
-                                    size: 16
+                                MaterialIconSymbol{
+                                    content: "sunny"
+                                    iconSize: 16
                                 }
                                 CustomText{
                                     Layout.fillWidth: true

@@ -5,6 +5,7 @@ import Quickshell.Io
 import QtQuick
 import QtQuick.Effects
 import qs.modules.utils
+import qs.modules.settings
 
 PanelWindow {
     id: panelWindow
@@ -14,6 +15,7 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Bottom
     exclusionMode: ExclusionMode.Normal
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+
 
 
     mask: Region{
@@ -35,7 +37,7 @@ PanelWindow {
             cava -p /dev/stdin <<EOF
 [general]
 # Reduced to 20 for wider, smoother hills
-bars = 40
+bars = ${Settings.musicVisBars}
 framerate = 60
 autosens = 1
 
@@ -103,9 +105,10 @@ EOF
         function drawMountainWave(ctx, data, isShadow) {
             if (data.length < 2) return
             var gradient = ctx.createLinearGradient(0, 0, width, height);
-            gradient.addColorStop(0.0, '#833ab4'); // Deep Purple
-            gradient.addColorStop(0.5, '#fd1d1d'); // Bright Red
-            gradient.addColorStop(1.0, '#fcb045'); // Orange
+            gradient.addColorStop(0.0, Settings.firstColor); // Deep Purple
+            gradient.addColorStop(0.5, Settings.secondColor); // Bright Red
+            gradient.addColorStop(1.0, Settings.thirdColor); // Orange
+          
             // gradient.addColorStop(0.0, Colors.primary)
             // gradient.addColorStop(0.3, Colors.secondary)
             // gradient.addColorStop(0.6, Colors.primaryContainer)

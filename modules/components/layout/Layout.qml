@@ -60,14 +60,13 @@ PanelWindow{
         }
 
 
-
-        Region{
-            x: notificationLoader.x
-            y: notificationLoader.y
-            width: notificationLoader.width
-            height: notificationLoader.height
-            intersection: Intersection.Subtract
-        }
+        // Region{
+        //     x: notificationLoader.x
+        //     y: notificationLoader.y
+        //     width: notificationLoader.width
+        //     height: notificationLoader.height
+        //     intersection: Intersection.Subtract
+        // }
 
         Region{
             x: clock.x
@@ -107,15 +106,7 @@ PanelWindow{
         implicitHeight: parent.height
         implicitWidth: parent.width
         anchors.bottom: parent.bottom
-        //color: isToolsWidgetClicked ? Qt.alpha(Colors.outline, 0.8) : "transparent"
-       color: "transparent"
-        // layer.enabled: true
-        // layer.effect: MultiEffect{
-        //     saturation: 0.5
-        //     blurEnabled: true
-        //     blurMax: 47
-        //     blur: 1
-        // }
+        color: "transparent"
     }
 
 
@@ -136,7 +127,7 @@ PanelWindow{
 
     property bool isToolsWidgetClicked: false
     property bool isSettingClicked: false
-    property bool isNotificationVisible: !ServiceNotification.muted && !utility.isClicked && notificationLoader.displayCount > 0
+ //   property bool isNotificationVisible: !ServiceNotification.muted && !utility.isClicked && notificationLoader.displayCount > 0
     property bool showOsd: false
 
     Item{
@@ -156,7 +147,6 @@ PanelWindow{
                 strokeWidth: 0
                 strokeColor: "transparent"
                 fillColor: Settings.layoutColor
-                //fillColor: "transparent"
                 startX: 0
                 startY: 0
 
@@ -267,6 +257,10 @@ PanelWindow{
             id: utility
         }
 
+        
+
+        
+
 
         GlobalShortcut{
             name: "toolsWidget"
@@ -295,55 +289,52 @@ PanelWindow{
             }
         }
 
-
-
-
-        Loader{
-            id: notificationLoader
-            active: layout.isNotificationVisible
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-
-            readonly property int notificationCount: ServiceNotification.popups.length
-            property int displayCount: notificationCount
-
-            height: displayCount > 0
-            ? Math.min(600, 10 + (displayCount * 90))
-            : 8
-            width: 300
-
-            Timer {
-                id: heightUpdateTimer
-                interval: 350
-                onTriggered: {
-                    notificationLoader.displayCount = notificationLoader.notificationCount
-                }
-            }
-
-            onNotificationCountChanged: {
-                if (notificationCount < displayCount) {
-                    heightUpdateTimer.restart()
-                } else {
-                    displayCount = notificationCount
-                }
-            }
-
-
-            Behavior on width{
-                NumberAnimation{
-                    duration: 200
-                    easing.type: Easing.OutQuad
-                }
-            }
-            Behavior on height{
-                NumberAnimation{
-                    duration: 300
-                    easing.type: Easing.OutQuad
-                }
-            }
-
-            sourceComponent:NotificationPanel{
-            }
-        }
+        // Loader{
+        //     id: notificationLoader
+        //     active: layout.isNotificationVisible
+        //     anchors.bottom: parent.bottom
+        //     anchors.right: parent.right
+        //
+        //     readonly property int notificationCount: ServiceNotification.popups.length
+        //     property int displayCount: notificationCount
+        //
+        //     height: displayCount > 0
+        //     ? Math.min(600, 10 + (displayCount * 90))
+        //     : 8
+        //     width: 300
+        //
+        //     Timer {
+        //         id: heightUpdateTimer
+        //         interval: 350
+        //         onTriggered: {
+        //             notificationLoader.displayCount = notificationLoader.notificationCount
+        //         }
+        //     }
+        //
+        //     onNotificationCountChanged: {
+        //         if (notificationCount < displayCount) {
+        //             heightUpdateTimer.restart()
+        //         } else {
+        //             displayCount = notificationCount
+        //         }
+        //     }
+        //
+        //
+        //     Behavior on width{
+        //         NumberAnimation{
+        //             duration: 200
+        //             easing.type: Easing.OutQuad
+        //         }
+        //     }
+        //     Behavior on height{
+        //         NumberAnimation{
+        //             duration: 300
+        //             easing.type: Easing.OutQuad
+        //         }
+        //     }
+        //
+        //     sourceComponent:NotificationPanel{
+        //     }
+        // }
     }
 }

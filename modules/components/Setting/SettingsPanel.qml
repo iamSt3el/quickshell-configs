@@ -16,9 +16,9 @@ Scope{
         active: GlobalStates.settingsOpen
         sourceComponent:PanelWindow{
             id: panelWindow
-            implicitWidth: 600
-            implicitHeight: 600
-            WlrLayershell.layer: WlrLayer.Top
+            implicitWidth: 700
+            implicitHeight: 700
+            WlrLayershell.layer: WlrLayer.Overlay
             exclusionMode: ExclusionMode.Normal
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
             color: "transparent"
@@ -44,13 +44,11 @@ Scope{
         }
     }
 
-
-
-    // GlobalShortcut{
-    //     name: "settingOpen"
-    //     onPressed:{
-    //         GlobalStates.settingsOpen = !GlobalStates.settingsOpen 
-    //     }
-    // }
+    GlobalShortcut{
+        name: "settingOpen"
+        onPressed:{
+            GlobalStates.settingsOpen = !GlobalStates.settingsOpen 
+        }
+    }
 
 }

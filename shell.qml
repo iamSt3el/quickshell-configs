@@ -10,7 +10,7 @@ import qs.modules.components.Setting
 import qs.modules.components.Osd
 import qs.modules.components.WallpaperSelector
 import qs.modules.components.MusicVis
-//import qs.modules.components.MangaReader
+import qs.modules.settings
 
 ShellRoot{
     Variants{
@@ -23,20 +23,25 @@ ShellRoot{
         }
     }
 
-
     AppLauncher{}
     Clipboard{}
     SettingsPanel{}
     Osd{}
     Wallpaper{}
-    Vis{
-        anchors {
-            left: true
-            right: true
-            bottom: true
+
+    Loader{
+        active: GlobalStates.musicVis
+        sourceComponent:Vis{
+            anchors {
+                left: true
+                right: true
+                bottom: true
+            }
         }
     }
 
+    //Panel{}
+    //ColorPicker{}
     
 
 

@@ -12,4 +12,5 @@ Singleton{
     property bool settingsOpen: false
     property bool osdOpen: false
     property bool wallpaperOpen: false
+    property bool musicVis: false
 }

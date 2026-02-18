@@ -20,11 +20,16 @@ Item{
         
         ColumnLayout{
             id: column
-            width: parent.width  
-            spacing: 15          
-            
+            width: parent.width
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 5
+            anchors.rightMargin: 5
+            anchors.topMargin: 5
+            spacing: 0        
+
             RowLayout{
-                Layout.margins: 5
                 spacing: 10
                 MaterialIconSymbol{
                     content: "palette"
@@ -38,224 +43,209 @@ Item{
                 }
             }
 
-            ColumnLayout{
-                Layout.margins: 5
-                spacing: 0
-                CustomText{
-                    content: "Matugen Settings"
-                    size: 18
-                }
-
-                RowLayout{
-                    Layout.topMargin: 10
-                    spacing: 5
-
-
-                    ClippingWrapperRectangle{
-                        Layout.preferredWidth: 240
-                        Layout.preferredHeight: 160
-                        radius: 10
-
-                        Image{
-                            anchors.fill: parent
-                            source: Settings.wallpaper
-                            fillMode: Image.PreserveAspectCrop
-                            sourceSize: Qt.size(width, height)
-                        }
-
-                        layer.enabled: true
-                        layer.effect: MultiEffect{
-                            shadowEnabled: true
-                            shadowBlur: 0.2
-                            shadowOpacity: 1.0
-                            shadowColor: Qt.alpha(Colors.shadow, 1)
-                        }
-                    }
-
-                    ColumnLayout{
-                        Layout.fillWidth: true
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 35
-                            color: Colors.surfaceContainerHigh
-                            radius: 10
-                            RowLayout{
-                                id: childRow
-                                anchors.fill: parent
-                                anchors.margins: 5
-                                CustomText{
-                                    Layout.fillWidth: true
-                                    content: "Matugen"
-                                    size: 14
-
-                                }
-                                CustomToogle{}
-                            }
-                        }
-
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 35
-                            color: Colors.surfaceContainerHigh
-                            radius: 10
-                            RowLayout{
-                                spacing: 60
-                                anchors.fill: parent
-                                anchors.margins: 5
-                                MaterialIconSymbol{
-                                    content: "wallpaper"
-                                    iconSize: 20
-                                }
-
-                                CustomText{
-                                    Layout.fillWidth: true
-                                    content: "⌘ + Ctrl + W"
-                                    size: 14
-                                }
-                            }
-                        }
-                        RowLayout{
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                                color: Settings.matugenSetting === "Light" ? Colors.primary : Colors.surfaceContainerHigh
-                                radius: 10
-
-                                MaterialIconSymbol{
-                                    anchors.centerIn: parent
-                                    content: "sunny"
-                                    iconSize: 24
-                                    color: Settings.matugenSetting === "Light" ? Colors.primaryText : Colors.surfaceVariantText
-                                    
-                                }
-
-                                Behavior on color{
-                                    ColorAnimation {
-                                        duration: 200
-                                    }
-                                }
-
-                                MouseArea{
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked:{
-                                        if(Settings.matugenSetting !== "Light"){
-                                            Settings.setMatugenSetting("Light")
-                                        }
-                                    }
-                                }
-                            }
-                            Rectangle{
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                                color: Settings.matugenSetting === "Dark" ? Colors.primary : Colors.surfaceContainerHigh
-                                Behavior on color{
-                                    ColorAnimation {
-                                        duration: 200
-                                    }
-                                }
-                                radius: 10
-                                MaterialIconSymbol{
-                                    anchors.centerIn: parent
-                                    color: Settings.matugenSetting === "Dark" ? Colors.primaryText : Colors.surfaceVariantText
-                                    content: "bedtime"
-                                    iconSize: 24
-                                }
-
-                                MouseArea{
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked:{
-                                        if(Settings.matugenSetting !== "Dark"){
-                                            Settings.setMatugenSetting("Dark")
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            CustomText{
+                Layout.topMargin: 30
+                content: "Appearance"
+                size: 18
+                color: Colors.primary
+            }
+            CustomText{
+                content: "Edit the appearance details"
+                size: 14
+                color: Colors.outline
             }
 
-            Flow {
-                id: flow
-                Layout.leftMargin: 5
-                Layout.rightMargin: 5
+            RowLayout{
                 Layout.fillWidth: true
-                spacing: 2
+                Layout.topMargin: 10
+                spacing: 10
+                ColumnLayout{
+                    spacing: 0
+                    CustomText{
+                        content: "Wallpaper"
+                        size: 16
+                    }
+                    CustomText{
+                        content: "Choose your wallpaper"
+                        size: 13
+                        color: Colors.outline
+                    }
 
-                Repeater {
-                    model: Settings.matugen
-                    delegate: Rectangle {
-                        id: button
-                        required property int index
-                        required property var modelData
-                        property bool active: Settings.matugenTheme === modelData.name
-                        property bool leftmost: index === 0
-                        property bool rightmost: index === Settings.matugen.length - 1
+                }
 
-                        onYChanged: {
-                            if (index === 0) {
-                                button.leftmost = true
-                            } else {
-                                var prev = flow.children[index - 1]
-                                var thisIsOnNewLine = prev && prev.y !== button.y
-                                button.leftmost = thisIsOnNewLine
-                                prev.rightmost = thisIsOnNewLine
+                Item{
+                    Layout.fillWidth: true
+                }
+                Rectangle{
+                    Layout.preferredWidth: 200
+                    Layout.preferredHeight: 30
+                    radius: 10
+                    color: Colors.surfaceContainerHighest
+                    clip: true
+                    CustomText{
+                        anchors.right: parent.right
+                        anchors.left: parent.left
+                        anchors.rightMargin: 10
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        content: Colors.wallpaper
+                        size: 14
+                    }
+                }
+                Rectangle{
+                    Layout.preferredHeight: 30 
+                    Layout.preferredWidth: 30
+                    radius: 10
+                    color: Colors.tertiary
+
+
+                    MaterialIconSymbol{
+                        anchors.centerIn: parent
+                        content: "wallpaper"
+                        size: 26
+                        color: Colors.tertiaryText
+                    }
+                } 
+            }
+            RowLayout{
+                Layout.topMargin: 10
+                ColumnLayout{
+                    spacing: 0
+                    CustomText{
+                        content: "Theme Mode"
+                        size: 16
+                    }
+                    CustomText{
+                        content: "Set Theme mode Dark/Light"
+                        size: 13
+                        color: Colors.outline
+                    }
+                }
+                Item{
+                    Layout.fillWidth: true
+                }
+                
+                Rectangle{
+                    id: outer
+                    Layout.preferredWidth:120
+                    Layout.preferredHeight: 30 
+                    color: "transparent"
+                    radius: 10
+                    border{
+                        width: 1
+                        color: Colors.outline
+                    }
+                    property bool active
+
+              
+                    Rectangle{
+                        id: slider
+                        implicitWidth: 60 
+                        implicitHeight: 30
+                        radius: 10
+                        color: Colors.tertiary
+
+                        Behavior on x{
+                            NumberAnimation{
+                                duration: 200
+                                easing.type: Easing.OutQuad
                             }
                         }
-
-                        implicitWidth: childText.width + 20
-                        implicitHeight: childText.height + 20
-
-                        topLeftRadius: (active || leftmost) ? height / 2 : 5
-                        topRightRadius: (active || rightmost) ? height / 2 : 5
-                        bottomLeftRadius: (active || leftmost) ? height / 2 : 5
-                        bottomRightRadius: (active || rightmost) ? height / 2 : 5
-
-                        color: active ? Colors.primary : Colors.surfaceContainerHigh
-
-                        Behavior on topLeftRadius {
-                            NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
-                        }
-                        Behavior on topRightRadius {
-                            NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
-                        }
-                        Behavior on bottomLeftRadius {
-                            NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
-                        }
-                        Behavior on bottomRightRadius {
-                            NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
-                        }
-                        Behavior on color {
-                            ColorAnimation { duration: 100 }
-                        }
-
-                        CustomText {
-                            id: childText
-                            anchors.centerIn: parent
-                            content: modelData.name
-                            size: 13
-                            color: button.active ? Colors.primaryText : Colors.surfaceVariantText
-                            weight: 600
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                Settings.setMatugenTheme(modelData.name)
-                                Quickshell.execDetached(["matugen", "image", Settings.wallpaper, "-t", modelData.cmd])
+                    }
+                    Row{
+                        Item{
+                            id: sun
+                            implicitHeight: 30
+                            implicitWidth: 60
+                            MaterialIconSymbol{
+                                anchors.centerIn: parent
+                                content: "sunny"
+                                size: 24
+                                color: !outer.active ? Colors.tertiaryText : Colors.surfaceText
                             }
+                            MouseArea{
+                                anchors.fill: parent
+                                onClicked:{
+                                    slider.x = sun.x
+                                    outer.active = false
+                                }
+                            }
+                        }
+                        Item{
+                            id: moon
+                            implicitHeight: 30
+                            implicitWidth: 60
+                            MaterialIconSymbol{
+                                anchors.centerIn: parent
+                                content: "bedtime"
+                                size: 24
+                                color: outer.active ? Colors.tertiaryText : Colors.surfaceText
+                            }
+                            MouseArea{
+                                anchors.fill: parent
+                                onClicked:{
+                                    slider.x = moon.x
+                                    outer.active = true
+                                }
+                            }
+
                         }
                     }
                 }
             }
+            RowLayout{
+                Layout.topMargin: 10
+                ColumnLayout{
+                    spacing: 0
+                    CustomText{
+                        content: "Matugen"
+                        size: 16
+                    }
+                    CustomText{
+                        content: "Matugen lets you generates colors from your wallpaper"
+                        size: 13
+                        color: Colors.outline
+                    }
+                }
+                Item{
+                    Layout.fillWidth: true
+                }
 
+                CustomToogle{
 
+                }
+            }
+            RowLayout{
+                Layout.topMargin: 10
+                ColumnLayout{
+                    spacing: 0
+                    CustomText{
+                        content: "Matugen Styles"
+                        size: 16
+                    }
+                    CustomText{
+                        content: "Choose matugen style"
+                        size: 13
+                        color: Colors.outline
+                    }
+                }
+                Item{
+                    Layout.fillWidth: true
+                }
 
+                CustomListNew{
+                    Layout.preferredWidth: 200
+                    Layout.preferredHeight: 30
+                    currentVal: Settings.currentMatugenStyle
+                    list: Settings.matugen
+                    onIsListClickedChanged:{
+                        if(isListClicked)
+                        grab.active = false
+                        else 
+                        grab.active = true
+                    }
+                }
+            }
         }
     }
 }
