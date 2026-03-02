@@ -11,7 +11,7 @@ import qs.modules.settings
 import qs.modules.customComponents
 
 Rectangle{
-    implicitWidth: parent.width
+    anchors.fill: parent
     topLeftRadius: Appearance.radius.large
     topRightRadius: Appearance.radius.extraLarge
     color: Colors.surface
@@ -24,21 +24,22 @@ Rectangle{
             easing.type: Easing.OutQuad
         }
     }
-
-    Connections{
-        target: loader
-        function onAnimationChanged(){
-            if(loader.animation){
-                timer.start();
-            }else{
-                colLoader.active = false
-            }
-        }
-    }
-
+    //
+    // Connections{
+    //     target: loader
+    //     function onAnimationChanged(){
+    //         if(loader.animation){
+    //             timer.start();
+    //         }else{
+    //             colLoader.active = false
+    //         }
+    //     }
+    // }
+    //
     Timer{
         id: timer
         interval: 300
+        running: true
         onTriggered:{
             colLoader.active = true
         }

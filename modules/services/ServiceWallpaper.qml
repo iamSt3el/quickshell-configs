@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Io
 import Qt.labs.folderlistmodel
 import QtCore
+import qs.modules.settings
 
 pragma Singleton
 pragma ComponentBehavior: Bound
@@ -13,6 +14,8 @@ Singleton {
     property string cacheDir: StandardPaths.writableLocation(StandardPaths.CacheLocation).toString().replace("file://", "") + "/wallpaper-thumbs"
     property int thumbSize: 256
     property string wallpaperScript:"/home/steel/.config/quickshell/scripts/wallpaper.sh"
+    property string scheme: SettingsConfig.matugenScheme
+    property string theme: SettingsConfig.matugenTheme
 
     property list<string> wallpapers: []
     property var wallpaperMap: ({})
@@ -196,7 +199,7 @@ Singleton {
         const originalPath = getOriginalPath(cachePath)
         if (originalPath) {
             console.log("[ServiceWallpaper] Setting wallpaper:", originalPath)
-            wallpaperSetter.exec([wallpaperScript, originalPath])
+            wallpaperSetter.exec([wallpaperScript, originalPath, root.scheme, root.theme])
             wallpapersChanged()
         } else {
             console.error("[ServiceWallpaper] Cannot find original path for:", cachePath)

@@ -31,7 +31,7 @@ PanelWindow{
     WlrLayershell.keyboardFocus:WlrKeyboardFocus.None
 
 
- 
+
     mask: Region{
         item: maskRect;
         intersection: Intersection.Xor;
@@ -121,220 +121,213 @@ PanelWindow{
     //         onClose: layout.showOsd = false
     //     }
     // }
-    
 
 
-
-    property bool isToolsWidgetClicked: false
-    property bool isSettingClicked: false
- //   property bool isNotificationVisible: !ServiceNotification.muted && !utility.isClicked && notificationLoader.displayCount > 0
-    property bool showOsd: false
+    // NewLayout{
+    //     id: newLayout
+    // }
 
     Item{
+        id: root
         anchors.fill: parent
-        layer.enabled: true
-        layer.effect: MultiEffect{
-            shadowEnabled: true
-            shadowBlur: 0.4
-            shadowOpacity: 1.0
-            shadowColor: Qt.alpha(Colors.shadow, 1)
-        }
-
+        property real disX: 18
+        property real disY: 18
+        property real radX: 18
+        property real radY: 18
+        property real lineDis: 6
+        property real clockHeight: 0
+        property real clockWidth: clock.width
+        property real workspaceWidth: 100
+        property real utilityWidth: 100
         Shape{
             preferredRendererType: Shape.CurveRenderer   
-
             ShapePath{
                 strokeWidth: 0
                 strokeColor: "transparent"
-                fillColor: Settings.layoutColor
+                fillColor: Colors.surface//"transparent"
                 startX: 0
-                startY: 0
-
-                PathLine{
-                    relativeX: 0
-                    relativeY: workspaces.implicitHeight + Appearance.size.arcHeight
-                }
+                startY: workspaces.height + root.disY
 
                 PathArc{
-                    relativeX: Appearance.size.arcWidth
-                    relativeY: -Appearance.size.arcHeight
-                    radiusX: Appearance.rounding.arcX
-                    radiusY: Appearance.rounding.arcY
+                    relativeX: root.disX
+                    relativeY: -root.disY
+                    radiusX: root.radX
+                    radiusY: root.radY
                 }
 
                 PathLine{
-                    relativeX: 0
-                    relativeY: -workspaces.implicitHeight + (Appearance.size.arcHeight + Appearance.size.lineWidth)
-                }
-
-                PathLine{
-                    relativeX: workspaces.implicitWidth - Appearance.size.arcWidth
+                    x: workspaces.width - root.disX
                     relativeY: 0
                 }
 
                 PathArc{
-                    relativeX: Appearance.size.arcWidth
-                    relativeY: -Appearance.size.arcHeight
-                    radiusX: Appearance.rounding.arcX
-                    radiusY: Appearance.rounding.arcY
-                }
-
-                PathLine{
-                    x: clock.x - Appearance.size.arcWidth
-                    y: clock.y + Appearance.size.lineWidth
-                }
-
-                PathArc{
-                    relativeX: Appearance.size.arcWidth
-                    relativeY: Appearance.size.arcHeight
-                    radiusX: Appearance.rounding.arcX
-                    radiusY: Appearance.rounding.arcY
-                }
-
-                PathLine{
-                    relativeX: clock.implicitWidth
-                    relativeY: 0
-                }
-
-                PathArc{
-                    relativeX: Appearance.size.arcWidth
-                    relativeY: -Appearance.size.arcHeight
-                    radiusX: Appearance.rounding.arcX
-                    radiusY: Appearance.rounding.arcY
-                }
-
-
-                PathLine{
-                    x: utility.x - Appearance.size.arcWidth
-                    y: utility.y + Appearance.size.lineWidth
-                }
-
-                PathArc{
-                    relativeX: Appearance.size.arcWidth
-                    relativeY: Appearance.size.arcHeight
-                    radiusX: Appearance.rounding.arcX
-                    radiusY: Appearance.rounding.arcY
-                }
-
-                PathLine{
-                    relativeX: utility.width - Appearance.size.arcWidth
-                    relativeY: 0
+                    relativeX: root.disX
+                    relativeY: -root.disY
+                    radiusX: root.radX
+                    radiusY: root.radY
+                    direction: PathArc.Counterclockwise
                 }
 
                 PathLine{
                     relativeX: 0
-                    relativeY: utility.height - (Appearance.size.arcHeight + Appearance.size.lineWidth)
+                    relativeY: -(workspaces.height - 2 * root.disY)
                 }
 
                 PathArc{
-                    relativeX: Appearance.size.arcWidth
-                    relativeY: Appearance.size.arcHeight
-                    radiusX: Appearance.rounding.arcX
-                    radiusY: Appearance.rounding.arcY
+                    relativeX: root.disX
+                    relativeY: -(root.disY - root.lineDis)
+                    radiusX: root.radX
+                    radiusY: root.radY
+                } 
+
+                PathLine{
+                    x: clock.x - root.disX
+                    relativeY: 0
+                }
+
+                PathArc{
+                    relativeX: root.disX
+                    relativeY: (root.disY - root.lineDis)
+                    radiusX: root.radX
+                    radiusY: root.radY
                 }
 
                 PathLine{
                     relativeX: 0
-                    relativeY: -utility.height - (Appearance.size.arcHeight)
+                    relativeY: (clock.height - (2 * root.disY))
+                }
+
+                PathArc{
+                    relativeX: root.disX
+                    relativeY: (root.disY )
+                    radiusX: root.radX
+                    radiusY: root.radY
+                    direction: PathArc.Counterclockwise
+                }
+
+                PathLine{
+                    relativeX: clock.width - 2 * root.disX
+                    relativeY: 0
+                }
+
+                PathArc{
+                    relativeX: root.disX
+                    relativeY: -root.disY
+                    radiusX: root.radX
+                    radiusY: root.radY
+                    direction: PathArc.Counterclockwise
+                }
+
+                PathLine{
+                    relativeX: 0
+                    relativeY: -(clock.height - (2 * root.disY))
+                }
+
+                PathArc{
+                    relativeX: root.disX
+                    relativeY: -(root.disY - root.lineDis)
+                    radiusX: root.radX
+                    radiusY: root.radY
+                }
+
+                PathLine{
+                    x: utility.x - root.disX 
+                    relativeY: 0
+                }
+
+                PathArc{
+                    relativeX: root.disX
+                    relativeY:(root.disY - root.lineDis)
+                    radiusX: root.radX
+                    radiusY: root.radY
+                }
+
+                PathLine{
+                    relativeX: 0
+                    relativeY: (utility.height - 2 * root.disY)
+                }
+
+                PathArc{
+                    relativeX: root.disX
+                    relativeY: root.disY
+                    radiusX: root.radX
+                    radiusY: root.radY
+                    direction: PathArc.Counterclockwise
+                }
+
+                PathLine{
+                    relativeX: utility.width - 2 * root.disX
+                    relativeY: 0
+                }
+
+                PathArc{
+                    relativeX: root.disX
+                    relativeY: root.disY
+                    radiusX: root.radX
+                    radiusY: root.radY
+                    //direction: PathArc.Counterclockwise
+                }
+
+                PathLine{
+                    relativeX: 0
+                    relativeY: -(utility.height + root.disY)
                 }
 
                 PathLine{
                     x: 0
                     y: 0
                 }
+
+                PathLine{
+                    relativeX: 0
+                    relativeY: workspaces.height + root.disY
+                }
             }
         }
-
 
 
         Workspaces{
             id: workspaces
         }
+
         Clock{
             id: clock
         }
+
         Utility{
             id: utility
         }
 
-        
-
-        
 
 
-        GlobalShortcut{
-            name: "toolsWidget"
-            onPressed:{
-                if(Hyprland.focusedMonitor.name === layout.screen.name){
-                    layout.isToolsWidgetClicked = !layout.isToolsWidgetClicked 
-                }
+
+
+    }
+
+    property bool isToolsWidgetClicked: false
+    property bool isSettingClicked: false
+    property bool showOsd: false
+
+    GlobalShortcut{
+        name: "toolsWidget"
+        onPressed:{
+            if(Hyprland.focusedMonitor.name === layout.screen.name){
+                layout.isToolsWidgetClicked = !layout.isToolsWidgetClicked 
             }
         }
+    }
+    Loader{
+        id: loader
+        active: layout.isToolsWidgetClicked
+        anchors.centerIn: parent
+        width: 300
+        height: 300
+        sourceComponent: Item{
+            ToolsWidget{
+                id: toolsWidget
+                onToogled: layout.isToolsWidgetClicked = false
 
-
-
-
-        Loader{
-            id: loader
-            active: layout.isToolsWidgetClicked
-            anchors.centerIn: parent
-            width: 300
-            height: 300
-            sourceComponent: Item{
-                ToolsWidget{
-                    id: toolsWidget
-                    onToogled: layout.isToolsWidgetClicked = false
-
-                }
             }
         }
-
-        // Loader{
-        //     id: notificationLoader
-        //     active: layout.isNotificationVisible
-        //     anchors.bottom: parent.bottom
-        //     anchors.right: parent.right
-        //
-        //     readonly property int notificationCount: ServiceNotification.popups.length
-        //     property int displayCount: notificationCount
-        //
-        //     height: displayCount > 0
-        //     ? Math.min(600, 10 + (displayCount * 90))
-        //     : 8
-        //     width: 300
-        //
-        //     Timer {
-        //         id: heightUpdateTimer
-        //         interval: 350
-        //         onTriggered: {
-        //             notificationLoader.displayCount = notificationLoader.notificationCount
-        //         }
-        //     }
-        //
-        //     onNotificationCountChanged: {
-        //         if (notificationCount < displayCount) {
-        //             heightUpdateTimer.restart()
-        //         } else {
-        //             displayCount = notificationCount
-        //         }
-        //     }
-        //
-        //
-        //     Behavior on width{
-        //         NumberAnimation{
-        //             duration: 200
-        //             easing.type: Easing.OutQuad
-        //         }
-        //     }
-        //     Behavior on height{
-        //         NumberAnimation{
-        //             duration: 300
-        //             easing.type: Easing.OutQuad
-        //         }
-        //     }
-        //
-        //     sourceComponent:NotificationPanel{
-        //     }
-        // }
     }
 }

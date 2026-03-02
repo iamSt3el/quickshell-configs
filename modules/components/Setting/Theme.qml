@@ -135,7 +135,7 @@ Item{
                         width: 1
                         color: Colors.outline
                     }
-                    property bool active
+                    property bool active: SettingsConfig.matugenTheme === "dark" ? false : true
 
               
                     Rectangle{
@@ -144,6 +144,7 @@ Item{
                         implicitHeight: 30
                         radius: 10
                         color: Colors.tertiary
+                        x: outer.active ? moon.x : sun.x
 
                         Behavior on x{
                             NumberAnimation{
@@ -159,15 +160,18 @@ Item{
                             implicitWidth: 60
                             MaterialIconSymbol{
                                 anchors.centerIn: parent
-                                content: "sunny"
+                                content: "bedtime"
                                 size: 24
                                 color: !outer.active ? Colors.tertiaryText : Colors.surfaceText
                             }
                             MouseArea{
                                 anchors.fill: parent
                                 onClicked:{
-                                    slider.x = sun.x
                                     outer.active = false
+                                    if(!outer.active){
+                                        SettingsConfig.matugenTheme = "dark"
+                                        Quickshell.execDetached([ServiceWallpaper.wallpaperScript, Colors.wallpaper, ServiceWallpaper.scheme, ServiceWallpaper.theme])
+                                    }
                                 }
                             }
                         }
@@ -177,15 +181,18 @@ Item{
                             implicitWidth: 60
                             MaterialIconSymbol{
                                 anchors.centerIn: parent
-                                content: "bedtime"
+                                content: "sunny"
                                 size: 24
                                 color: outer.active ? Colors.tertiaryText : Colors.surfaceText
                             }
                             MouseArea{
                                 anchors.fill: parent
                                 onClicked:{
-                                    slider.x = moon.x
-                                    outer.active = true
+                                    outer.active = true 
+                                    if(outer.active){
+                                        SettingsConfig.matugenTheme = "light"
+                                        Quickshell.execDetached([ServiceWallpaper.wallpaperScript, Colors.wallpaper, ServiceWallpaper.scheme, ServiceWallpaper.theme])
+                                    }
                                 }
                             }
 
@@ -236,13 +243,18 @@ Item{
                 CustomListNew{
                     Layout.preferredWidth: 200
                     Layout.preferredHeight: 30
-                    currentVal: Settings.currentMatugenStyle
+                    currentVal: SettingsConfig.matugenScheme
                     list: Settings.matugen
                     onIsListClickedChanged:{
                         if(isListClicked)
                         grab.active = false
                         else 
                         grab.active = true
+                    }
+
+                    onCurrentValChanged:{
+                        SettingsConfig.matugenScheme = currentVal
+                        Quickshell.execDetached([ServiceWallpaper.wallpaperScript, Colors.wallpaper, ServiceWallpaper.scheme, ServiceWallpaper.theme])
                     }
                 }
             }

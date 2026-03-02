@@ -22,7 +22,7 @@ Singleton{
         property int notificationPanelWidth: 300
         property int notificationPanelHeight: 550
         property int dashboardPanelWidth: 300
-        property int dashboardPanelHeight: 550
+        property int dashboardPanelHeight: 500
         property int batteryPanelWidth: 240
         property int batteryPanelHeight: 260
         property int widgetHeight: 25
@@ -38,8 +38,8 @@ Singleton{
     }
 
     rounding : QtObject{
-        property int arcY: 10
-        property int arcX: 18
+        property int arcY: 20
+        property int arcX: 20
     }
 
     duration : QtObject{

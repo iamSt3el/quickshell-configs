@@ -19,17 +19,7 @@ Rectangle {
     focus: true  // Enable keyboard event capture
     property bool inputExpanded: false  // Track expansion state
 
-    // Keyboard event handler
-    Keys.onPressed: (event) => {
-        if (!inputExpanded) {
-            inputExpanded = true
-            input.forceActiveFocus()
-            // Insert the pressed key into the text field
-            if (event.text.length > 0 && !event.modifiers) {
-                input.text = event.text
-            }
-        }
-    }
+
 
     Image{
         id: background
@@ -305,11 +295,9 @@ Rectangle {
                 anchors.margins: 10
                 spacing: 10
 
-                Rectangle{
+                Item{
                     Layout.preferredWidth: 60
                     Layout.preferredHeight: 60
-                    color: Colors.surfaceContainerHigh
-                    radius: 20
                     CustomIconImage{
                         anchors.centerIn: parent
                         icon: "lock"
@@ -350,36 +338,7 @@ Rectangle {
                     }
                 }
 
-                Rectangle{
-                    Layout.preferredWidth: 60
-                    Layout.preferredHeight: 60
-                    radius: 20
-                    visible: input.text.length > 0
-
-                    color: Colors.primary
-
-                    Loader{
-                        active: !root.context.unlockInProgress
-                        anchors.centerIn: parent
-                        sourceComponent:CustomIconImage{
-                            anchors.centerIn: parent
-                            icon: "rightArrow"
-                            size: 26
-                            color: Colors.primaryText
-                        }
-                    }
-
-                    Loader{
-                        active: root.context.unlockInProgress
-                        anchors.centerIn: parent
-                        sourceComponent: CustomLoader{
-                            anchors.centerIn: parent
-                            size: 40
-                            running: true
-                        }
-                    }
-
-                }
+                
             }
         }
 

@@ -1,0 +1,252 @@
+import Quickshell
+import Quickshell.Hyprland
+import Quickshell.Wayland
+import Quickshell.Widgets
+import QtQuick
+import QtQuick.Effects
+import QtQuick.Layouts
+import QtQuick.Shapes
+import qs.modules.utils
+import qs.modules.services
+import qs.modules.settings
+import qs.modules.customComponents
+import qs.modules.components.Clipboard
+import qs.modules.components.WallpaperSelector
+import qs.modules.components.CustomContextMenu
+
+Scope {
+    id: root
+    property bool clipboardActive: GlobalStates.clipboardOpen
+    property bool wallpaperActive: GlobalStates.wallpaperOpen
+
+    PanelWindow {
+        id: panelWindow
+        implicitHeight: 600
+        anchors.left: true
+        anchors.right: true
+        anchors.bottom: true
+        WlrLayershell.layer: WlrLayer.Top
+        exclusionMode: ExclusionMode.Normal
+        WlrLayershell.keyboardFocus: root.clipboardActive ? WlrKeyboardFocus.OnDemand : root.wallpaperActive ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+        color: "transparent"
+
+        Loader {
+            id: contextMenuLoader
+            active: false
+            sourceComponent: CustomContextMenu {
+                onClose: contextMenuLoader.active = false
+            }
+        }
+
+        Connections {
+            target: dockLoder.item
+            function onContextMenuRequested(px, py, appEntry) {
+                contextMenuLoader.active = true
+                const mapped = dockLoder.item.mapToItem(panelWindow.contentItem, px, py)
+                contextMenuLoader.item.appEntry = appEntry
+                contextMenuLoader.item.anchor.rect = Qt.rect(mapped.x, mapped.y, 1, 1)
+                contextMenuLoader.item.visible = true
+            }
+        }
+
+        mask: Region {
+            item: maskRect
+            intersection: Intersection.Xor
+
+            Region {
+                item: container
+                intersection: Intersection.Subtract
+            }
+        }
+
+        Rectangle {
+            id: maskRect
+            anchors.fill: parent
+            color: "transparent"
+        }
+
+        Shape {
+            id: bgShape
+            z: 1
+            preferredRendererType: Shape.CurveRenderer
+            visible: child.height > 0
+
+            readonly property real w: child.width
+            readonly property real h: child.height
+            readonly property real bodyLeft: container.x
+            readonly property real bodyRight: container.x + w
+            readonly property real bodyBottom: container.y + container.height
+            readonly property real bodyTop: bodyBottom - h
+
+            readonly property real rounding: Math.min(h / 3, w / 3)
+
+            readonly property real flareX: w / 18
+            readonly property bool flattenFlare: h < flareX * 2
+            readonly property real flareY: flattenFlare ? Math.max(0, h / 2) : flareX
+            readonly property real flareRadiusY: Math.min(flareX, Math.max(0, h))
+
+            ShapePath {
+                strokeWidth: -1
+                fillColor: Settings.layoutColor
+
+                startX: bgShape.bodyLeft - bgShape.flareX
+                startY: bgShape.bodyBottom
+
+                PathArc {
+                    x: bgShape.bodyLeft
+                    y: bgShape.bodyBottom - bgShape.flareY
+                    radiusX: bgShape.flareX
+                    radiusY: bgShape.flareRadiusY
+                    direction: PathArc.Counterclockwise
+                }
+
+                PathLine {
+                    x: bgShape.bodyLeft
+                    y: bgShape.bodyTop + bgShape.rounding
+                }
+
+                PathArc {
+                    x: bgShape.bodyLeft + bgShape.rounding
+                    y: bgShape.bodyTop
+                    radiusX: bgShape.rounding
+                    radiusY: Math.min(bgShape.rounding, bgShape.h)
+                }
+
+                PathLine {
+                    x: bgShape.bodyRight - bgShape.rounding
+                    y: bgShape.bodyTop
+                }
+
+                PathArc {
+                    x: bgShape.bodyRight
+                    y: bgShape.bodyTop + bgShape.rounding
+                    radiusX: bgShape.rounding
+                    radiusY: Math.min(bgShape.rounding, bgShape.h)
+                }
+
+                PathLine {
+                    x: bgShape.bodyRight
+                    y: bgShape.bodyBottom - bgShape.flareY
+                }
+
+                PathArc {
+                    x: bgShape.bodyRight + bgShape.flareX
+                    y: bgShape.bodyBottom
+                    radiusX: bgShape.flareX
+                    radiusY: bgShape.flareRadiusY
+                    direction: PathArc.Counterclockwise
+                }
+
+                PathLine {
+                    x: bgShape.bodyLeft - bgShape.flareX
+                    y: bgShape.bodyBottom
+                }
+            }
+        }
+
+        Item {
+            id: container
+            z: 10
+            implicitWidth: Math.max(100, child.width)
+            implicitHeight: Math.max(20, child.implicitHeight)
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            property bool active: hover.hovered || root.clipboardActive || root.wallpaperActive || (dockLoder.item && dockLoder.item.showPreview)
+            property bool collapsed: false
+
+            onActiveChanged: {
+                if (active)
+                    collapsed = false
+            }
+
+            HoverHandler {
+                id: hover
+            }
+
+            Timer {
+                id: collapseTimer
+                interval: 1000
+                running: !container.active
+                onTriggered: container.collapsed = true
+            }
+
+            Item {
+                id: child
+
+                property real dockWidth: dockLoder.item ? dockLoder.item.implicitWidth + 20 : dockWidth
+
+                implicitHeight: container.collapsed ? 0
+                    : root.clipboardActive ? 600
+                    : root.wallpaperActive ? Appearance.size.wallpaperPanelHeight
+                    : 60
+
+                implicitWidth: root.clipboardActive ? 400
+                    : root.wallpaperActive ? Appearance.size.wallpaperPanelWidth
+                    : dockWidth
+
+                anchors.bottom: parent.bottom
+                clip: true
+
+                Behavior on implicitHeight {
+                    NumberAnimation {
+                        duration: 300
+                        easing.type: Easing.OutQuad
+                    }
+                }
+                Behavior on implicitWidth {
+                    NumberAnimation {
+                        duration: 300
+                        easing.type: Easing.OutQuad
+                    }
+                }
+
+                Loader {
+                    id: dockLoder
+                    active: !root.clipboardActive && !root.wallpaperActive && !container.collapsed
+                    anchors.fill: parent
+                    sourceComponent: Dock {}
+                }
+
+                Loader {
+                    id: clipLoader
+                    active: root.clipboardActive
+                    anchors.fill: parent
+                    sourceComponent: ClipboardContent {
+                        onClosed: GlobalStates.clipboardOpen = false
+                    }
+                }
+
+                Loader {
+                    id: wallpaperLoader
+                    active: root.wallpaperActive
+                    anchors.fill: parent
+                    sourceComponent: WallpaperContent {}
+                }
+            }
+        }
+    }
+
+    GlobalShortcut {
+        name: "clipboard"
+        onPressed: {
+            if (GlobalStates.clipboardOpen) {
+                GlobalStates.clipboardOpen = false
+            } else {
+                GlobalStates.clipboardOpen = true
+                GlobalStates.wallpaperOpen = false
+            }
+        }
+    }
+
+    GlobalShortcut {
+        name: "wallpaperLauncher"
+        onPressed: {
+            if (GlobalStates.wallpaperOpen) {
+                GlobalStates.wallpaperOpen = false
+            } else {
+                GlobalStates.wallpaperOpen = true
+                GlobalStates.clipboardOpen = false
+            }
+        }
+    }
+}

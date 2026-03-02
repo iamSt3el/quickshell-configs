@@ -4,20 +4,21 @@ import QtQuick
 import Quickshell.Io
 import qs.modules.utils
 
-Item{
+Singleton{
     id: settings
 
     property string layoutColor: Colors.surface
     property string activeTheme: "Wallpaper"
     property string profile: "/home/steel/Downloads/DANDADAN.jpg"
-    property int dashboardHeight: 400
+    property int    dashboardHeight: 400
     property string defaultFont: "Rubik"
     property string wallpaper: Colors.wallpaper
-    property string matugenTheme: "Default"
     property string matugenSetting: "Light"
+    property string matugenTheme: matugenSetting.toLowerCase()
     property string currentDisplayMode: "Extended"
     property string currentMatugenStyle: "default"
-    property int musicVisBars: 60
+    property int    musicVisBars: 60
+    property string matugenScheme: "scheme-content"
 
     // Workspace configur ation per monitor
     property var monitorWorkspaces: ({
@@ -134,36 +135,28 @@ Item{
 
     property var matugen:[
         {
-            name: "default",
-            cmd: "scheme-tonal-spot"
+            name: "scheme-tonal-spot"
         },
         {
-            name: "Content",
-            cmd: "scheme-content"
+            name: "scheme-content"
         },
         {
-            name: "Expressive",
-            cmd: "scheme-expressive"
+            name: "scheme-expressive"
         },
         {
-            name: "Fidelity",
-            cmd: "scheme-fidelity"
+            name: "scheme-fidelity"
         },
         {
-            name: "Fruit Salad",
-            cmd: "scheme-fruit-salad"
+            name: "scheme-fruit-salad"
         },
         {
-            name: "Monochrome",
-            cmd:"scheme-monochrome"
+            name:"scheme-monochrome"
         },
         {
-            name: "Neutral",
-            cmd:"scheme-neutral"
+            name:"scheme-neutral"
         },
         {
-            name: "Rainbow",
-            cmd: "scheme-rainbow"
+            name: "scheme-rainbow"
         }    
     ]
 

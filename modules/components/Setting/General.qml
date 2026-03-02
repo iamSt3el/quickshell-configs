@@ -214,9 +214,9 @@ Item{
                 }
 
                 CustomToogle{
-                    isToggleOn: GlobalStates.musicVis
+                    isToggleOn: SettingsConfig.musicVisOn
                     onToggled: function(state) {
-                        GlobalStates.musicVis = state 
+                        SettingsConfig.musicVisOn = state 
                     }
                 }
             }
@@ -318,9 +318,9 @@ Item{
                 colorPicker.active = false
             }
             onColorsChanged: (first, second, third) => {
-                Settings.firstColor = first.toString()
-                Settings.secondColor = second.toString()
-                Settings.thirdColor = third.toString()
+                SettingsConfig.firstColor = first.toString()
+                SettingsConfig.secondColor = second.toString()
+                SettingsConfig.thirdColor = third.toString()
             }
         }
 

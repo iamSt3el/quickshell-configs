@@ -10,6 +10,7 @@ import qs.modules.components.Setting
 import qs.modules.components.Osd
 import qs.modules.components.WallpaperSelector
 import qs.modules.components.MusicVis
+import qs.modules.components.Dock
 import qs.modules.settings
 
 ShellRoot{
@@ -24,13 +25,16 @@ ShellRoot{
     }
 
     AppLauncher{}
-    Clipboard{}
+    //Clipboardsd{}
     SettingsPanel{}
-    Osd{}
-    Wallpaper{}
+    Osd{} 
+    //Wallpaper{}
+    DockPanel{}
+    //TestMorph{}
+    //NewLayout{}
 
     Loader{
-        active: GlobalStates.musicVis
+        active: SettingsConfig.musicVisOn
         sourceComponent:Vis{
             anchors {
                 left: true

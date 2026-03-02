@@ -170,6 +170,16 @@ Item{
 
 
     signal toggleDashboard
+    property bool active: hoverHandler.hovered
+
+    onActiveChanged:{
+        if(!active) root.toggleDashboard()
+    }
+
+    
+    HoverHandler{
+        id: hoverHandler
+    }
 
     ColumnLayout{
         id: col
@@ -482,7 +492,7 @@ Item{
 
         Rectangle{
             Layout.fillWidth: true
-            Layout.preferredHeight: 100
+            Layout.preferredHeight: 50
             color: Colors.surfaceContainer
             radius: 20
 
@@ -491,87 +501,6 @@ Item{
                 anchors.margins: 10
                 spacing: 10
 
-                RowLayout{
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 40
-                    spacing: 4
-                    Repeater{
-                        model: Settings.themeModes
-
-                        delegate: Rectangle{
-                            id: themeIcon
-                            Layout.fillHeight: true
-                            Layout.preferredWidth: row.implicitWidth + 20
-                            required property int index
-                            required property var modelData
-                            property bool active: Settings.activeTheme === modelData.name
-                            property bool leftmost: index === 0
-                            property bool rightmost: index === Settings.themeModes.length - 1
-
-                            color: active ? Colors.primary : themeArea.containsMouse ? Qt.alpha(Colors.primary, 0.5) : Colors.surfaceContainerHighest
-
-
-                            onYChanged: {
-                                if (index === 0) {
-                                    button.leftmost = true
-                                } else {
-                                    var prev = flow.children[index - 1]
-                                    var thisIsOnNewLine = prev && prev.y !== button.y
-                                    button.leftmost = thisIsOnNewLine
-                                    prev.rightmost = thisIsOnNewLine
-                                }
-                            }
-
-
-                            topLeftRadius: (active || leftmost) ? height / 2 : 5
-                            topRightRadius: (active || rightmost) ? height / 2 : 5
-                            bottomLeftRadius: (active || leftmost) ? height / 2 : 5
-                            bottomRightRadius: (active || rightmost) ? height / 2 : 5
-
-
-                            Behavior on topLeftRadius {
-                                NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
-                            }
-                            Behavior on topRightRadius {
-                                NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
-                            }
-                            Behavior on bottomLeftRadius {
-                                NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
-                            }
-                            Behavior on bottomRightRadius {
-                                NumberAnimation { duration: 100; easing.type: Easing.OutQuad }
-                            }
-                            Behavior on color {
-                                ColorAnimation { duration: 100 }
-                            }
-                            RowLayout{
-                                anchors.centerIn: parent
-                                id: row
-                                MaterialIconSymbol{
-                                    content: modelData.icon
-                                    size: 18
-                                    color: themeIcon.active ? Colors.primaryText : Colors.surfaceText
-                                }
-                                CustomText{
-                                    content: modelData.name
-                                    size: 13
-                                    color: themeIcon.active ? Colors.primaryText : Colors.surfaceText
-                                }
-                            }
-
-                            MouseArea{
-                                id: themeArea
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                hoverEnabled: true
-                                onClicked:{
-                                    Settings.setActiveTheme(modelData.name)
-                                }
-                            }
-
-                        }
-                    }
-                }
 
                 RowLayout{
                     Layout.fillWidth: true

@@ -16,15 +16,12 @@ Item{
     property alias container: container
 
 
-    Rectangle{
+    Item{
         id: container
-        property bool isClicked:hoverHandler.hovered
+        property bool isClicked: hoverHandler.hovered
         implicitWidth: clockText.width + 20
         implicitHeight: Appearance.size.clockHeight
         anchors.horizontalCenter: parent.horizontalCenter
-        color: Settings.layoutColor
-        bottomRightRadius: Appearance.radius.extraLarge
-        bottomLeftRadius: Appearance.radius.extraLarge
 
         onIsClickedChanged:{
             if(isClicked){

@@ -75,11 +75,10 @@ Item{
     }
 
 
-    Rectangle{
+    Item{
         id: container 
         anchors.fill: parent
-        color: Settings.layoutColor
-        bottomLeftRadius: Appearance.radius.extraLarge
+        //color: Settings.layoutColor
 
         Loader{
             id: notificationLoader

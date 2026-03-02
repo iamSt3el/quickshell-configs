@@ -18,21 +18,19 @@ Item{
     property var assignedWorkspaces: Settings.getWorkspacesForMonitor(Hyprland.monitorFor(layout.screen).name)
     property var otherScreenWorkspaces: Settings.getOtherScreenWorkspaces(Hyprland.monitorFor(layout.screen).name)
 
-    Rectangle{
+    Item{
         id: container
         property bool isClicked: false
         implicitWidth: workspacesRow.width + 20
         implicitHeight: 40
-        color: Settings.layoutColor
-        bottomRightRadius: 20 
 
-        Rectangle{
-            id: overlay
-            anchors.fill: parent
-            z: 1
-            color: "transparent"
-            focus: true
-        }
+        // Rectangle{
+        //     id: overlay
+        //     anchors.fill: parent
+        //     z: 1
+        //     color: "transparent"
+        //     focus: true
+        // }
 
         Row {
             visible: !container.isClicked

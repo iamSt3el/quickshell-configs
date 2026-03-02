@@ -33,21 +33,22 @@ Rectangle{
     //     shadowOpacity: 1.0
     //     shadowColor: Qt.alpha(Colors.shadow, 1)
     // }
-    Connections{
-        target: clipLoader
-        function onAnimationChanged(){
-            if(clipLoader.animation){
-                timer.start()
-            }else{
-                col.visible = false
-            }
-        }
-    }
+    // Connections{
+    //     target: clipLoader
+    //     function onAnimationChanged(){
+    //         if(clipLoader.animation){
+    //             timer.start()
+    //         }else{
+    //             col.visible = false
+    //         }
+    //     }
+    // }
 
 
     Timer{
         id: timer
         interval: 300
+        running: true
         onTriggered:{
             col.visible = true
         }
