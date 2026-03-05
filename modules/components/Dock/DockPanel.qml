@@ -151,7 +151,7 @@ Scope {
             implicitHeight: Math.max(20, child.implicitHeight)
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            property bool active: hover.hovered || root.clipboardActive || root.wallpaperActive || (dockLoder.item && dockLoder.item.showPreview)
+            property bool active: SettingsConfig.dockAutoHide ? hover.hovered || root.clipboardActive || root.wallpaperActive || (dockLoder.item && dockLoder.item.showPreview) : true
             property bool collapsed: false
 
             onActiveChanged: {
@@ -166,7 +166,7 @@ Scope {
             Timer {
                 id: collapseTimer
                 interval: 1000
-                running: !container.active
+                running: SettingsConfig.dockAutoHide && !container.active
                 onTriggered: container.collapsed = true
             }
 
@@ -178,7 +178,7 @@ Scope {
                 implicitHeight: container.collapsed ? 0
                     : root.clipboardActive ? 600
                     : root.wallpaperActive ? Appearance.size.wallpaperPanelHeight
-                    : 60
+                    : SettingsConfig.dock ? 60 : 0
 
                 implicitWidth: root.clipboardActive ? 400
                     : root.wallpaperActive ? Appearance.size.wallpaperPanelWidth
@@ -202,7 +202,7 @@ Scope {
 
                 Loader {
                     id: dockLoder
-                    active: !root.clipboardActive && !root.wallpaperActive && !container.collapsed
+                    active: SettingsConfig.dock && !root.clipboardActive && !root.wallpaperActive && !container.collapsed
                     anchors.fill: parent
                     sourceComponent: Dock {}
                 }

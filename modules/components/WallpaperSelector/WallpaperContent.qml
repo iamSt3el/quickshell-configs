@@ -49,37 +49,62 @@ Rectangle{
         active: false
         visible: active
         anchors.fill: parent
-        sourceComponent:ColumnLayout{
+        sourceComponent: ColumnLayout {
             id: col
             anchors.fill: parent
             anchors.margins: 10
             spacing: 10
-            NumberAnimation on opacity{
+
+            Component.onCompleted: searchInput.forceActiveFocus()
+
+            NumberAnimation on opacity {
                 from: 0
                 to: 1
                 duration: 100
                 running: col.visible
             }
 
-            NumberAnimation on scale{
+            NumberAnimation on scale {
                 from: 0.8
                 to: 1
                 duration: 100
                 running: col.visible
             }
-            
-            Rectangle{
+
+            Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 50
                 radius: Appearance.radius.extraLarge
                 color: Colors.surfaceContainer
-                RowLayout{
+                RowLayout {
                     anchors.fill: parent
                     anchors.rightMargin: 10
                     spacing: 10
-                    SearchBar{
+                    Rectangle {
                         Layout.preferredHeight: 50
                         Layout.preferredWidth: 400
+                        radius: 20
+                        color: Colors.surfaceContainerHigh
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 10
+                            spacing: 10
+                            MaterialIconSymbol {
+                                content: "search"
+                                iconSize: 20
+                            }
+                            TextInput {
+                                id: searchInput
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                clip: true
+                                font.pixelSize: 18
+                                font.weight: 800
+                                color: Colors.inverseSurface
+                                onTextChanged: ServiceWallpaper.updateSearch(text)
+                                Keys.onEscapePressed: text = ""
+                            }
+                        }
                     }
                     Item{
                         Layout.fillWidth: true
@@ -135,8 +160,8 @@ Rectangle{
                 Layout.fillWidth: true
                 cellWidth: width / 4
                 cellHeight: height / (4 / 2)
-                model: ScriptModel{
-                    values: ServiceWallpaper.wallpapers
+                model: ScriptModel {
+                    values: ServiceWallpaper.filteredWallpapers
                 }
                 clip: true
 

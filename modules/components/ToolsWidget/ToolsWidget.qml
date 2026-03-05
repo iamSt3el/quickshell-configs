@@ -9,55 +9,66 @@ import qs.modules.services
 import qs.modules.customComponents
 
 
-Item{
+Item {
     id: toolWidgets
     anchors.centerIn: parent
-    width:300
+    width: 300
     height: 300
     signal toogled
     signal settingClicked
-        
 
-    Rectangle{
+    property bool open: false
+
+    Component.onCompleted: Qt.callLater(() => open = true)
+
+    function closeWidget() {
+        open = false
+        closeTimer.start()
+    }
+
+    Timer {
+        id: closeTimer
+        interval: 350
+        onTriggered: toolWidgets.toogled()
+    }
+
+    Rectangle {
         id: container
         anchors.fill: parent
         color: "transparent"
 
-        Rectangle{
+        Rectangle {
             implicitHeight: 40
             implicitWidth: 40
             radius: width
             color: Settings.layoutColor
             anchors.centerIn: parent
 
-
-
-            MaterialIconSymbol{
+            MaterialIconSymbol {
                 visible: !ServiceTools.isRecording
                 iconSize: 30
                 content: "close"
                 anchors.centerIn: parent
             }
 
-            MouseArea{
+            MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
                     if (ServiceTools.isRecording) {
                         ServiceTools.stopRecording()
                     } else {
-                        toolWidgets.toogled()
+                        toolWidgets.closeWidget()
                     }
                 }
             }
         }
-        
-        Repeater{
-            id: repeater
-            anchors.centerIn: parent
-            model:ServiceTools.tools
 
-            delegate: Rectangle{
+        Repeater {
+            id: repeater
+            model: ServiceTools.tools
+
+            delegate: Rectangle {
                 id: icon
                 property int iconIndex: index
                 property bool showOptions: false
@@ -65,134 +76,148 @@ Item{
                 implicitHeight: 50
                 radius: width
                 color: Settings.layoutColor
-                scale: 0
 
                 property var pos: Functions.getCirclePosition(
                     index,
                     ServiceTools.tools.length,
-                    120/2,
+                    120 / 2,
                     container.width / 2,
                     container.height / 2
                 )
-                x: pos.x
-                y: pos.y
 
-                MaterialIconSymbol{
+                // Fly out from center on open, fly back on close
+                x: toolWidgets.open ? pos.x : (toolWidgets.width - width) / 2
+                y: toolWidgets.open ? pos.y : (toolWidgets.height - height) / 2
+
+                Behavior on x {
+                    SequentialAnimation {
+                        PauseAnimation { duration: toolWidgets.open ? index * 60 : 0 }
+                        NumberAnimation { duration: 300; easing.type: Easing.OutBack }
+                    }
+                }
+                Behavior on y {
+                    SequentialAnimation {
+                        PauseAnimation { duration: toolWidgets.open ? index * 60 : 0 }
+                        NumberAnimation { duration: 300; easing.type: Easing.OutBack }
+                    }
+                }
+
+                scale: toolWidgets.open ? 1 : 0
+                opacity: toolWidgets.open ? 1 : 0
+
+                Behavior on scale {
+                    SequentialAnimation {
+                        PauseAnimation { duration: toolWidgets.open ? index * 60 : 0 }
+                        NumberAnimation { duration: 300; easing.type: Easing.OutBack }
+                    }
+                }
+                Behavior on opacity {
+                    SequentialAnimation {
+                        PauseAnimation { duration: toolWidgets.open ? index * 60 : 0 }
+                        NumberAnimation { duration: 200 }
+                    }
+                }
+
+                MaterialIconSymbol {
                     iconSize: 30
                     anchors.centerIn: parent
                     content: modelData.icon
                 }
 
-                Item{
+                Item {
                     anchors.fill: parent
-                    visible: icon.showOptions
-                    Repeater{
-                        anchors.fill: parent
+                    Repeater {
                         model: modelData.options
-                        delegate: Item{
+                        delegate: Item {
                             width: 50
                             height: 50
+
                             property var childPos: Functions.getFixedSpaceCirclePosition(
-                                index,
-                                3,
-                                120 / 2,
-                                icon.width / 2,
-                                icon.height / 2,
-                                65,
-                                icon.iconIndex - 1
+                                index, 3, 120 / 2,
+                                icon.width / 2, icon.height / 2,
+                                65, icon.iconIndex - 1
                             )
-                            x: childPos.x
-                            y: childPos.y
-                            Rectangle{
+
+                            x: icon.showOptions ? childPos.x : icon.width / 2 - width / 2
+                            y: icon.showOptions ? childPos.y : icon.height / 2 - height / 2
+
+                            Behavior on x {
+                                SequentialAnimation {
+                                    PauseAnimation { duration: icon.showOptions ? index * 60 : 0 }
+                                    NumberAnimation { duration: 300; easing.type: Easing.OutBack }
+                                }
+                            }
+                            Behavior on y {
+                                SequentialAnimation {
+                                    PauseAnimation { duration: icon.showOptions ? index * 60 : 0 }
+                                    NumberAnimation { duration: 300; easing.type: Easing.OutBack }
+                                }
+                            }
+
+                            Rectangle {
                                 implicitWidth: 40
                                 implicitHeight: 40
                                 radius: width
                                 anchors.centerIn: parent
                                 color: Settings.layoutColor
 
-                                scale: 0
+                                scale: icon.showOptions ? 1 : 0
+                                opacity: icon.showOptions ? 1 : 0
 
-                              
+                                Behavior on scale {
+                                    SequentialAnimation {
+                                        PauseAnimation { duration: icon.showOptions ? index * 60 : 0 }
+                                        NumberAnimation { duration: 300; easing.type: Easing.OutBack }
+                                    }
+                                }
+                                Behavior on opacity {
+                                    SequentialAnimation {
+                                        PauseAnimation { duration: icon.showOptions ? index * 60 : 0 }
+                                        NumberAnimation { duration: 200 }
+                                    }
+                                }
 
-                                MaterialIconSymbol{
+                                MaterialIconSymbol {
                                     iconSize: 20
                                     anchors.centerIn: parent
                                     content: modelData.icon
                                 }
 
-                                CustomMouseArea{
-                                    id: optionIconArea
+                                CustomMouseArea {
+                                    enabled: icon.showOptions
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
-
-                                    onClicked:{
-                                        // Handle recording options specially
+                                    onClicked: {
                                         var parentTool = ServiceTools.tools[icon.iconIndex]
-                                        if(parentTool.name === "Record"){
+                                        if (parentTool.name === "Record") {
                                             var withAudio = modelData.audio || false
                                             ServiceTools.toggleRecording(modelData.name, withAudio)
-                                            toolWidgets.toogled()
-                                        }
-                                        // Handle other commands
-                                        else if(modelData.command){
-                                            toolWidgets.toogled()
+                                            toolWidgets.closeWidget()
+                                        } else if (modelData.command) {
                                             Quickshell.execDetached(modelData.command)
+                                            toolWidgets.closeWidget()
                                         }
                                     }
-                                }
-
-                                Timer{
-                                    interval: icon.showOptions ? (index * 100 + 200) : 0
-                                    running: icon.showOptions
-                                    onTriggered: parent.scale = 1
-                                }
-
-                                Behavior on scale{
-                                    NumberAnimation{
-                                        duration: 300
-                                        easing.type: Easing.OutBack
-                                    }
-                                }
-
-                                onVisibleChanged:{
-                                    if(!visible) scale = 0
                                 }
                             }
                         }
                     }
                 }
 
-                Timer{
-                    interval: index * 150
-                    running: true
-                    onTriggered: parent.scale = 1
-                }
-
-                Behavior on scale{
-                    NumberAnimation{
-                        duration: 300
-                        easing.type: Easing.OutBack
-                    }
-                }
-
-                CustomMouseArea{
-                    id: iconArea
+                CustomMouseArea {
+                    enabled: toolWidgets.open
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-
-
-                    onClicked:{
-                        if(modelData.options)icon.showOptions = !icon.showOptions
-                        else if(modelData.name === "Setting"){
+                    onClicked: {
+                        if (modelData.options) {
+                            icon.showOptions = !icon.showOptions
+                        } else if (modelData.name === "Setting") {
                             toolWidgets.settingClicked()
-                            toolWidgets.toogled()
-
+                            toolWidgets.closeWidget()
                         }
                     }
                 }
-
             }
         }
-
     }
 }

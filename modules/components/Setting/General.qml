@@ -173,7 +173,82 @@ Item{
                     }
                 }
 
-            } 
+            }
+            Rectangle{
+                Layout.topMargin: 10
+                Layout.bottomMargin: 10
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: Colors.outline
+            }
+
+            CustomText{
+                content: "Dock"
+                size: 18
+                color: Colors.primary
+            }
+            CustomText{
+                content: "Edit Dock settings"
+                size: 14
+                color: Colors.outline
+            }
+
+            RowLayout{
+                Layout.topMargin: 10
+                Layout.fillWidth: true
+                ColumnLayout{
+                    spacing: 0
+                    CustomText{
+                        content: "Dock"
+                        size: 16
+                    }
+                    CustomText{
+                        content: "Turn Dock on/off"
+                        size: 13
+                        color: Colors.outline
+                    }
+                }
+
+                Item{
+                    Layout.fillWidth: true
+                }
+
+                CustomToogle{
+                    isToggleOn: SettingsConfig.dock
+                    onToggled: function(state) {
+                        SettingsConfig.dock = state 
+                    }
+                }
+            }
+
+            RowLayout{
+                Layout.topMargin: 10
+                Layout.fillWidth: true
+                ColumnLayout{
+                    spacing: 0
+                    CustomText{
+                        content: "Dock Autohide"
+                        size: 16
+                    }
+                    CustomText{
+                        content: "Turn Dock Autohide on/off"
+                        size: 13
+                        color: Colors.outline
+                    }
+                }
+
+                Item{
+                    Layout.fillWidth: true
+                }
+
+                CustomToogle{
+                    isToggleOn: SettingsConfig.dockAutoHide
+                    onToggled: function(state) {
+                        SettingsConfig.dockAutoHide = state 
+                    }
+                }
+            }
+
             Rectangle{
                 Layout.topMargin: 10
                 Layout.bottomMargin: 10
@@ -245,7 +320,7 @@ Item{
                     Layout.preferredHeight: 30
                     radius: 10
                     color: Colors.tertiary
-                    
+
                     MaterialIconSymbol{
                         anchors.centerIn: parent
                         content: "palette"
@@ -262,7 +337,7 @@ Item{
             RowLayout{
                 Layout.topMargin: 10
                 Layout.fillWidth: true
-                
+
                 ColumnLayout{
                     CustomText{
                         content: "Music Visualizer Bars"

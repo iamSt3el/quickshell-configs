@@ -176,7 +176,7 @@ Item{
         if(!active) root.toggleDashboard()
     }
 
-    
+
     HoverHandler{
         id: hoverHandler
     }

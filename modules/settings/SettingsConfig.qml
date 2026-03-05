@@ -14,6 +14,9 @@ Singleton {
     property alias secondColor: settingsAdapter.secondColor
     property alias thirdColor: settingsAdapter.thirdColor
     property alias pinnedApps: settingsAdapter.pinnedApps
+    property alias dock: settingsAdapter.dock
+    property alias dockAutoHide: settingsAdapter.dockAutoHide
+
 
     Timer {
         id: writeTimer
@@ -51,6 +54,8 @@ Singleton {
             property string secondColor: "#ffffff"
             property string thirdColor: "#fffff"
             property list<string> pinnedApps: []
+            property bool dock: true
+            property bool dockAutoHide: true
         }
     }
 }

@@ -3,6 +3,7 @@ import Quickshell.Io
 import Qt.labs.folderlistmodel
 import QtCore
 import qs.modules.settings
+import qs.modules.utils
 
 pragma Singleton
 pragma ComponentBehavior: Bound
@@ -18,8 +19,34 @@ Singleton {
     property string theme: SettingsConfig.matugenTheme
 
     property list<string> wallpapers: []
+    property var filteredWallpapers: []
+    property string currentSearchText: ""
     property var wallpaperMap: ({})
     property var processedFiles: ({})
+
+    onWallpapersChanged: updateSearch(currentSearchText)
+
+    function fuzzyQuery(search: string): var {
+        const existing = new Set(wallpapers)
+        const preps = []
+        for (let i = 0; i < folderModel.count; i++) {
+            const orig = folderModel.get(i, "filePath")
+            const cachePath = root.cacheDir + "/" + Qt.md5(orig) + ".jpg"
+            if (existing.has(cachePath)) {
+                preps.push({
+                    content: Fuzzy.prepare(orig.split("/").pop()),
+                    cachePath: cachePath
+                })
+            }
+        }
+        return Fuzzy.go(search, preps, { all: true, key: "content" })
+            .map(r => r.obj.cachePath)
+    }
+
+    function updateSearch(searchText) {
+        currentSearchText = searchText
+        filteredWallpapers = searchText.length > 0 ? fuzzyQuery(searchText) : [...wallpapers]
+    }
 
     property alias folderModel: folderModel
     property alias cacheModel: cacheModel
