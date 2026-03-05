@@ -66,8 +66,8 @@ Big thanks to these awesome people:
 | Person | Why |
 |--------|-----|
 | [end_4](https://github.com/end-4) | Inspiration and Quickshell patterns |
-| [soramane](https://github.com/soramane) | Design inspiration |
-| [outfoxxed](https://github.com/outfoxxed) | Creator of [Quickshell](https://quickshell.outfoxxed.me) |
+| [soramane](https://github.com/soramanew) | Design inspiration |
+| [outfoxxed](https://outfoxxed.me/) | Creator of [Quickshell](https://quickshell.outfoxxed.me) |
 
 ---
 
