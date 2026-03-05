@@ -18,7 +18,7 @@
 
 <div align="center">
 
-https://github.com/iamSt3el/Nebula/blob/master/git.mp4
+https://github.com/user-attachments/assets/30a3f633-4933-4bc3-8144-f51887c8eb0a
 
 </div>
 
