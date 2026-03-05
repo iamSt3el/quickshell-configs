@@ -18,23 +18,8 @@
 
 <div align="center">
 
-https://github.com/iamSt3el/Nebula/raw/main/git.mp4
+https://github.com/iamSt3el/Nebula/blob/master/git.mp4
 
-</div>
-
----
-
-## 📸 Screenshots
-
-<!-- Replace with your actual screenshots -->
-<div align="center">
-  <img src="assets/screenshots/main.png" alt="Main" width="100%"/>
-  <br/><br/>
-  <img src="assets/screenshots/launcher.png" alt="App Launcher" width="49%"/>
-  <img src="assets/screenshots/settings.png" alt="Settings" width="49%"/>
-  <br/><br/>
-  <img src="assets/screenshots/music.png" alt="Music Visualizer" width="49%"/>
-  <img src="assets/screenshots/wallpaper.png" alt="Wallpaper Selector" width="49%"/>
 </div>
 
 ---
