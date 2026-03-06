@@ -111,6 +111,22 @@ GridView{
                     asynchronous: true
                     source: IconUtil.getIconPath(modelData.icon)
                 }
+
+                MouseArea{
+                    id: appArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onEntered:{
+                        appList.activeIndex = index
+                    }
+                    onClicked: {
+                        if(modelData){
+                            modelData.execute()
+                            appLauncher.closed()
+                        }
+                    }
+                }
             }
             Item{
                 Layout.fillWidth: true

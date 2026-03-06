@@ -7,11 +7,15 @@ import qs.modules.utils
 import qs.modules.services
 import qs.modules.customComponents
 
-Item{
-    implicitWidth: row.implicitWidth
+Rectangle{
+    implicitWidth: row.implicitWidth + 12
+    radius: 8
+    color: Colors.surfaceContainerHigh
     RowLayout{
         id: row
         anchors.fill: parent
+        anchors.leftMargin: 6
+        anchors.rightMargin: 6
         property string icon:{
             let level = ServiceUPower.powerLevel
             if(ServiceUPower.isCharging){

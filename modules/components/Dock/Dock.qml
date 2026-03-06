@@ -97,6 +97,7 @@ Item {
                     id: dockIconArea
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onEntered: {
                         if (modelData.toplevels.length > 0) {
@@ -170,14 +171,29 @@ Item {
             radius: 4
         }
 
-        Item {
+        Rectangle {
             Layout.preferredWidth: 40
             Layout.preferredHeight: 40
-
+            color: area.containsMouse ? Colors.surfaceContainerHighest : "transparent"
+            radius: 10
+            Behavior on color{
+                ColorAnimation{
+                    duration: 100
+                }
+            }
             MaterialIconSymbol {
                 anchors.centerIn: parent
                 content: "apps"
                 iconSize: 40
+            }
+            MouseArea{
+                id: area
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked:{
+                    if(!GlobalStates.appLauncherOpen) GlobalStates.appLauncherOpen = true
+                }
             }
         }
     }

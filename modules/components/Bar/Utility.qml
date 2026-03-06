@@ -256,7 +256,7 @@ Item{
             }
 
             Battery{
-                Layout.preferredHeight: Appearance.size.batteryWidgetHeight
+                Layout.preferredHeight: 25
                 MouseArea{
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor

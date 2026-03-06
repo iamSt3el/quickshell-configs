@@ -47,11 +47,29 @@ Rectangle{
         MaterialIconSymbol{
             content: ServiceMusic.isPlaying ? "pause" : "play_arrow"
             iconSize: 18
+
+            CustomMouseArea{
+                id: loopArea
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onClicked:{
+                    ServiceMusic.togglePlaying()
+                }
+            }
         }
 
         MaterialIconSymbol{
             content: "skip_next"
             iconSize: 18
+
+            CustomMouseArea{
+                id: nArea
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onClicked:{
+                    ServiceMusic.next()
+                }
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ Item{
     }
     signal closed
 
-    property bool isGrid: false
+    property bool isGrid: SettingsConfig.appGrid
     property var appList: isGrid ? gridLoader.item : listLoader.item
 
 
@@ -50,13 +50,6 @@ Item{
         }
     }
 
-    Rectangle{
-        id: container
-        anchors.fill: parent
-        color: Settings.layoutColor
-        topRightRadius: 20
-        bottomRightRadius: 20
-        clip: true
 
         Timer{
             id: timer
@@ -216,7 +209,7 @@ Item{
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     if(appLauncher.isGrid){
-                                        appLauncher.isGrid = false
+                                        SettingsConfig.appGrid = false
                                     }
                                 }
                             }
@@ -245,7 +238,7 @@ Item{
                                 hoverEnabled: true
                                 onClicked: {
                                     if(!appLauncher.isGrid){
-                                        appLauncher.isGrid = true
+                                        SettingsConfig.appGrid = true
                                     }
                                 }
                             }
@@ -292,6 +285,5 @@ Item{
                 }
             }
         }
-    }
 }
 

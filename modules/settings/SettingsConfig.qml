@@ -28,6 +28,8 @@ Singleton {
     property alias wallhavenAtleast: settingsAdapter.wallhavenAtleast
     property alias wallhavenRatios: settingsAdapter.wallhavenRatios
 
+    property alias appGrid: settingsAdapter.appGrid
+
 
     Timer {
         id: writeTimer
@@ -78,6 +80,8 @@ Singleton {
             property string wallhavenTopRange: "1M"
             property string wallhavenAtleast: ""
             property string wallhavenRatios: ""
+
+            property bool appGrid: false
         }
     }
 }
