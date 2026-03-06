@@ -227,11 +227,11 @@ Item{
                 ColumnLayout{
                     spacing: 0
                     CustomText{
-                        content: "Dock Autohide"
+                        content: "Autohide"
                         size: 16
                     }
                     CustomText{
-                        content: "Turn Dock Autohide on/off"
+                        content: "Turn Autohide on/off"
                         size: 13
                         color: Colors.outline
                     }
@@ -245,6 +245,34 @@ Item{
                     isToggleOn: SettingsConfig.dockAutoHide
                     onToggled: function(state) {
                         SettingsConfig.dockAutoHide = state 
+                    }
+                }
+            }
+
+            RowLayout{
+                Layout.topMargin: 10
+                Layout.fillWidth: true
+                ColumnLayout{
+                    spacing: 0
+                    CustomText{
+                        content: "Music Player"
+                        size: 16
+                    }
+                    CustomText{
+                        content: "Turn Music Player on/off"
+                        size: 13
+                        color: Colors.outline
+                    }
+                }
+
+                Item{
+                    Layout.fillWidth: true
+                }
+
+                CustomToogle{
+                    isToggleOn: SettingsConfig.dockMusicPlayer
+                    onToggled: function(state) {
+                        SettingsConfig.dockMusicPlayer = state 
                     }
                 }
             }
@@ -295,6 +323,7 @@ Item{
                     }
                 }
             }
+            
 
             RowLayout{
                 Layout.topMargin: 10

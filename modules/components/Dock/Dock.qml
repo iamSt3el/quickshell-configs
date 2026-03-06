@@ -154,6 +154,15 @@ Item {
                 }
             }
         }
+        Loader{ 
+            active: SettingsConfig.dockMusicPlayer
+            visible: active
+            Layout.fillHeight: true
+            Layout.preferredWidth: 160
+            sourceComponent:
+            DockMusicPlayer{}
+        }
+
         Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: 2

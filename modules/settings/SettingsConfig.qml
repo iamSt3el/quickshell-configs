@@ -16,6 +16,17 @@ Singleton {
     property alias pinnedApps: settingsAdapter.pinnedApps
     property alias dock: settingsAdapter.dock
     property alias dockAutoHide: settingsAdapter.dockAutoHide
+    property alias dockMusicPlayer: settingsAdapter.dockMusicPlayer
+
+    // Wallhaven online wallpaper settings
+    property alias wallhavenApiKey: settingsAdapter.wallhavenApiKey
+    property alias wallhavenCategories: settingsAdapter.wallhavenCategories
+    property alias wallhavenPurity: settingsAdapter.wallhavenPurity
+    property alias wallhavenSorting: settingsAdapter.wallhavenSorting
+    property alias wallhavenOrder: settingsAdapter.wallhavenOrder
+    property alias wallhavenTopRange: settingsAdapter.wallhavenTopRange
+    property alias wallhavenAtleast: settingsAdapter.wallhavenAtleast
+    property alias wallhavenRatios: settingsAdapter.wallhavenRatios
 
 
     Timer {
@@ -56,6 +67,17 @@ Singleton {
             property list<string> pinnedApps: []
             property bool dock: true
             property bool dockAutoHide: true
+            property bool dockMusicPlayer: true
+
+            // Wallhaven params
+            property string wallhavenApiKey: ""
+            property string wallhavenCategories: "111"
+            property string wallhavenPurity: "100"
+            property string wallhavenSorting: "toplist"
+            property string wallhavenOrder: "desc"
+            property string wallhavenTopRange: "1M"
+            property string wallhavenAtleast: ""
+            property string wallhavenRatios: ""
         }
     }
 }

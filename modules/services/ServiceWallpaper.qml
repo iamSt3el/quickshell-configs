@@ -24,6 +24,122 @@ Singleton {
     property var wallpaperMap: ({})
     property var processedFiles: ({})
 
+    // ── Online / Wallhaven ──────────────────────────────────────────────────
+    property bool onlineMode: false
+    property list<var> onlineWallpapers: []
+    property bool isFetchingOnline: false
+    property int  onlinePage: 1
+    property bool hasMorePages: false
+    property string _fetchBuffer: ""
+    property string _pendingDownloadPath: ""
+    property string onlineError: ""
+
+    onOnlineModeChanged: {
+        if (onlineMode) {
+            onlineWallpapers = []
+            onlinePage = 1
+            onlineError = ""
+        }
+    }
+
+    function buildWallhavenUrl(page) {
+        const p = []
+        p.push("categories=" + SettingsConfig.wallhavenCategories)
+        p.push("purity="     + SettingsConfig.wallhavenPurity)
+        p.push("sorting="    + SettingsConfig.wallhavenSorting)
+        p.push("order="      + SettingsConfig.wallhavenOrder)
+        if (SettingsConfig.wallhavenSorting === "toplist")
+            p.push("topRange=" + SettingsConfig.wallhavenTopRange)
+        if (SettingsConfig.wallhavenAtleast.length > 0)
+            p.push("atleast=" + SettingsConfig.wallhavenAtleast)
+        if (SettingsConfig.wallhavenRatios.length > 0)
+            p.push("ratios=" + SettingsConfig.wallhavenRatios)
+        if (currentSearchText.length > 0)
+            p.push("q=" + encodeURIComponent(currentSearchText))
+        if (SettingsConfig.wallhavenApiKey.length > 0)
+            p.push("apikey=" + SettingsConfig.wallhavenApiKey)
+        p.push("page=" + page)
+        return "https://wallhaven.cc/api/v1/search?" + p.join("&")
+    }
+
+    function fetchWallhaven(resetPage) {
+        if (isFetchingOnline) return
+        if (resetPage) {
+            onlinePage = 1
+            onlineWallpapers = []
+        }
+        isFetchingOnline = true
+        onlineError = ""
+        _fetchBuffer = ""
+        const url = buildWallhavenUrl(onlinePage)
+        console.log("[ServiceWallpaper] Fetching Wallhaven page", onlinePage, "–", url)
+        wallhavenFetcher.command = ["bash", "-c", "curl -s '" + url + "'"]
+        wallhavenFetcher.running = true
+    }
+
+    function _parseWallhavenResults(json) {
+        try {
+            const data = JSON.parse(json)
+
+            // API-level error (e.g. bad API key, invalid params)
+            if (data.error) {
+                onlineError = data.error
+                console.error("[ServiceWallpaper] Wallhaven API error:", data.error)
+                isFetchingOnline = false
+                return
+            }
+
+            const items = data.data || []
+            const meta  = data.meta || {}
+
+            const parsed = items.map(item => ({
+                id:         item.id,
+                thumbUrl:   item.thumbs.large,
+                fullUrl:    item.path,
+                resolution: item.resolution,
+                fileType:   item.file_type
+            }))
+
+            onlineWallpapers = (onlinePage === 1)
+                ? parsed
+                : [...onlineWallpapers, ...parsed]
+
+            hasMorePages = (meta.current_page || 1) < (meta.last_page || 1)
+            onlineError = ""
+            console.log("[ServiceWallpaper] Wallhaven: got", parsed.length,
+                        "wallpapers, page", meta.current_page, "/", meta.last_page)
+        } catch (e) {
+            // Non-JSON response — usually the rate-limit plain-text message
+            const msg = json.trim()
+            onlineError = msg.length > 0 ? msg : "Failed to parse response"
+            console.error("[ServiceWallpaper] Wallhaven parse error:", e, "| body:", msg)
+        }
+        isFetchingOnline = false
+    }
+
+    function fetchNextPage() {
+        if (!hasMorePages || isFetchingOnline) return
+        onlinePage++
+        fetchWallhaven(false)
+    }
+
+    function downloadAndSetWallpaper(wallpaper) {
+        if (_pendingDownloadPath.length > 0) {
+            console.warn("[ServiceWallpaper] Download already in progress")
+            return
+        }
+        const ext = wallpaper.fullUrl.split('.').pop().split('?')[0] || "jpg"
+        const savePath = root.wallpaperDir + "/" + wallpaper.id + "." + ext
+        _pendingDownloadPath = savePath
+        console.log("[ServiceWallpaper] Downloading wallpaper", wallpaper.id, "->", savePath)
+        wallhavenDownloader.command = [
+            "bash", "-c",
+            "curl -sL '" + wallpaper.fullUrl + "' -o '" + savePath + "'"
+        ]
+        wallhavenDownloader.running = true
+    }
+    // ── End Online ──────────────────────────────────────────────────────────
+
     onWallpapersChanged: updateSearch(currentSearchText)
 
     function fuzzyQuery(search: string): var {
@@ -251,4 +367,37 @@ Singleton {
         folderModel.folder = ""
         folderModel.folder = folder
     }
+
+    // ── Wallhaven processes ─────────────────────────────────────────────────
+    Process {
+        id: wallhavenFetcher
+        stdout: SplitParser {
+            onRead: line => { root._fetchBuffer += line }
+        }
+        onExited: (exitCode) => {
+            if (exitCode === 0) {
+                root._parseWallhavenResults(root._fetchBuffer)
+            } else {
+                root.onlineError = "Network error — check your connection (curl exit " + exitCode + ")"
+                console.error("[ServiceWallpaper] Wallhaven curl failed, exit:", exitCode)
+                root.isFetchingOnline = false
+            }
+            root._fetchBuffer = ""
+        }
+    }
+
+    Process {
+        id: wallhavenDownloader
+        onExited: (exitCode) => {
+            if (exitCode === 0) {
+                console.log("[ServiceWallpaper] Download complete:", root._pendingDownloadPath)
+                wallpaperSetter.exec([wallpaperScript, root._pendingDownloadPath, root.scheme, root.theme])
+                root.refresh()
+            } else {
+                console.error("[ServiceWallpaper] Download failed for:", root._pendingDownloadPath)
+            }
+            root._pendingDownloadPath = ""
+        }
+    }
+    // ── End Wallhaven processes ─────────────────────────────────────────────
 }
