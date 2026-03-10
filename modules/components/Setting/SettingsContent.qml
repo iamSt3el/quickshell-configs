@@ -201,6 +201,12 @@ Item{
                     Loader{
                         anchors.fill: parent
                         active: root.currentPage === 4
+                        sourceComponent: Ai{}
+                    }
+
+                    Loader{
+                        anchors.fill: parent
+                        active: root.currentPage === 5
                         sourceComponent: About{}
                     }
 

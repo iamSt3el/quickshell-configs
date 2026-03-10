@@ -30,6 +30,9 @@ Singleton {
 
     property alias appGrid: settingsAdapter.appGrid
 
+    // Google AI (Gemini) settings
+    property alias googleAiApiKey: settingsAdapter.googleAiApiKey
+
 
     Timer {
         id: writeTimer
@@ -82,6 +85,9 @@ Singleton {
             property string wallhavenRatios: ""
 
             property bool appGrid: false
+
+            // Google AI
+            property string googleAiApiKey: ""
         }
     }
 }

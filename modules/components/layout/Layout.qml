@@ -28,7 +28,7 @@ PanelWindow{
         bottom: true
     }
 
-    WlrLayershell.keyboardFocus:WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus:workspaces.active ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
 
 
@@ -38,8 +38,8 @@ PanelWindow{
         Region{
             x: workspaces.x;
             y: workspaces.y;
-            width: workspaces.container.width;
-            height: workspaces.container.height;
+            width: workspaces.width;
+            height: workspaces.height;
             intersection: Intersection.Subtract
         } 
         Region{
@@ -156,16 +156,16 @@ PanelWindow{
                 }
 
                 PathLine{
-                    x: workspaces.width - root.disX
+                    x: workspaces.width + (workspaces.showArc ? root.disX : -root.disX)
                     relativeY: 0
                 }
 
                 PathArc{
-                    relativeX: root.disX
-                    relativeY: -root.disY
+                    relativeX: workspaces.showArc ? -root.disX : root.disX
+                    relativeY: -root.disY 
                     radiusX: root.radX
                     radiusY: root.radY
-                    direction: PathArc.Counterclockwise
+                    direction: workspaces.showArc ? PathArc.Clockwise : PathArc.Counterclockwise
                 }
 
                 PathLine{
@@ -297,11 +297,6 @@ PanelWindow{
         Utility{
             id: utility
         }
-
-
-
-
-
     }
 
     property bool isToolsWidgetClicked: false

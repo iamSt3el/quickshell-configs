@@ -94,6 +94,10 @@ Singleton{
             icon: "keyboard"
         },
         {
+            name: "AI",
+            icon: "smart_toy"
+        },
+        {
             name: "About",
             icon: 'info'
         }

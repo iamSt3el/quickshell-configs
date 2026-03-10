@@ -8,88 +8,116 @@ import qs.modules.customComponents
 import Quickshell.Hyprland
 import Quickshell.Widgets
 
+
+
 Item{
-    id: workspaces
-    property alias container: container
-    implicitWidth: container.width
-    implicitHeight: container.height
+    id: root
+    property bool isClicked: false 
+    property bool active: false
+    property bool showArc: height > 1000 ? true : false
+    implicitWidth: root.active ? 500 : 200//workspacesRow.width + 20
+    implicitHeight: root.active ? 1080 : 40
 
-    // Get monitor-specific workspaces
-    property var assignedWorkspaces: Settings.getWorkspacesForMonitor(Hyprland.monitorFor(layout.screen).name)
-    property var otherScreenWorkspaces: Settings.getOtherScreenWorkspaces(Hyprland.monitorFor(layout.screen).name)
-
-    Item{
-        id: container
-        property bool isClicked: false
-        implicitWidth: workspacesRow.width + 20
-        implicitHeight: 40
-
-        // Rectangle{
-        //     id: overlay
-        //     anchors.fill: parent
-        //     z: 1
-        //     color: "transparent"
-        //     focus: true
-        // }
-
-        Row {
-            visible: !container.isClicked
-            anchors.centerIn: parent
-            spacing: 10
-
-            ListView{
-                id: workspacesRow
-                width: contentWidth
-                height: container.height
-                orientation: Qt.Horizontal
-                spacing: 10
-                model: workspaces.assignedWorkspaces
-                interactive: false
-
-                delegate: Rectangle{
-                    property int workspaceId: modelData
-                    property var currentWorkspace: ServiceWorkspaces.getWorkspace(workspaceId)
-                    anchors.verticalCenter: parent.verticalCenter
-                    implicitHeight: currentWorkspace ? 25 : 15
-                    implicitWidth: currentWorkspace ? Math.max(15, topLevels.appList.width) + 10 : 15
-                    radius: 10
-                    color: currentWorkspace ? currentWorkspace.active ? Colors.primary : Colors.surfaceContainer : Colors.surfaceContainer
-                    border{
-                        width: 1
-                        color: Qt.alpha(Colors.outline, 0.5)
-                    }
-
-                Behavior on implicitWidth{
-                    NumberAnimation{
-                        duration: 100
-                        easing.type: Easing.OutQuad
-                    }
-                }
-
-               TopLevels{
-                    id: topLevels
-                }
-
-
-                    MouseArea{
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        acceptedButtons: Qt.RightButton | Qt.LeftButton
-                        onClicked: function(mouse){
-                            if(mouse.button === Qt.LeftButton){
-                                if(currentWorkspace){
-                                    currentWorkspace.activate()
-                                }else{
-                                    Hyprland.dispatch(`workspace ${workspaceId}`)
-                                }
-                            }else if(mouse.button === Qt.RightButton){
-                            }
-                        }
-                    }
-                }
-            }
-
-            
+    Behavior on implicitWidth{
+        NumberAnimation{
+            duration: 300
+            easing: Easing.OutQuad
         }
     }
+    Behavior on implicitHeight{
+        NumberAnimation{
+            duration: 300
+            easing: Easing.OutQuad
+        }
+    }
+    onActiveChanged:{
+        if(active){
+            timer.start();
+        }else{
+            loader.active = false
+        }
+    }
+    Timer{
+        id: timer
+        interval: 300
+        onTriggered:{
+           loader.active = true 
+        }
+    }
+    Loader{
+        id: loader
+        active: false
+        visible: active
+        anchors.fill: parent
+        sourceComponent: AiContent{}
+    }
+
+
+    // Row {
+    //     visible: !root.isClicked
+    //     anchors.centerIn: parent
+    //     spacing: 10
+    //
+    //     ListView{
+    //         id: workspacesRow
+    //         width: contentWidth
+    //         height: root.height
+    //         orientation: Qt.Horizontal
+    //         spacing: 10
+    //         model: 5
+    //         interactive: false
+    //
+    //         delegate: Rectangle{
+    //             property int workspaceId: modelData
+    //             property var currentWorkspace: ServiceWorkspaces.getWorkspace(workspaceId)
+    //             anchors.verticalCenter: parent.verticalCenter
+    //             implicitHeight: currentWorkspace ? 25 : 15
+    //             implicitWidth: currentWorkspace ? Math.max(15, topLevels.appList.width) + 10 : 15
+    //             radius: 10
+    //             color: currentWorkspace ? currentWorkspace.active ? Colors.primary : Colors.surfaceContainer : Colors.surfaceContainer
+    //             border{
+    //                 width: 1
+    //                 color: Qt.alpha(Colors.outline, 0.5)
+    //             }
+    //
+    //         Behavior on implicitWidth{
+    //             NumberAnimation{
+    //                 duration: 100
+    //                 easing.type: Easing.OutQuad
+    //             }
+    //         }
+    //
+    //        TopLevels{
+    //             id: topLevels
+    //         }
+    //
+    //
+    //             MouseArea{
+    //                 anchors.fill: parent
+    //                 cursorShape: Qt.PointingHandCursor
+    //                 acceptedButtons: Qt.RightButton | Qt.LeftButton
+    //                 onClicked: function(mouse){
+    //                     if(mouse.button === Qt.LeftButton){
+    //                         if(currentWorkspace){
+    //                             currentWorkspace.activate()
+    //                         }else{
+    //                             Hyprland.dispatch(`workspace ${workspaceId}`)
+    //                         }
+    //                     }else if(mouse.button === Qt.RightButton){
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //
+    //     
+    // }
+    GlobalShortcut{
+        name: "ai"
+        onPressed:{
+            if(root.active)root.active = false 
+            else if(Hyprland.focusedMonitor.name === layout.screen.name) root.active = true
+        }
+    }
+
 }
