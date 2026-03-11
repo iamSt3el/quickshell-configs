@@ -110,6 +110,9 @@ PanelWindow{
     }
 
 
+     
+
+
     //CustomClock{}
 
     //
@@ -134,7 +137,7 @@ PanelWindow{
         property real disY: 18
         property real radX: 18
         property real radY: 18
-        property real lineDis: 6
+        property real lineDis: 4
         property real clockHeight: 0
         property real clockWidth: clock.width
         property real workspaceWidth: 100
