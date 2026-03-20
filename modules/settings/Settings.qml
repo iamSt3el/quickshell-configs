@@ -98,9 +98,14 @@ Singleton{
             icon: "smart_toy"
         },
         {
+            name: "Manga",
+            icon: "menu_book"
+        },
+        {
             name: "About",
             icon: 'info'
         }
+
     ]
 
     property var displayModes:[

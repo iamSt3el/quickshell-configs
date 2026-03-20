@@ -13,11 +13,13 @@ import qs.modules.customComponents
 import qs.modules.components.Clipboard
 import qs.modules.components.WallpaperSelector
 import qs.modules.components.CustomContextMenu
+import qs.modules.components.TypingGame
 
 Scope {
     id: root
     property bool clipboardActive: GlobalStates.clipboardOpen
     property bool wallpaperActive: GlobalStates.wallpaperOpen
+    property bool typingGameActive: GlobalStates.typingGameOpen
 
     PanelWindow {
         id: panelWindow
@@ -27,7 +29,7 @@ Scope {
         anchors.bottom: true
         WlrLayershell.layer: WlrLayer.Top
         exclusionMode: ExclusionMode.Normal
-        WlrLayershell.keyboardFocus: root.clipboardActive ? WlrKeyboardFocus.OnDemand : root.wallpaperActive ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+        WlrLayershell.keyboardFocus: (root.clipboardActive || root.wallpaperActive || root.typingGameActive) ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
         color: "transparent"
 
         Loader {
@@ -78,7 +80,7 @@ Scope {
             readonly property real bodyBottom: container.y + container.height
             readonly property real bodyTop: bodyBottom - h
 
-            readonly property real rounding: Math.min(h / 3, w / 3)
+            readonly property real rounding: root.typingGameActive ? 16 : Math.min(h / 3, w / 3)
 
             readonly property real flareX: w / 18
             readonly property bool flattenFlare: h < flareX * 2
@@ -151,7 +153,7 @@ Scope {
             implicitHeight: Math.max(20, child.implicitHeight)
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            property bool active: SettingsConfig.dockAutoHide ? hover.hovered || root.clipboardActive || root.wallpaperActive || (dockLoder.item && dockLoder.item.showPreview) : true
+            property bool active: SettingsConfig.dockAutoHide ? hover.hovered || root.clipboardActive || root.wallpaperActive || root.typingGameActive || (dockLoder.item && dockLoder.item.showPreview) : true
             property bool collapsed: false
 
             onActiveChanged: {
@@ -178,10 +180,12 @@ Scope {
                 implicitHeight: container.collapsed ? 0
                     : root.clipboardActive ? 600
                     : root.wallpaperActive ? Appearance.size.wallpaperPanelHeight
+                    : root.typingGameActive ? Appearance.size.typingGameHeight
                     : SettingsConfig.dock ? 60 : 0
 
                 implicitWidth: root.clipboardActive ? 400
                     : root.wallpaperActive ? Appearance.size.wallpaperPanelWidth
+                    : root.typingGameActive ? Appearance.size.typingGameWidth
                     : dockWidth
 
                 anchors.bottom: parent.bottom
@@ -201,8 +205,17 @@ Scope {
                 }
 
                 Loader {
+                    id: typingGameLoader
+                    active: root.typingGameActive
+                    anchors.fill: parent
+                    sourceComponent: TypingGameContent {
+                        onClosed: GlobalStates.typingGameOpen = false
+                    }
+                }
+
+                Loader {
                     id: dockLoder
-                    active: SettingsConfig.dock && !root.clipboardActive && !root.wallpaperActive && !container.collapsed
+                    active: SettingsConfig.dock && !root.clipboardActive && !root.wallpaperActive && !root.typingGameActive && !container.collapsed
                     anchors.fill: parent
                     sourceComponent: Dock {}
                 }
@@ -246,6 +259,20 @@ Scope {
             } else {
                 GlobalStates.wallpaperOpen = true
                 GlobalStates.clipboardOpen = false
+                GlobalStates.typingGameOpen = false
+            }
+        }
+    }
+
+    GlobalShortcut {
+        name: "typingGame"
+        onPressed: {
+            if (GlobalStates.typingGameOpen) {
+                GlobalStates.typingGameOpen = false
+            } else {
+                GlobalStates.typingGameOpen = true
+                GlobalStates.clipboardOpen = false
+                GlobalStates.wallpaperOpen = false
             }
         }
     }

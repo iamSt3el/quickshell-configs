@@ -55,17 +55,11 @@ Item{
                     color: Colors.surfaceContainerHigh
 
                     ColumnLayout{
-                        // anchors.top: parent.top
-                        // anchors.left: parent.left
-                        // anchors.right: parent.right
-                        // anchors.topMargin: 10
-                        // anchors.leftMargin: 10
-                        // anchors.rightMargin: 10
+
                         anchors.fill: parent
                         anchors.margins: 10
 
                         CustomText{
-                            //Layout.alignment: Qt.AlignHCenter
                             content: "Nebula"
                             size: 22
                             weight: 700
@@ -174,7 +168,7 @@ Item{
                 Item{
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-
+                    
                     Loader{
                         anchors.fill: parent
                         active: root.currentPage === 0
@@ -203,12 +197,18 @@ Item{
                         active: root.currentPage === 4
                         sourceComponent: Ai{}
                     }
-
                     Loader{
                         anchors.fill: parent
                         active: root.currentPage === 5
+                        sourceComponent: MangaReader{}
+                    }
+
+                    Loader{
+                        anchors.fill: parent
+                        active: root.currentPage === 6
                         sourceComponent: About{}
                     }
+
 
 
                 }

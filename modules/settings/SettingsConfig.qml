@@ -33,6 +33,13 @@ Singleton {
     // Google AI (Gemini) settings
     property alias googleAiApiKey: settingsAdapter.googleAiApiKey
 
+    // Manga Reader
+    property alias mangaScrollSpeed: settingsAdapter.mangaScrollSpeed
+    property alias mangaPageSpacing: settingsAdapter.mangaPageSpacing
+    property alias mangaDefaultSite: settingsAdapter.mangaDefaultSite
+    property alias mangaPreloadPages: settingsAdapter.mangaPreloadPages
+    property alias mangaFilterAdult: settingsAdapter.mangaFilterAdult
+
 
     Timer {
         id: writeTimer
@@ -88,6 +95,13 @@ Singleton {
 
             // Google AI
             property string googleAiApiKey: ""
+
+            // Manga Reader
+            property int mangaScrollSpeed: 5
+            property int mangaPageSpacing: 4
+            property string mangaDefaultSite: "comix"
+            property int mangaPreloadPages: 1500
+            property bool mangaFilterAdult: true
         }
     }
 }

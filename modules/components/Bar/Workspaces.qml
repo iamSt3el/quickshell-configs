@@ -111,7 +111,7 @@ Item{
     }
 
     GlobalShortcut{
-        name: "ai"
+        name: "mangaReader"
         onPressed:{
             if(root.active){
                 root.active = false

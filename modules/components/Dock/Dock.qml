@@ -113,7 +113,7 @@ Item {
                     onExited: {
                         root.iconHovered = false
                         if (!root.previewHovered)
-                            hidePreviewTimer.restart()
+                        hidePreviewTimer.restart()
                     }
                     onClicked: function(mouse) {
                         if (mouse.button === Qt.LeftButton && dockItem.modelData.toplevels.length > 0)
@@ -155,6 +155,13 @@ Item {
                 }
             }
         }
+
+        Rectangle {
+            Layout.fillHeight: true
+            Layout.preferredWidth: 2
+            color: Colors.outline
+            radius: 4
+        }
         Loader{ 
             active: SettingsConfig.dockMusicPlayer
             visible: active
@@ -164,38 +171,59 @@ Item {
             DockMusicPlayer{}
         }
 
-        Rectangle {
-            Layout.fillHeight: true
-            Layout.preferredWidth: 2
-            color: Colors.outline
-            radius: 4
-        }
 
-        Rectangle {
-            Layout.preferredWidth: 40
-            Layout.preferredHeight: 40
-            color: area.containsMouse ? Colors.surfaceContainerHighest : "transparent"
-            radius: 10
-            Behavior on color{
-                ColorAnimation{
-                    duration: 100
-                }
-            }
-            MaterialIconSymbol {
-                anchors.centerIn: parent
-                content: "apps"
-                iconSize: 40
-            }
-            MouseArea{
-                id: area
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked:{
-                    if(!GlobalStates.appLauncherOpen) GlobalStates.appLauncherOpen = true
-                }
-            }
-        }
+
+        // Rectangle {
+        //     Layout.preferredWidth: 40
+        //     Layout.preferredHeight: 40
+        //     color: typingArea.containsMouse ? Colors.surfaceContainerHighest : "transparent"
+        //     radius: 10
+        //     Behavior on color { ColorAnimation { duration: 100 } }
+        //     MaterialIconSymbol {
+        //         anchors.centerIn: parent
+        //         content: "keyboard"
+        //         iconSize: 28
+        //     }
+        //     MouseArea {
+        //         id: typingArea
+        //         anchors.fill: parent
+        //         hoverEnabled: true
+        //         cursorShape: Qt.PointingHandCursor
+        //         onClicked: {
+        //             GlobalStates.typingGameOpen = !GlobalStates.typingGameOpen
+        //             if (GlobalStates.typingGameOpen) {
+        //                 GlobalStates.clipboardOpen = false
+        //                 GlobalStates.wallpaperOpen = false
+        //             }
+        //         }
+        //     }
+        // }
+
+        // Rectangle {
+        //     Layout.preferredWidth: 40
+        //     Layout.preferredHeight: 40
+        //     color: area.containsMouse ? Colors.surfaceContainerHighest : "transparent"
+        //     radius: 10
+        //     Behavior on color{
+        //         ColorAnimation{
+        //             duration: 100
+        //         }
+        //     }
+        //     MaterialIconSymbol {
+        //         anchors.centerIn: parent
+        //         content: "apps"
+        //         iconSize: 40
+        //     }
+        //     MouseArea{
+        //         id: area
+        //         anchors.fill: parent
+        //         hoverEnabled: true
+        //         cursorShape: Qt.PointingHandCursor
+        //         onClicked:{
+        //             if(!GlobalStates.appLauncherOpen) GlobalStates.appLauncherOpen = true
+        //         }
+        //     }
+        // }
     }
 
 }

@@ -28,7 +28,7 @@ PanelWindow{
         bottom: true
     }
 
-    WlrLayershell.keyboardFocus:workspaces.active ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    WlrLayershell.keyboardFocus: (workspaces.active || utility.isTodoClicked) ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
 
 

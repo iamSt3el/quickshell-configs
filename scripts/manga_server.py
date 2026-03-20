@@ -60,6 +60,7 @@ TTL_LATEST = 120    # 2 min  — latest-updates changes often
 TTL_SEARCH = 600    # 10 min
 TTL_INFO   = 1800   # 30 min — series metadata rarely changes
 TTL_PAGES  = 3600   # 1 hr   — chapter pages never change
+TTL_TAGS   = 3600   # 1 hr   — tags rarely change
 
 
 def _cached(key, ttl, fn):
@@ -102,12 +103,46 @@ def cover_url(sid):
 
 # ── Search ─────────────────────────────────────────────────────────────────
 
-def search(query, mtype=None, offset=0, sort="Latest Updates"):
-    key = f"search:{query}:{mtype}:{offset}:{sort}"
-    return _cached(key, TTL_SEARCH, lambda: _search(query, mtype, offset, sort))
+ADULT_TAGS = ["Adult", "Smut", "Ecchi"]
 
 
-def _search(query, mtype, offset, sort):
+# ── Tag lookup (lightweight — no chapter list) ──────────────────────────────
+
+def _fetch_tags(full_id):
+    """Fetch only the tags for a series by scraping its detail page."""
+    try:
+        html = fetch(f"{BASE}/series/{full_id}")
+        tags = re.findall(
+            r'<a[^>]+href="[^"]*search\?included_tag=[^"]*"[^>]*>([^<]+)</a>', html
+        )
+        return [t.strip() for t in tags if t.strip()]
+    except Exception:
+        return []
+
+
+def get_tags(full_id):
+    return _cached(f"tags:{full_id}", TTL_TAGS, lambda: _fetch_tags(full_id))
+
+
+def is_adult(full_id):
+    tags_lower = [t.lower() for t in get_tags(full_id)]
+    return any(at.lower() in tags_lower for at in ADULT_TAGS)
+
+
+def filter_adult_results(results):
+    """Remove adult series from a list. Fetches tags in parallel."""
+    ids = [r["id"] for r in results]
+    with ThreadPoolExecutor(max_workers=10) as ex:
+        adult_flags = list(ex.map(is_adult, ids))
+    return [r for r, adult in zip(results, adult_flags) if not adult]
+
+
+def search(query, mtype=None, offset=0, sort="Latest Updates", filter_adult=False):
+    key = f"search:{query}:{mtype}:{offset}:{sort}:{filter_adult}"
+    return _cached(key, TTL_SEARCH, lambda: _search(query, mtype, offset, sort, filter_adult))
+
+
+def _search(query, mtype, offset, sort, filter_adult=False):
     params = (
         f"text={quote(query)}"
         f"&limit={PAGE_LIMIT}"
@@ -117,6 +152,9 @@ def _search(query, mtype, offset, sort):
     )
     if mtype:
         params += f"&included_type={quote(mtype)}"
+    if filter_adult:
+        for tag in ADULT_TAGS:
+            params += f"&excluded_tag={quote(tag)}"
 
     html     = fetch(f"{BASE}/search/data?{params}", extra_headers=SEARCH_HEADERS)
     articles = re.findall(r"<article[^>]*>(.*?)</article>", html, re.S)
@@ -216,8 +254,11 @@ def _info(full_id):
 
 # ── Latest Updates ─────────────────────────────────────────────────────────
 
-def latest_updates(page=1):
-    return _cached(f"latest:{page}", TTL_LATEST, lambda: _latest_updates(page))
+def latest_updates(page=1, filter_adult=False):
+    data = _cached(f"latest:{page}", TTL_LATEST, lambda: _latest_updates(page))
+    if filter_adult:
+        data = dict(data, results=filter_adult_results(data["results"]))
+    return data
 
 
 def _latest_updates(page):
@@ -259,8 +300,11 @@ def _latest_updates(page):
 
 # ── Hot Updates ────────────────────────────────────────────────────────────
 
-def hot_updates():
-    return _cached("hot", TTL_HOT, _hot_updates)
+def hot_updates(filter_adult=False):
+    data = _cached("hot", TTL_HOT, _hot_updates)
+    if filter_adult:
+        data = filter_adult_results(data)
+    return data
 
 
 def _hot_updates():
@@ -427,7 +471,11 @@ def dl_list():
             with open(ch_meta) as f:
                 chapters.append(json.load(f))
         # Sort chapters descending by chapter number
-        chapters.sort(key=lambda c: float(c.get("chapterNum", "0") or "0"), reverse=True)
+        def _ch_sort_key(c):
+            val = c.get("chapterNum", "0") or "0"
+            m = re.search(r"[\d.]+", val)
+            return float(m.group()) if m else 0.0
+        chapters.sort(key=_ch_sort_key, reverse=True)
         cover_path = os.path.join(series_dir, "cover.jpg")
         cover_url_local = f"file://{cover_path}" if os.path.exists(cover_path) else proxy_url(sm.get("rawCoverUrl", ""))
         result.append({**sm, "image": cover_url_local, "chapters": chapters})
@@ -656,20 +704,23 @@ class Handler(BaseHTTPRequestHandler):
             p = parsed.path
 
             if p == "/hot":
-                self._json(hot_updates())
+                filter_adult = param("filter_adult", "0") == "1"
+                self._json(hot_updates(filter_adult))
 
             elif p == "/latest":
-                page = int(param("page", "1"))
-                self._json(latest_updates(page))
+                page         = int(param("page", "1"))
+                filter_adult = param("filter_adult", "0") == "1"
+                self._json(latest_updates(page, filter_adult))
 
             elif p == "/search":
-                q      = param("q")
-                mtype  = param("type") or None
-                offset = int(param("offset", "0"))
-                sort   = param("sort", "Latest Updates")
+                q            = param("q")
+                mtype        = param("type") or None
+                offset       = int(param("offset", "0"))
+                sort         = param("sort", "Latest Updates")
+                filter_adult = param("filter_adult", "0") == "1"
                 if not q:
                     return self._error("missing q", 400)
-                self._json(search(q, mtype, offset, sort))
+                self._json(search(q, mtype, offset, sort, filter_adult))
 
             elif p == "/info":
                 mid = param("id")

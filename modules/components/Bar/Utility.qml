@@ -19,9 +19,10 @@ Item{
 
     property bool isWifiClicked: false
     property bool isBluetoothClicked: false
-    property bool isNotificationClicked: false 
+    property bool isNotificationClicked: false
     property bool isSoundPanelClicked: false
     property bool isBatteryInfoClicked: false
+    property bool isTodoClicked: false
 
     onIsClickedChanged:{
         if(utility.isClicked){
@@ -51,6 +52,24 @@ Item{
             utility.implicitWidth = row.width + 20
             utility.implicitHeight = Appearance.size.barHeight
         }
+    }
+
+    onIsTodoClickedChanged:{
+        if(utility.isTodoClicked){
+            utility.implicitWidth = Appearance.size.todoPanelWidth
+        }else{
+            utility.implicitWidth = row.width + 20
+            utility.implicitHeight = Appearance.size.barHeight
+        }
+    }
+
+    // Bind height to todo widget's content-driven implicitHeight
+    Binding {
+        target: utility
+        property: "implicitHeight"
+        when: utility.isTodoClicked
+        value: todoLoader.item ? todoLoader.item.implicitHeight : Appearance.size.todoPanelHeight
+        restoreMode: Binding.RestoreNone
     }
 
     Behavior on implicitWidth{
@@ -139,15 +158,35 @@ Item{
                 onToggleDashboard: {
                     utility.isClicked = false
                     dashboardLoader.visible = false
-                } 
+                }
                 onIsWifiClickedChanged: utility.isWifiClicked = dashboard.isWifiClicked
                 onIsBluetoothClickedChanged: utility.isBluetoothClicked = dashboard.isBluetoothClicked
             }
         }
 
+        Loader{
+            id: todoLoader
+            active: utility.isTodoClicked
+            anchors.fill: parent
+            visible: false
+            Timer{
+                interval: Appearance.duration.normal
+                running: utility.isTodoClicked
+                onTriggered:{
+                    todoLoader.visible = true
+                }
+            }
+            sourceComponent: TodoWidget{
+                onToggleTodo: {
+                    utility.isTodoClicked = false
+                    todoLoader.visible = false
+                }
+            }
+        }
+
         RowLayout{
             id: row
-            visible: !utility.isClicked && utility.height === 40
+            visible: !utility.isClicked && !utility.isTodoClicked && utility.height === 40
             spacing: Appearance.spacing.medium
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
@@ -262,6 +301,28 @@ Item{
                     cursorShape: Qt.PointingHandCursor
                     onClicked:{
                         utility.isBatteryInfoClicked = true
+                    }
+                }
+            }
+
+            Rectangle{
+                Layout.preferredHeight: todoIcon.height + 4
+                Layout.preferredWidth: todoIcon.width + 10
+                color: Colors.surfaceContainerHighest
+                radius: Appearance.radius.medium
+
+                MaterialIconSymbol{
+                    id: todoIcon
+                    iconSize: Appearance.size.iconSizeNormal - 3
+                    content: "checklist"
+                    anchors.centerIn: parent
+                }
+
+                CustomMouseArea{
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked:{
+                        utility.isTodoClicked = true
                     }
                 }
             }

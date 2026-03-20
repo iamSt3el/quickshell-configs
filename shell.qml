@@ -45,31 +45,10 @@ ShellRoot{
         }
     }
 
-    PanelWindow{
-        implicitWidth: 100
-        implicitHeight: 100
-        color: "transparent"
-        Rectangle{
-            id: rect
-            anchors.fill: parent
-            radius: 10
-            color: "grey"
-            property var progress: 0
-            CustomCircularLoader{
-                anchors.centerIn: parent
-                value: rect.progress
-            }
-
-            MouseArea{
-                anchors.fill: parent
-                onClicked:{
-                    rect.progress += 0.1
-                }
-            }
-        }
-    }
 
 
+
+    //CubeTest{}
     //Panel{}
     //ColorPicker{}
     

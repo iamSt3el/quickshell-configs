@@ -137,6 +137,24 @@ Item {
                     }
                 }
 
+                // Site selector dropdown (browse / favs only)
+                CustomList {
+                    id: siteDropdown
+                    visible: root.viewState === "browse" || root.viewState === "favs"
+                    Layout.preferredWidth: 110
+                    Layout.preferredHeight: 30
+                    list: [
+                        { description: "WeebCentral", key: "weebcentral" },
+                        { description: "Comix.to",    key: "comix"       }
+
+                    ]
+                    onListChildClicked: (item) => ServiceManga.switchSite(item.key)
+
+                    Binding on currentVal {
+                        value: ServiceManga._sites[ServiceManga.currentSite].label
+                    }
+                }
+
                 // Refresh pages button (reader only)
                 Rectangle {
                     visible: root.viewState === "reader"
@@ -217,13 +235,18 @@ Item {
 
                     // Browse section chips
                     Repeater {
-                        model: [
-                            { label: "Hot",     origin: ""       },
-                            { label: "Latest",  origin: "latest" },
-                            { label: "Manhwa",  origin: "ko"     },
-                            { label: "Manga",   origin: "ja"     },
-                            { label: "Manhua",  origin: "zh"     }
-                        ]
+                        model: {
+                            const base = [
+                                { label: "Hot",    origin: ""       },
+                                { label: "Latest", origin: "latest" },
+                            ]
+                            const weeb = [
+                                { label: "Manhwa", origin: "ko" },
+                                { label: "Manga",  origin: "ja" },
+                                { label: "Manhua", origin: "zh" },
+                            ]
+                            return ServiceManga.currentSite === "weebcentral" ? base.concat(weeb) : base
+                        }
                         delegate: Rectangle {
                             required property var modelData
                             property bool sel: root.viewState === "browse"
@@ -620,46 +643,49 @@ Item {
                                 property bool expanded: false
 
                                 // Series header row
-                                RowLayout {
-                                    id: seriesHeader
-                                    width: parent.width
-                                    height: 56
-                                    spacing: 10
+                                Item{
+                                    implicitWidth: parent.width
+                                    implicitHeight: 56
+                                    RowLayout {
+                                        id: seriesHeader
+                                        anchors.fill: parent
+                                        spacing: 10
 
-                                    Image {
-                                        Layout.preferredWidth: 40
-                                        Layout.preferredHeight: 56
-                                        Layout.leftMargin: 8
-                                        source: modelData.image || ""
-                                        fillMode: Image.PreserveAspectCrop
-                                        smooth: true
-                                        asynchronous: true
-                                    }
+                                        Image {
+                                            Layout.preferredWidth: 40
+                                            Layout.preferredHeight: 56
+                                            Layout.leftMargin: 8
+                                            source: modelData.image || ""
+                                            fillMode: Image.PreserveAspectCrop
+                                            smooth: true
+                                            asynchronous: true
+                                        }
 
-                                    ColumnLayout {
-                                        Layout.fillWidth: true
-                                        spacing: 2
-                                        CustomText {
-                                            content: modelData.title || ""
-                                            size: 13
-                                            color: Colors.surfaceText
-                                            elide: Text.ElideRight
+                                        ColumnLayout {
                                             Layout.fillWidth: true
+                                            spacing: 2
+                                            CustomText {
+                                                content: modelData.title || ""
+                                                size: 13
+                                                color: Colors.surfaceText
+                                                elide: Text.ElideRight
+                                                Layout.fillWidth: true
+                                            }
+                                            CustomText {
+                                                content: (modelData.chapters ? modelData.chapters.length : 0) + " chapters"
+                                                size: 11
+                                                color: Colors.outline
+                                            }
                                         }
-                                        CustomText {
-                                            content: (modelData.chapters ? modelData.chapters.length : 0) + " chapters"
-                                            size: 11
+
+                                        MaterialIconSymbol {
+                                            content: expanded ? "expand_less" : "expand_more"
+                                            iconSize: 20
                                             color: Colors.outline
+                                            Layout.rightMargin: 10
                                         }
-                                    }
 
-                                    MaterialIconSymbol {
-                                        content: expanded ? "expand_less" : "expand_more"
-                                        iconSize: 20
-                                        color: Colors.outline
-                                        Layout.rightMargin: 10
                                     }
-
                                     MouseArea {
                                         anchors.fill: parent
                                         cursorShape: Qt.PointingHandCursor
@@ -942,9 +968,53 @@ Item {
                                                 const chs = ServiceManga.currentManga ? ServiceManga.currentManga.chapters : []
                                                 if (chs.length > 0) {
                                                     root.offlineMode = false
-                                                    ServiceManga.fetchChapterPages(chs[chs.length - 1].id)
+                                                    ServiceManga.fetchChapterPages(chs[chs.length - 1].id, ServiceManga.currentManga ? ServiceManga.currentManga.id : "")
                                                     root.viewState = "reader"
                                                 }
+                                            }
+                                        }
+                                    }
+
+                                    // Download All button
+                                    Rectangle {
+                                        id: dlAllBtn
+                                        height: 30
+                                        width: 30
+                                        radius: 10
+                                        visible: ServiceManga.currentManga !== null
+
+                                        property bool isBulkActive: ServiceManga.bulkDownload.mangaId !== ""
+                                            && ServiceManga.currentManga
+                                            && ServiceManga.bulkDownload.mangaId === ServiceManga.currentManga.id
+
+                                        color: isBulkActive ? Colors.surfaceContainerHigh : Colors.surfaceContainerHigh
+
+                                        // Circular progress bar shown during bulk download
+                                        CustomCircularLoader {
+                                            anchors.centerIn: parent
+                                            size: 26
+                                            trackWidth: 2.5
+                                            highlightColor: Colors.primary
+                                            trackColor: Colors.surfaceContainerHigh
+                                            visible: parent.isBulkActive
+                                            value: ServiceManga.bulkDownloadValue
+                                        }
+
+                                        MaterialIconSymbol {
+                                            anchors.centerIn: parent
+                                            content: "download_for_offline"
+                                            iconSize: 16
+                                            color: Colors.outline
+                                            visible: !parent.isBulkActive
+                                        }
+
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                const m = ServiceManga.currentManga
+                                                if (!m || dlAllBtn.isBulkActive) return
+                                                ServiceManga.downloadAllChapters(m)
                                             }
                                         }
                                     }
@@ -1141,7 +1211,7 @@ Item {
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
                                             root.offlineMode = false
-                                            ServiceManga.fetchChapterPages(modelData.id)
+                                            ServiceManga.fetchChapterPages(modelData.id, ServiceManga.currentManga ? ServiceManga.currentManga.id : "")
                                             root.viewState = "reader"
                                         }
                                     }
@@ -1157,11 +1227,28 @@ Item {
                     visible: root.viewState === "reader"
                     anchors.fill: parent
                     clip: true
-                    spacing: 4
+                    spacing: SettingsConfig.mangaPageSpacing
+                    maximumFlickVelocity: 4000
+                    cacheBuffer: SettingsConfig.mangaPreloadPages
 
                     model: ScriptModel { values: ServiceManga.chapterPages }
 
                     ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+
+                    WheelHandler {
+                        grabPermissions: WheelHandler.CanTakeOverFromAnything
+                        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                        onWheel: event => {
+                            const velocity = event.angleDelta.y * SettingsConfig.mangaScrollSpeed
+                            if (readerList.verticalOvershoot !== 0.0 ||
+                                (velocity > 0 && readerList.verticalVelocity <= 0) ||
+                                (velocity < 0 && readerList.verticalVelocity >= 0)) {
+                                readerList.flick(0, velocity - readerList.verticalVelocity)
+                            } else {
+                                readerList.cancelFlick()
+                            }
+                        }
+                    }
 
                     Column {
                         anchors.centerIn: parent
@@ -1190,8 +1277,8 @@ Item {
                         required property var modelData
                         width: readerList.width
                         height: pageImg.status === Image.Ready && pageImg.implicitWidth > 0
-                            ? Math.round(pageImg.implicitHeight * width / pageImg.implicitWidth)
-                            : width * 1.4
+                        ? Math.round(pageImg.implicitHeight * width / pageImg.implicitWidth)
+                        : width * 1.4
 
                         Image {
                             id: pageImg
@@ -1232,6 +1319,7 @@ Item {
                         }
                     }
                 }
+
             }
         }
     }

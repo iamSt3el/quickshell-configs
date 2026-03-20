@@ -2,11 +2,36 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.modules.settings
 
 Singleton {
     id: root
 
-    readonly property string apiUrl: "http://127.0.0.1:5150"
+    // ── Site selection ───────────────────────────────────────────────────────
+    // "weebcentral" → port 5150  |  "comix" → port 5151
+    property string currentSite: SettingsConfig.mangaDefaultSite
+
+    readonly property var _sites: ({
+        "weebcentral": { label: "WEEBCentral", port: 5150, script: "manga_server.py"  },
+        "comix":       { label: "Comix.to",    port: 5151, script: "comix_server.py" },
+    })
+
+    readonly property string apiUrl: "http://127.0.0.1:" + _sites[currentSite].port
+
+    function switchSite(siteKey) {
+        if (siteKey === currentSite) return
+        currentSite = siteKey
+        // Reset browse/detail state only — favs & downloads are shared
+        mangaList         = []
+        currentOffset     = 0
+        latestPage        = 1
+        currentSearchText = ""
+        currentOrigin     = ""
+        currentManga      = null
+        chapterPages      = []
+        serverReady       = false
+        healthPoller.start()
+    }
 
     // ── Manga list ──────────────────────────────────────────────────────────
     property list<var> mangaList: []
@@ -39,21 +64,65 @@ Singleton {
     property list<var> downloadsList: []
     property var downloadProgress: ({})  // chapterId -> {status, total, done}
 
-    // ── Backend server ───────────────────────────────────────────────────────
+    // ── Bulk (whole-manga) download ───────────────────────────────────────────
+    property var bulkDownload: ({ mangaId: "", total: 0, chapterIds: [] })
+    // 0.0–1.0 while active, -1 when idle
+    readonly property real bulkDownloadValue: {
+        const job = bulkDownload
+        if (!job.mangaId || job.total === 0) return -1
+        var done = 0
+        for (var i = 0; i < job.chapterIds.length; i++) {
+            const p = downloadProgress[job.chapterIds[i]]
+            if (p && p.status === "done") done++
+        }
+        const v = done / job.total
+        return v >= 1.0 ? 1.0 : v
+    }
+
+    // ── Backend servers (both run always, active one is selected by apiUrl) ──
     property bool serverReady: false
 
     Process {
         id: serverProcess
-        command: ["python3", "/home/steel/.config/quickshell/scripts/manga_server.py"]
+        command: ["bash", "-c", "fuser -k 5150/tcp 2>/dev/null; sleep 0.3; exec python3 /home/steel/.config/quickshell/scripts/manga_server.py"]
         running: true
         onExited: (code) => {
-            console.warn("[ServiceManga] Server exited with code", code, "— restarting")
-            serverReady = false
-            serverProcess.running = true
+            if (code !== 0) {
+                console.warn("[ServiceManga] weebcentral server exited:", code)
+                if (root.currentSite === "weebcentral") { root.serverReady = false; healthPoller.start() }
+                weebRestartTimer.start()
+            }
         }
     }
 
-    // Poll /health every 150ms instead of a fixed 1500ms wait
+    Timer {
+        id: weebRestartTimer
+        interval: 3000
+        repeat: false
+        onTriggered: serverProcess.running = true
+    }
+
+    Process {
+        id: comixProcess
+        command: ["bash", "-c", "fuser -k 5151/tcp 2>/dev/null; sleep 0.3; exec python3 /home/steel/.config/quickshell/scripts/comix_server.py"]
+        running: true
+        onExited: (code) => {
+            if (code !== 0) {
+                console.warn("[ServiceManga] comix server exited:", code)
+                if (root.currentSite === "comix") { root.serverReady = false; healthPoller.start() }
+                comixRestartTimer.start()
+            }
+        }
+    }
+
+    Timer {
+        id: comixRestartTimer
+        interval: 3000
+        repeat: false
+        onTriggered: comixProcess.running = true
+    }
+
+    // Poll /health every 150ms until the active backend is ready
     Timer {
         id: healthPoller
         interval: 150
@@ -153,7 +222,8 @@ Singleton {
         if (origin === "") {
             isFetchingManga = true
             mangaError = ""
-            const url = root.apiUrl + "/hot"
+            let url = root.apiUrl + "/hot"
+            if (SettingsConfig.mangaFilterAdult) url += "?filter_adult=1"
             console.log("[ServiceManga] GET", url)
             _get(url, function(err, body) {
                 if (err) { mangaError = "Request failed: " + err; isFetchingManga = false; return }
@@ -163,7 +233,8 @@ Singleton {
             if (reset) latestPage = 1
             isFetchingManga = true
             mangaError = ""
-            const url = root.apiUrl + "/latest?page=" + latestPage
+            let url = root.apiUrl + "/latest?page=" + latestPage
+            if (SettingsConfig.mangaFilterAdult) url += "&filter_adult=1"
             console.log("[ServiceManga] GET", url)
             _get(url, function(err, body) {
                 if (err) { mangaError = "Request failed: " + err; isFetchingManga = false; return }
@@ -200,11 +271,21 @@ Singleton {
                 + "&offset=" + offset
                 + "&sort=" + encodeURIComponent(sort)
         if (type) url += "&type=" + encodeURIComponent(type)
+        if (SettingsConfig.mangaFilterAdult) url += "&filter_adult=1"
         console.log("[ServiceManga] GET", url)
         _get(url, function(err, body) {
             if (err) { mangaError = "Request failed: " + err; isFetchingManga = false; return }
             _parseMangaResults(body)
         })
+    }
+
+    // Exact tag names used by WeebCentral (case-insensitive match)
+    readonly property var _adultTags: ["adult", "smut", "ecchi"]
+
+    function _isAdult(item) {
+        if (!item.tags || !Array.isArray(item.tags)) return false
+        const lower = item.tags.map(t => t.toLowerCase())
+        return root._adultTags.some(tag => lower.indexOf(tag) !== -1)
     }
 
     function _parseMangaResults(json) {
@@ -217,7 +298,11 @@ Singleton {
             const isLatest = !isHot && data.nextPage !== undefined
             const items    = isHot ? data : (data.results || [])
 
-            mangaList = [...mangaList, ...items.map(item => ({
+            const filtered = SettingsConfig.mangaFilterAdult
+                ? items.filter(item => !root._isAdult(item))
+                : items
+
+            mangaList = [...mangaList, ...filtered.map(item => ({
                 id:       item.id     || "",
                 title:    item.title  || "",
                 thumbUrl: item.image  || "",
@@ -288,14 +373,15 @@ Singleton {
     }
 
     // ── Chapter pages ─────────────────────────────────────────────────────────
-    function fetchChapterPages(chapterId) {
+    function fetchChapterPages(chapterId, mangaId) {
         if (isFetchingPages) return
         isFetchingPages = true
         currentChapterId = chapterId
         chapterPages = []
         pagesError = ""
 
-        const url = root.apiUrl + "/pages?chapterId=" + encodeURIComponent(chapterId)
+        var url = root.apiUrl + "/pages?chapterId=" + encodeURIComponent(chapterId)
+        if (mangaId) url += "&mangaId=" + encodeURIComponent(mangaId)
         console.log("[ServiceManga] GET", url)
         _get(url, function(err, body) {
             if (err) { pagesError = "Request failed: " + err; isFetchingPages = false; return }
@@ -418,8 +504,8 @@ Singleton {
     }
 
     function startDownload(chapter, manga) {
-        // chapter: {id, chapter, title}; manga: {id, title, coverUrl}
-        const rawCover = _extractRawUrl(manga.coverUrl)
+        // chapter: {id, chapter, title}; manga: {id, title, image}
+        const rawCover = _extractRawUrl(manga.image || "")
         // Optimistically mark as pending
         var dp = Object.assign({}, downloadProgress)
         dp[chapter.id] = { status: "pending", total: 0, done: 0 }
@@ -451,13 +537,53 @@ Singleton {
                      var dp = Object.assign({}, downloadProgress)
                      dp[chapterId] = prog
                      downloadProgress = dp
-                     if (prog.status === "done") fetchDownloads()
+                     if (prog.status === "done") {
+                         fetchDownloads()
+                         // Clear bulk job once all chapters are done
+                         if (bulkDownload.mangaId && bulkDownloadValue >= 1.0)
+                             bulkDownload = { mangaId: "", total: 0, chapterIds: [] }
+                     }
                  } catch(e) {}
              })
     }
 
     function getDownloadProgress(chapterId) {
         return downloadProgress[chapterId] || { status: "not_started", total: 0, done: 0 }
+    }
+
+    function downloadAllChapters(manga) {
+        const chapters = manga.chapters || []
+        if (chapters.length === 0) return
+
+        const allIds = chapters.map(function(c) { return c.id })
+        const rawCover = _extractRawUrl(manga.image || "")
+
+        // Mark not-started chapters as pending
+        var dp = Object.assign({}, downloadProgress)
+        chapters.forEach(function(ch) {
+            const s = dp[ch.id] ? dp[ch.id].status : "not_started"
+            if (s !== "done" && s !== "downloading" && s !== "pending")
+                dp[ch.id] = { status: "pending", total: 0, done: 0 }
+        })
+        downloadProgress = dp
+
+        bulkDownload = { mangaId: manga.id, total: chapters.length, chapterIds: allIds }
+        dlPoller.start()
+
+        chapters.forEach(function(ch) {
+            const s = downloadProgress[ch.id] ? downloadProgress[ch.id].status : "not_started"
+            if (s !== "done" && s !== "downloading")
+                _post(root.apiUrl + "/dl/start", {
+                    mangaId:      manga.id,
+                    chapterId:    ch.id,
+                    chapterNum:   ch.chapter,
+                    chapterTitle: ch.title,
+                    mangaTitle:   manga.title,
+                    rawCoverUrl:  rawCover
+                }, function(err) {
+                    if (err) console.warn("[ServiceManga] bulk dl/start failed:", ch.id)
+                })
+        })
     }
 
     function deleteDownload(chapterId) {
