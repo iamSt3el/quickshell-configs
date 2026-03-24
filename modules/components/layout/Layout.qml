@@ -75,32 +75,8 @@ PanelWindow{
             height: clock.height
             intersection: Intersection.Subtract
         } 
-        //
-        // Region{
-        //     x: demo.x
-        //     y: demo.y
-        //     width: demo.width
-        //     height: demo.height
-        //     intersection: Intersection.Subtract
-        // }
+
     }
-
-
-    // Rectangle{
-    //     id: demo
-    //     implicitHeight: 100
-    //     implicitWidth: 100
-    //     radius: height
-    //     anchors.centerIn: parent
-    //
-    //     CustomLoader{
-    //         anchors.centerIn: parent
-    //         size: 80
-    //     }
-    // } 
-
-
-
     Rectangle{
         id: maskRect
         implicitHeight: parent.height
@@ -108,28 +84,6 @@ PanelWindow{
         anchors.bottom: parent.bottom
         color: "transparent"
     }
-
-
-     
-
-
-    //CustomClock{}
-
-    //
-    // Loader{
-    //     id: osd
-    //     active: layout.showOsd
-    //     visible: active
-    //     sourceComponent:Osd{
-    //         onClose: layout.showOsd = false
-    //     }
-    // }
-
-
-    // NewLayout{
-    //     id: newLayout
-    // }
-
     Item{
         id: root
         anchors.fill: parent
@@ -327,5 +281,9 @@ PanelWindow{
 
             }
         }
+    }
+
+    NotificationPanel{
+   
     }
 }

@@ -13,7 +13,7 @@ import qs.modules.customComponents
 import qs.modules.components.Clipboard
 import qs.modules.components.WallpaperSelector
 import qs.modules.components.CustomContextMenu
-import qs.modules.components.TypingGame
+import qs.modules.components.Osd
 
 Scope {
     id: root
@@ -153,7 +153,7 @@ Scope {
             implicitHeight: Math.max(20, child.implicitHeight)
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            property bool active: SettingsConfig.dockAutoHide ? hover.hovered || root.clipboardActive || root.wallpaperActive || root.typingGameActive || (dockLoder.item && dockLoder.item.showPreview) : true
+            property bool active: SettingsConfig.dockAutoHide ? hover.hovered || root.clipboardActive || root.wallpaperActive || root.typingGameActive || GlobalStates.osdOpen || (dockLoder.item && dockLoder.item.showPreview) : true
             property bool collapsed: false
 
             onActiveChanged: {
@@ -181,11 +181,13 @@ Scope {
                     : root.clipboardActive ? 600
                     : root.wallpaperActive ? Appearance.size.wallpaperPanelHeight
                     : root.typingGameActive ? Appearance.size.typingGameHeight
+                    : GlobalStates.osdOpen ? 60
                     : SettingsConfig.dock ? 60 : 0
 
                 implicitWidth: root.clipboardActive ? 400
                     : root.wallpaperActive ? Appearance.size.wallpaperPanelWidth
                     : root.typingGameActive ? Appearance.size.typingGameWidth
+                    : GlobalStates.osdOpen ? 300
                     : dockWidth
 
                 anchors.bottom: parent.bottom
@@ -204,18 +206,25 @@ Scope {
                     }
                 }
 
-                Loader {
-                    id: typingGameLoader
-                    active: root.typingGameActive
+                // Loader {
+                //     id: typingGameLoader
+                //     active: root.typingGameActive
+                //     anchors.fill: parent
+                //     sourceComponent: TypingGameContent {
+                //         onClosed: GlobalStates.typingGameOpen = false
+                //     }
+                // }
+
+                Loader{
+                    id: osdLoader
+                    active: GlobalStates.osdOpen
                     anchors.fill: parent
-                    sourceComponent: TypingGameContent {
-                        onClosed: GlobalStates.typingGameOpen = false
-                    }
+                    sourceComponent:OsdContent{}
                 }
 
                 Loader {
                     id: dockLoder
-                    active: SettingsConfig.dock && !root.clipboardActive && !root.wallpaperActive && !root.typingGameActive && !container.collapsed
+                    active: SettingsConfig.dock && !root.clipboardActive && !root.wallpaperActive && !root.typingGameActive && !container.collapsed && !GlobalStates.osdOpen
                     anchors.fill: parent
                     sourceComponent: Dock {}
                 }
@@ -236,6 +245,25 @@ Scope {
                     sourceComponent: WallpaperContent {}
                 }
             }
+        }
+    }
+
+    Timer{
+        id: osdTimer
+        interval: 3000
+        onTriggered:{
+            GlobalStates.osdOpen = false
+        }
+    }
+
+    Connections {
+        target: ServicePipewire.sink?.audio ?? null
+        function onVolumeChanged() {
+            GlobalStates.osdOpen = true
+            osdTimer.restart()
+        }
+        function onMutedChanged(){
+            GlobalStates.osdOpen = true
         }
     }
 

@@ -28,7 +28,7 @@ ShellRoot{
     AppLauncher{}
     //Clipboardsd{}
     SettingsPanel{}
-    Osd{} 
+    //Osd{} 
     //Wallpaper{}
     DockPanel{}
     //TestMorph{}

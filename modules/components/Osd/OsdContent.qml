@@ -22,25 +22,25 @@ Rectangle{
     NumberAnimation on opacity{
         from: 0
         to: 1
-        duration: 100
+        duration: 200
         running: true
     }
 
     NumberAnimation on scale{
         from: 0.8
         to: 1
-        duration: 100
+        duration: 200
         running: true
     }
 
 
     RowLayout{
-        anchors.margins: 10
+        anchors.margins: 15
         anchors.fill: parent
         spacing: 10       
         MaterialIconSymbol{
             content: ServicePipewire.muted ? "volume_off" :"volume_up"
-            iconSize: Appearance.size.iconSizeNormal
+            iconSize: 26
         }
         CustomSliderNew{
             id: slider
