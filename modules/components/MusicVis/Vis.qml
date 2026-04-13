@@ -105,9 +105,9 @@ EOF
         function drawMountainWave(ctx, data, isShadow) {
             if (data.length < 2) return
             var gradient = ctx.createLinearGradient(0, 0, width, height);
-            gradient.addColorStop(0.0, SettingsConfig.firstColor);
-            gradient.addColorStop(0.5, SettingsConfig.secondColor);
-            gradient.addColorStop(1.0, SettingsConfig.thirdColor);
+            gradient.addColorStop(0.0, SettingsConfig.theme.firstColor);
+            gradient.addColorStop(0.5, SettingsConfig.theme.secondColor);
+            gradient.addColorStop(1.0, SettingsConfig.theme.thirdColor);
           
             // gradient.addColorStop(0.0, Colors.primary)
             // gradient.addColorStop(0.3, Colors.secondary)

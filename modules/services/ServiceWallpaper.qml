@@ -15,14 +15,63 @@ Singleton {
     property string cacheDir: StandardPaths.writableLocation(StandardPaths.CacheLocation).toString().replace("file://", "") + "/wallpaper-thumbs"
     property int thumbSize: 256
     property string wallpaperScript:"/home/steel/.config/quickshell/scripts/wallpaper.sh"
-    property string scheme: SettingsConfig.matugenScheme
-    property string theme: SettingsConfig.matugenTheme
+    property string scheme: SettingsConfig.theme.matugenScheme
+    property string theme: SettingsConfig.theme.matugenTheme
 
     property list<string> wallpapers: []
     property var filteredWallpapers: []
     property string currentSearchText: ""
     property var wallpaperMap: ({})
     property var processedFiles: ({})
+
+    // ── Favorites ──────────────────────────────────────────────────────────
+    property string favoritesPath: "/home/steel/.config/quickshell/favorites.json"
+    property var favorites: ({})
+    property var favoritedWallpapers: []
+
+    function isFavorite(cachePath) {
+        return !!favorites[getOriginalPath(cachePath)]
+    }
+
+    function toggleFavorite(cachePath) {
+        const orig = getOriginalPath(cachePath)
+        if (!orig) return
+        const copy = Object.assign({}, favorites)
+        if (copy[orig]) delete copy[orig]
+        else copy[orig] = true
+        favorites = copy
+        _updateFavoritedWallpapers()
+        saveFavorites()
+    }
+
+    function _updateFavoritedWallpapers() {
+        const favList = []
+        for (let i = 0; i < wallpapers.length; i++) {
+            const cp = wallpapers[i]
+            if (favorites[getOriginalPath(cp)]) favList.push(cp)
+        }
+        favoritedWallpapers = favList
+    }
+
+    function saveFavorites() {
+        const data = JSON.stringify(Object.keys(favorites))
+        favSaver.command = [
+            "python3", "-c",
+            "import sys,json; json.dump(json.loads(sys.argv[1]),open(sys.argv[2],'w'),indent=2)",
+            data, favoritesPath
+        ]
+        favSaver.running = true
+    }
+
+    function loadFavorites() {
+        favLoader._buffer = ""
+        favLoader.command = [
+            "bash", "-c",
+            "[ -f '" + favoritesPath + "' ] && cat '" + favoritesPath + "' || echo '[]'"
+        ]
+        favLoader.running = true
+    }
+    // ── End Favorites ──────────────────────────────────────────────────────
 
     // ── Online / Wallhaven ──────────────────────────────────────────────────
     property bool onlineMode: false
@@ -44,20 +93,20 @@ Singleton {
 
     function buildWallhavenUrl(page) {
         const p = []
-        p.push("categories=" + SettingsConfig.wallhavenCategories)
-        p.push("purity="     + SettingsConfig.wallhavenPurity)
-        p.push("sorting="    + SettingsConfig.wallhavenSorting)
-        p.push("order="      + SettingsConfig.wallhavenOrder)
-        if (SettingsConfig.wallhavenSorting === "toplist")
-            p.push("topRange=" + SettingsConfig.wallhavenTopRange)
-        if (SettingsConfig.wallhavenAtleast.length > 0)
-            p.push("atleast=" + SettingsConfig.wallhavenAtleast)
-        if (SettingsConfig.wallhavenRatios.length > 0)
-            p.push("ratios=" + SettingsConfig.wallhavenRatios)
+        p.push("categories=" + SettingsConfig.wallhaven.categories)
+        p.push("purity="     + SettingsConfig.wallhaven.purity)
+        p.push("sorting="    + SettingsConfig.wallhaven.sorting)
+        p.push("order="      + SettingsConfig.wallhaven.order)
+        if (SettingsConfig.wallhaven.sorting === "toplist")
+            p.push("topRange=" + SettingsConfig.wallhaven.topRange)
+        if (SettingsConfig.wallhaven.atleast.length > 0)
+            p.push("atleast=" + SettingsConfig.wallhaven.atleast)
+        if (SettingsConfig.wallhaven.ratios.length > 0)
+            p.push("ratios=" + SettingsConfig.wallhaven.ratios)
         if (currentSearchText.length > 0)
             p.push("q=" + encodeURIComponent(currentSearchText))
-        if (SettingsConfig.wallhavenApiKey.length > 0)
-            p.push("apikey=" + SettingsConfig.wallhavenApiKey)
+        if (SettingsConfig.wallhaven.apiKey.length > 0)
+            p.push("apikey=" + SettingsConfig.wallhaven.apiKey)
         p.push("page=" + page)
         return "https://wallhaven.cc/api/v1/search?" + p.join("&")
     }
@@ -140,7 +189,10 @@ Singleton {
     }
     // ── End Online ──────────────────────────────────────────────────────────
 
-    onWallpapersChanged: updateSearch(currentSearchText)
+    onWallpapersChanged: {
+        updateSearch(currentSearchText)
+        _updateFavoritedWallpapers()
+    }
 
     function fuzzyQuery(search: string): var {
         const existing = new Set(wallpapers)
@@ -181,6 +233,7 @@ Singleton {
                 console.log("[ServiceWallpaper] Setting wallpaper folder to:", "file://" + root.wallpaperDir)
                 cacheModel.folder = "file://" + root.cacheDir
                 folderModel.folder = "file://" + root.wallpaperDir
+                root.loadFavorites()
             } else {
                 console.error("[ServiceWallpaper] Failed to create cache directory:", root.cacheDir)
             }
@@ -400,4 +453,37 @@ Singleton {
         }
     }
     // ── End Wallhaven processes ─────────────────────────────────────────────
+
+    // ── Favorites processes ─────────────────────────────────────────────────
+    Process {
+        id: favLoader
+        property string _buffer: ""
+        stdout: SplitParser {
+            onRead: line => { favLoader._buffer += line }
+        }
+        onExited: (exitCode) => {
+            if (exitCode === 0 && favLoader._buffer.length > 0) {
+                try {
+                    const keys = JSON.parse(favLoader._buffer)
+                    const set = {}
+                    for (let i = 0; i < keys.length; i++) set[keys[i]] = true
+                    root.favorites = set
+                    root._updateFavoritedWallpapers()
+                    console.log("[ServiceWallpaper] Loaded", keys.length, "favorites")
+                } catch (e) {
+                    console.warn("[ServiceWallpaper] Failed to parse favorites:", e)
+                }
+            }
+            favLoader._buffer = ""
+        }
+    }
+
+    Process {
+        id: favSaver
+        onExited: (exitCode) => {
+            if (exitCode !== 0)
+                console.error("[ServiceWallpaper] Failed to save favorites, exit:", exitCode)
+        }
+    }
+    // ── End Favorites processes ─────────────────────────────────────────────
 }

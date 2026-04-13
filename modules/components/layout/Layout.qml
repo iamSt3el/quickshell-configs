@@ -14,6 +14,7 @@ import qs.modules.components.Clipboard
 import qs.modules.components.Notification
 import qs.modules.components.Dock
 import qs.modules.components.Osd
+import qs.modules.components.Widgets
 import qs.modules.services
 import qs.modules.customComponents
 
@@ -241,7 +242,6 @@ PanelWindow{
                 }
             }
         }
-
 
         Workspaces{
             id: workspaces

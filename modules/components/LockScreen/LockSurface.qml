@@ -10,15 +10,17 @@ import Quickshell.Widgets
 import qs.modules.utils
 import qs.modules.settings
 import qs.modules.customComponents
+import qs.modules.components.Widgets
 import qs.modules.services 
+import QtQuick.Shapes
 
 
-Rectangle {
+Item{
     id: root
     required property LockContext context
     focus: true
     property bool inputExpanded: false
-    color: Colors.surface
+
 
     Keys.onPressed: (event) => {
         if(!inputExpanded){
@@ -30,6 +32,7 @@ Rectangle {
         }
     }
 
+
     Image{
         id: background
         source: WallpaperTheme.wallpaper
@@ -40,329 +43,281 @@ Rectangle {
         layer.enabled: true
         layer.effect: MultiEffect {
             blurEnabled: true
-            blur: 0.2
+            blur: 0.8
             blurMax: 40
             autoPaddingEnabled: false
         }
     }
+    // Button {
+    //     text: "Its not working, let me out"
+    //     onClicked: context.unlocked();
+    // }
 
-    ColumnLayout{
-        anchors.centerIn: parent
-        spacing: 0
-        RowLayout{
-            id: clockRow
-            Layout.leftMargin: 20
-            Layout.rightMargin: 20
-            spacing:0
-            CustomText{
-                content: ServiceClock.hour
-                size: 160
-                style: Text.Raised
-                styleColor: Colors.outline
-                font.bold: false
-
-            }
-
-            CustomText{
-                content: ":"
-                size: 120
-                bottomPadding: 32
-                style: Text.Raised
-                weight: 400
-                color: Colors.outline
-                styleColor: Colors.outline
-                font.bold: false
-            }
-
-            CustomText{
-                content: ServiceClock.minute
-                size: 160
-                style: Text.Raised
-                styleColor: Colors.outline
-                font.bold: false
-
-            }
-
-            CustomText{
-                Layout.preferredWidth: 80
-                content: ServiceClock.seconds
-                size: 60
-                style: Text.Raised
-                weight: 400
-                color: Colors.outline
-                styleColor: Colors.outline
-                font.bold: false
-            }
-        }
     
 
-        RowLayout{
-            Layout.leftMargin: 20
-            Layout.rightMargin: 20
-            spacing: 10
-            CustomIconImage{
-                icon: "calender"
-                size: 30
-            }
-            CustomText{
-                content: ServiceClock.day
-                size: 30
-                style: Text.Raised
-                weight: 400
-                styleColor: Colors.outline
-                font.bold: false
-            }
 
-            CustomText{
-                content: "."
-                size: 40
-                style: Text.Raised
-                bottomPadding: 15
-                weight: 400
-                styleColor: Colors.outline
-                font.bold: false
-            }
 
-            CustomText{
-                content: ServiceClock.month
-                size: 30
-                style: Text.Raised
-                weight: 400
-                styleColor: Colors.outline
-                font.bold: false
-            }
-
-            CustomText{
-                content: ServiceClock.date
-                size: 30
-                style: Text.Raised
-                weight: 400
-                styleColor: Colors.outline
-                font.bold: false
-            }
-
-            CustomText{
-                content: "."
-                size: 40
-                style: Text.Raised
-                bottomPadding: 15
-                weight: 400
-                styleColor: Colors.outline
-                font.bold: false
-            }
-
-            CustomText{
-                content: ServiceClock.year
-                size: 30
-                style: Text.Raised
-                weight: 400
-                styleColor: Colors.outline
-                font.bold: false
-            }
-        }
+    NewClock{
+        //anchors.centerIn: parent
     }
 
 
+    Item{
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        implicitWidth: 900
+        implicitHeight: 100
+        Shape {
+            id: bgShape
+            z: 1
+            preferredRendererType: Shape.CurveRenderer
 
-    RowLayout{
-        anchors.margins: 20
-        spacing: 10
-        anchors{
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-            bottomMargin: 20
-        }
+            readonly property real w: container.width
+            readonly property real h: container.height
+            readonly property real bodyLeft: container.x
+            readonly property real bodyRight: container.x + w
+            readonly property real bodyBottom: container.y + container.height
+            readonly property real bodyTop: bodyBottom - h
 
-        CustomRectangle{
-            id: test
-            Layout.preferredWidth: 160
-            Layout.preferredHeight: 80
-            radius: 20
-            background: background
+            readonly property real rounding: Math.min(h / 3, w / 3)
 
+            readonly property real flareX: w / 18
+            readonly property bool flattenFlare: h < flareX * 2
+            readonly property real flareY: flattenFlare ? Math.max(0, h / 2) : flareX
+            readonly property real flareRadiusY: Math.min(flareX, Math.max(0, h))
 
-            RowLayout{
-                anchors.fill: parent
-                anchors.margins: 10
-                spacing: 0
-                ClippingWrapperRectangle{
-                    Layout.preferredHeight: 50
-                    Layout.preferredWidth: 50
-                    radius: height
+            ShapePath {
+                strokeWidth: -1
+                fillColor: Settings.layoutColor
 
-                    border{
-                        width: 1
-                        color: Colors.outline
-                    }
+                startX: bgShape.bodyLeft - bgShape.flareX
+                startY: bgShape.bodyBottom
 
-                    Image{
-                        anchors.fill: parent
-                        sourceSize: Qt.size(width, height)
-                        source: Settings.profile
-                    }
+                PathArc {
+                    x: bgShape.bodyLeft
+                    y: bgShape.bodyBottom - bgShape.flareY
+                    radiusX: bgShape.flareX
+                    radiusY: bgShape.flareRadiusY
+                    direction: PathArc.Counterclockwise
                 }
 
-                ColumnLayout{
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    spacing: 10
-                    Layout.margins: 10
-                    CustomText{
-                        Layout.fillHeight: true
-                        content: "St3el"
-                        size: 18
-                    }
-                    CustomText{
-                        Layout.fillHeight: true
-                        content: "Hyprland"
-                        color: Colors.outline
-                        size: 14
-                    }
+                PathLine {
+                    x: bgShape.bodyLeft
+                    y: bgShape.bodyTop + bgShape.rounding
+                }
+
+                PathArc {
+                    x: bgShape.bodyLeft + bgShape.rounding
+                    y: bgShape.bodyTop
+                    radiusX: bgShape.rounding
+                    radiusY: Math.min(bgShape.rounding, bgShape.h)
+                }
+
+                PathLine {
+                    x: bgShape.bodyRight - bgShape.rounding
+                    y: bgShape.bodyTop
+                }
+
+                PathArc {
+                    x: bgShape.bodyRight
+                    y: bgShape.bodyTop + bgShape.rounding
+                    radiusX: bgShape.rounding
+                    radiusY: Math.min(bgShape.rounding, bgShape.h)
+                }
+
+                PathLine {
+                    x: bgShape.bodyRight
+                    y: bgShape.bodyBottom - bgShape.flareY
+                }
+
+                PathArc {
+                    x: bgShape.bodyRight + bgShape.flareX
+                    y: bgShape.bodyBottom
+                    radiusX: bgShape.flareX
+                    radiusY: bgShape.flareRadiusY
+                    direction: PathArc.Counterclockwise
+                }
+
+                PathLine {
+                    x: bgShape.bodyLeft - bgShape.flareX
+                    y: bgShape.bodyBottom
                 }
             }
-
         }
         Item{
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
+            id: container
+            z: 10
+            implicitWidth: 800
+            implicitHeight: 0
+            visible: true
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
 
-        CustomRectangle{
-            Layout.preferredHeight: 80
-            Layout.preferredWidth: 500
-            
-
-            transform: Translate {
-                id: shakeTransform
-                x: 0
-            }
-            radius: 20
-            background: background
-
-
-            // Reusable shake animation component
-            component ShakeAnim: NumberAnimation {
-                target: shakeTransform
-                property: "x"
-                duration: 100
-                easing.type: Easing.InOutQuad
+            Behavior on implicitHeight{
+                NumberAnimation{
+                    duration: 300
+                    easing.type: Easing.OutQuad
+                }
             }
 
-            // Shake animation on auth failure
-            SequentialAnimation {
-                id: shakeAnimation
-                running: root.context.showFailure
-
-                ShakeAnim { to: -10; duration: 50; easing.type: Easing.OutQuad }
-                ShakeAnim { to: 10 }
-                ShakeAnim { to: -8 }
-                ShakeAnim { to: 8 }
-                ShakeAnim { to: -4 }
-                ShakeAnim { to: 4 }
-                ShakeAnim { to: 0; duration: 50; easing.type: Easing.InQuad }
+            Connections{
+                target: root.context
+                function onUnlocked(){
+                    container.implicitHeight = 0
+                    row.visible = false
+                }
             }
+
+            onVisibleChanged:{
+                if(!visible){
+                    row.visible = false
+                }
+            }
+
+            Timer{
+                id: timer2
+                interval: 600
+                running: true
+                onTriggered:{
+                    container.implicitHeight = 80
+                }
+            }
+
+            Timer{
+                id: timer
+                interval: 900
+                running: true
+                onTriggered:{
+                    row.visible = true
+                }
+            }
+
 
             RowLayout{
+                id: row
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
+                visible: false
 
                 Rectangle{
-                    Layout.preferredWidth: 60
-                    Layout.preferredHeight: 60
-                    //color: Colors.surfaceContainerHigh
-                    color: "transparent"
+                    Layout.preferredWidth: 130
+                    Layout.fillHeight: true
                     radius: 20
-                    MaterialIconSymbol{
-                        anchors.centerIn: parent
-                        content: "lock"
-                        iconSize: 26
+                    color: Colors.surfaceContainer
+
+                    RowLayout{
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        spacing: 10
+
+                        ClippingWrapperRectangle{
+                            Layout.preferredWidth: 40
+                            Layout.preferredHeight: 40
+                            radius: 10
+                            color: Colors.primary
+                            Image{
+                                source: Settings.profile
+                                anchors.fill: parent
+                                sourceSize: Qt.size(width, height)
+                                fillMode: Qt.PreserveAspectCrop
+                            }
+                        }
+                        ColumnLayout{
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            spacing: 2
+                            CustomText{
+                                content: "St3el"
+                                size: 15
+                                color: Colors.surfaceText
+                            }
+                            CustomText{
+                                content: "Hyprland"
+                                size: 13
+                                color: Colors.outline
+                            }
+                        }
+                    }
+                        
+                    // MaterialIconSymbol{
+                    //     anchors.centerIn: parent
+                    //     content: "power"
+                    //     iconSize: 30
+                    //     color: Colors.surfaceText
+                    // }
+                }
+
+                Rectangle{
+                    Layout.preferredWidth: 400
+                    Layout.fillHeight: true
+                    radius: 20
+                    color: Colors.surfaceContainer
+                    RowLayout{
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        spacing: 0
+
+                        Rectangle{
+                            Layout.preferredWidth: 40
+                            Layout.preferredHeight: 40
+                            //color: Colors.surfaceContainerHigh
+                            color: "transparent"
+                            radius: 20
+                            MaterialIconSymbol{
+                                anchors.centerIn: parent
+                                content: "lock"
+                                iconSize: 26
+                            }
+                        }
+
+                        TextField{
+                            id: input
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            placeholderText: root.context.showFailure ? "Seriously Dude" : "Enter password"
+                            placeholderTextColor: root.context.showFailure ? Colors.error : Colors.outline
+                            inputMethodHints: Qt.ImhSensitiveData
+                            background: null
+                            clip: true
+                            text: ""
+                            font.pixelSize: 20
+                            font.weight: 600
+                            color: Colors.surfaceText
+                            echoMode: TextInput.Password
+                            verticalAlignment: TextInput.AlignVCenter
+                            enabled: !root.context.unlockInProgress
+
+
+                            onTextChanged: {
+                                root.context.currentText = this.text;
+                            }
+                            onAccepted: root.context.tryUnlock();
+
+
+                            Connections {
+                                target: root.context
+
+                                function onCurrentTextChanged() {
+                                    input.text = root.context.currentText;
+                                }
+                            }
+                        } 
+                    }
+
+                }
+                Rectangle{
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: Colors.surfaceContainer
+                    radius: 20
+
+                    LockScreenMusicPlayer{
+                        anchors.fill: parent
                     }
                 }
 
-                TextField{
-                    id: input
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    placeholderText: "Enter password"
-                    placeholderTextColor: Colors.outline
-                    inputMethodHints: Qt.ImhSensitiveData
-                    background: null
-                    clip: true
-                    text: ""
-                    font.pixelSize: 20
-                    font.weight: 600
-                    color: Colors.surfaceText
-                    echoMode: TextInput.Password
-                    verticalAlignment: TextInput.AlignVCenter
-                    enabled: !root.context.unlockInProgress
-
-
-                    onTextChanged: {
-                        root.context.currentText = this.text;
-                    }
-                    onAccepted: root.context.tryUnlock();
-
-
-                    Connections {
-                        target: root.context
-
-                        function onCurrentTextChanged() {
-                            input.text = root.context.currentText;
-                        }
-                    }
-                } 
-
-                // Rectangle{
-                //     Layout.preferredWidth: 60
-                //     Layout.preferredHeight: 60
-                //     radius: 20
-                //     visible: input.text.length > 0
-                //
-                //     color: Colors.primary
-                //
-                //     // Loader{
-                //     //     active: root.context.unlockInProgress
-                //     //     anchors.centerIn: parent
-                //     //     sourceComponent: CustomLoader{
-                //     //         anchors.centerIn: parent
-                //     //         size: 40
-                //     //         running: true
-                //     //     }
-                //     // }
-                //
-                // }
-            }
-        }
-
-        Item{
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
-
-        CustomRectangle{
-            Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
-            radius: 10
-            background: background
-            MaterialIconSymbol{
-                anchors.centerIn: parent
-                content: "restart_alt"
-                iconSize: 18
-            }
-        }
-
-        CustomRectangle{
-            Layout.preferredHeight: 50
-            Layout.preferredWidth: 50
-            radius: 10
-            background: background
-            MaterialIconSymbol{
-                anchors.centerIn: parent
-                content: "power_settings_new"
-                iconSize: 20
-            }
+            } 
         }
     }
 }

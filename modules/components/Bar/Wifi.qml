@@ -70,182 +70,7 @@ ColumnLayout{
             }
         }
     }
-    Item {
-        visible: root.isWifiSettingClicked
-        Layout.fillWidth: true
-        Layout.fillHeight: true
 
-        ColumnLayout {
-            anchors.fill: parent
-            spacing: 10
-
-            Rectangle {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: 30
-                Layout.preferredHeight: 30
-                radius: height / 2
-                color: Qt.alpha(Colors.primary, 0.3)
-
-                MaterialIconSymbol {
-                    anchors.centerIn: parent
-                    content: "signal_wifi_4_bar"
-                    iconSize: 20
-                    color: Colors.primary
-                }
-            }
-
-            CustomText {
-                Layout.alignment: Qt.AlignHCenter
-                content: root.wifiDetailsData ? root.wifiDetailsData.ssid : ""
-                size: 14
-                color: Colors.surfaceText
-            }
-
-            CustomText {
-                Layout.alignment: Qt.AlignHCenter
-                content: root.wifiDetailsData && root.wifiDetailsData.active ? "Connected" : "Not Connected"
-                size: 12
-                color: Colors.primary
-            }
-
-            RowLayout{
-                Layout.fillWidth: true
-                Layout.topMargin: 20
-                Layout.leftMargin: 10
-                Layout.rightMargin: 10
-                CustomText{
-                    Layout.fillWidth: true
-                    content: "Signal Strength"
-                    size: 12
-                    color: Colors.outline
-                }
-                CustomText{
-                    content: root.wifiDetailsData ? root.wifiDetailsData.signal + "%" : ""
-                    size: 12
-                }
-            }
-
-            RowLayout{
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.rightMargin: 10
-                CustomText{
-                    Layout.fillWidth: true
-                    content: "Frequency"
-                    size: 12
-                    color: Colors.outline
-                }
-                CustomText{
-                    content: root.wifiDetailsData ? root.wifiDetailsData.band: ""
-                    size: 12
-                }
-            }
-
-            RowLayout{
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.rightMargin: 10
-                CustomText{
-                    Layout.fillWidth: true
-                    content: "Security"
-                    size: 12
-                    color: Colors.outline
-                }
-                CustomText{
-                    content: root.wifiDetailsData ? root.wifiDetailsData.security : ""
-                    size: 12
-                }
-            }
-
-            RowLayout{
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.rightMargin: 10
-                CustomText{
-                    Layout.fillWidth: true
-                    content: "MAC Address"
-                    size: 12
-                    color: Colors.outline
-                }
-                CustomText{
-                    content: root.wifiDetailsData ? "44:22:2R:F4:R3:23" : ""
-                    size: 12
-                }
-            }
-
-            RowLayout{
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.rightMargin: 10
-                CustomText{
-                    Layout.fillWidth: true
-                    content: "Mode"
-                    size: 12
-                    color: Colors.outline
-                }
-                CustomText{
-                    content: root.wifiDetailsData ? root.wifiDetailsData.mode: ""
-                    size: 12
-                }
-            }
-
-
-
-            RowLayout{
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.rightMargin: 10
-                CustomText{
-                    Layout.fillWidth: true
-                    content: "Speed"
-                    size: 12
-                    color: Colors.outline
-                }
-                CustomText{
-                    content: root.wifiDetailsData ? root.wifiDetailsData.rate: ""
-                    size: 12
-                }
-            }
-
-            Item{
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-            }
-
-
-
-            Rectangle{
-                visible: root.wifiDetailsData && root.wifiDetailsData.active ? false : true 
-                Layout.preferredHeight: 30
-                Layout.fillWidth: true
-                radius: 10
-                color: Qt.alpha(Colors.primary, 0.8)
-
-
-                CustomText{
-                    anchors.centerIn: parent
-                    content: "Connect Network"
-                    size: 13
-                    color: Colors.primaryText
-                }
-            }
-
-            Rectangle{
-                Layout.preferredHeight: 30
-                Layout.fillWidth: true
-                radius: 10
-                color: Qt.alpha(Colors.errorContainer, 0.3)
-
-                CustomText{
-                    anchors.centerIn: parent
-                    content: "Forget Network"
-                    size: 13
-                    color: Colors.error
-                }
-            }
-
-        }
-    }
 
 
     RowLayout{
@@ -266,163 +91,270 @@ ColumnLayout{
         }
     }
 
-    ClippingWrapperRectangle{
+
+    ColumnLayout{
         visible: !root.isWifiSettingClicked
         Layout.fillWidth: true
         Layout.fillHeight: true
-        radius: 10
-        color: "transparent"
+        spacing: 0
+        Item{
+            Layout.fillWidth: true
+            Layout.maximumHeight: 100
+            Layout.preferredHeight: list.implicitHeight + 15
+            clip: true
+            ListView{ 
+                id: list
+                anchors.fill: parent
+                implicitHeight: contentHeight
+                orientation: Qt.Vertical
+                model: ServiceNetwork.connectedAndSavedNetworks
+                spacing: 5
 
-        ListView{
-            anchors.fill: parent
-            anchors.margins: 5
-            anchors.centerIn: parent
-            orientation: Qt.Vertical
-            model: ServiceWifi.availableNetworks
-            spacing: 5
+                delegate: Rectangle{
+                    implicitHeight: 40
+                    implicitWidth: parent ? parent.width : 0
+                    color: modelData?.connected ? Colors.primary : Colors.surfaceContainerHighest
+                    radius: 10
 
-            delegate: Rectangle{
-                implicitHeight: 40
-                implicitWidth: parent ? parent.width : 0
-                color: modelData.active ? Colors.primary : wifiArea.containsMouse ? Qt.alpha(Colors.primary, 0.5) : "transparent"
-                radius: 10
-
-                Behavior on color{
-                    ColorAnimation{
-                        duration: 200
-                    }
-                }
-
-                MouseArea{
-                    id: wifiArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-
-                    onClicked:{
-                        if(modelData.active){
-                            ServiceWifi.disconnect()
-                        }else{
-                            ServiceWifi.connect(modelData.ssid)
+                    Behavior on color{
+                        ColorAnimation{
+                            duration: 200
                         }
                     }
-                }
 
-                RowLayout{
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    spacing: 10
+                    MouseArea{
+                        id: wifiArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
 
- 
-                    MaterialIconSymbol {
-                        property string batteryIcon: {
-                            let signal = modelData.signal
-                            if(signal >= 90){
-                                return "signal_wifi_4_bar"
-                            }
-                            else if(signal < 90 && signal >=60){
-                                return "network_wifi_3_bar"
-                            }else if(signal < 60 && signal >= 30){
-                                return "network_wifi_2_bar"
-                            }
-                            return "network_wifi_1_bar"
+                        onClicked:{
+                                if(!modelData?.connected)modelData.connect()
+                                else modelData?.disconnect()
                         }
-
-                        iconSize: 20
-                        content: batteryIcon
-                        color: modelData.active ? Colors.primaryText : Colors.surfaceText
                     }
 
-
-
-                    ColumnLayout{
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
+                    RowLayout{
+                        anchors.fill: parent
+                        anchors.margins: 10
                         spacing: 10
-                        CustomText{
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
 
-                            size: 12
-                            content: modelData.ssid
-                            color: modelData.active ? Colors.primaryText : Colors.surfaceText
+
+                        MaterialIconSymbol {
+                            property string batteryIcon: {
+                                let signal = modelData?.signalStrength * 100
+                                if(signal >= 90){
+                                    return "signal_wifi_4_bar"
+                                }
+                                else if(signal < 90 && signal >=60){
+                                    return "network_wifi_3_bar"
+                                }else if(signal < 60 && signal >= 30){
+                                    return "network_wifi_2_bar"
+                                }
+                                return "network_wifi_1_bar"
+                            }
+
+                            iconSize: 20
+                            content: batteryIcon
+                            color: modelData?.connected ? Colors.primaryText : Colors.surfaceText
+
                         }
 
-                        CustomText{
+
+
+                        ColumnLayout{
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            visible: modelData.active
-                            content: modelData.active ? "Connected" : ""
-                            color: Colors.outline
-                        }
-                    }
+                            spacing: 10
+                            CustomText{
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
 
+                                size: 12
+                                content: modelData?.name ?? ""
+                                color: modelData.connected ? Colors.primaryText : Colors.surfaceText
+                            }
 
-                    Item{
-                        Layout.preferredWidth: row.implicitWidth 
-                        Layout.fillHeight: true
-                        
-                        Behavior on Layout.preferredWidth{
-                            NumberAnimation{
-                                duration: 200
-                                easing.type:Easing.OutQuad
+                            CustomText{
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                visible: modelData?.connected
+                                content: modelData?.connected ? "Connected" : ""
+                                color: Colors.outline
                             }
                         }
-                        RowLayout{
-                            id: row
-                            anchors.fill: parent
-                            spacing: 10
-                            Loader{
-                                id: lockLoader
-                                active: modelData.isSecure
 
-                                sourceComponent: MaterialIconSymbol {
-                                    iconSize: Appearance.size.iconSizeNormal - 5
-                                    content: "lock"
-                                    color: modelData.ssid === ServiceWifi.currentSSID ? Colors.primaryText : Colors.surfaceText
+
+                        Item{
+                            Layout.preferredWidth: row.implicitWidth 
+                            Layout.fillHeight: true
+
+                            Behavior on Layout.preferredWidth{
+                                NumberAnimation{
+                                    duration: 200
+                                    easing.type:Easing.OutQuad
                                 }
                             }
+                            RowLayout{
+                                id: row
+                                anchors.fill: parent
+                                spacing: 10
+                                Loader{
+                                    id: lockLoader
+                                    active: modelData?.security ? true : false
 
-                            Loader{
-                                id: rightLoader
-                                active: wifiArea.containsMouse
-                                visible: active
-
-                                sourceComponent: Rectangle{ 
-                                    implicitWidth: 20
-                                    implicitHeight: 20
-                                    radius: height / 2
-                                    color: modelData.ssid === ServiceWifi.currentSSID ? Colors.primaryText :  Qt.alpha(Colors.primaryText, 0.5)
-                                    MaterialIconSymbol {
-                                        anchors.centerIn: parent
-                                        iconSize: 18
-                                        content: "chevron_forward"
-                                        //color: modelData.ssid === ServiceWifi.currentSSID ? Colors.primaryText : Colors.surfaceText
-
-                                        NumberAnimation on opacity{
-                                            from: 0
-                                            to: 1
-                                            duration: 300
-                                            running: true
-                                        }
-
-                                        MouseArea{
-                                            id: wifiDetails
-                                            anchors.fill: parent
-                                            cursorShape: Qt.PointingHandCursor
-                                            onClicked:{
-                                                root.isWifiSettingClicked = true
-                                                root.wifiDetailsData = modelData
-                                            }
-                                        }
+                                    sourceComponent: MaterialIconSymbol {
+                                        iconSize: Appearance.size.iconSizeNormal - 5
+                                        content: "lock"
+                                        color: modelData?.connected ? Colors.primaryText : Colors.surfaceText
                                     }
                                 }
+
                             }
                         }
                     }
                 }
             }
+        }
 
+        CustomText{
+            content: "Search Wi-Fi networks nearby"
+            size: 12
+            color: Colors.outline
+        }
+
+        Item{
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            clip: true
+            ListView{   
+                anchors.fill: parent
+                orientation: Qt.Vertical
+                model: ServiceNetwork.available
+                spacing: 5
+
+                delegate: Rectangle{
+                    implicitHeight: 40
+                    implicitWidth: parent ? parent.width : 0
+                    radius: 10
+                    color: "transparent"
+
+                    Behavior on color{
+                        ColorAnimation{
+                            duration: 200
+                        }
+                    }
+
+                    MouseArea{
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked:{
+                            if(!modelData?.connected)modelData.connect()
+                            else modelData?.disconnect()
+                        }
+                    }
+
+                    RowLayout{
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        spacing: 10
+
+
+                        MaterialIconSymbol {
+                            property string batteryIcon: {
+                                let signal = modelData.signalStrength * 100
+                                if(signal >= 90){
+                                    return "signal_wifi_4_bar"
+                                }
+                                else if(signal < 90 && signal >=60){
+                                    return "network_wifi_3_bar"
+                                }else if(signal < 60 && signal >= 30){
+                                    return "network_wifi_2_bar"
+                                }
+                                return "network_wifi_1_bar"
+                            }
+
+                            iconSize: 20
+                            content: batteryIcon
+
+                        }
+
+
+
+                        ColumnLayout{
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            spacing: 10
+                            CustomText{
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                size: 12
+                                content: modelData?.name ?? ""
+                            }
+
+                            CustomText{
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                visible: modelData?.known
+                                content: modelData?.known ? "Known" : "Unknown"
+                                color: Colors.outline
+                            }
+                        }
+
+
+                        Item{
+                            Layout.preferredWidth: row.implicitWidth 
+                            Layout.fillHeight: true
+
+                            Behavior on Layout.preferredWidth{
+                                NumberAnimation{
+                                    duration: 200
+                                    easing.type:Easing.OutQuad
+                                }
+                            }
+                            RowLayout{
+                                id: row
+                                anchors.fill: parent
+                                spacing: 10
+                                Loader{
+                                    id: lockLoader
+                                    active: modelData?.security ? true : false
+
+                                    sourceComponent: MaterialIconSymbol {
+                                        iconSize: Appearance.size.iconSizeNormal - 5
+                                        content: "lock"
+                                        color: modelData?.connected ? Colors.primaryText : Colors.surfaceText
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle{
+            Layout.alignment: Qt.AlignCenter
+            Layout.preferredHeight: 40
+            Layout.fillWidth: true
+            radius: 15
+            color: area.containsMouse ? Colors.primary : Colors.surfaceContainerHighest
+            CustomText{
+                anchors.centerIn: parent
+                content: "More Settings"
+                size: 12
+                color: area.containsMouse ? Colors.primaryText : Colors.surfaceText
+            } 
+            MouseArea{
+                id: area
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+            }
         }
     }
 }

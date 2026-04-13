@@ -27,7 +27,7 @@ Item {
         width: parent.width
         height: 6
         radius: 10
-        color: Colors.surface
+        color: Colors.surfaceContainerHighest
 
         Rectangle {
             id: handle
@@ -97,6 +97,7 @@ Item {
         MouseArea {
             id: trackMouseArea
             anchors.fill: parent
+            enabled: root.interactive
             visible: root.interactive
             onClicked: (mouse) => {
                 var newProgress = Math.max(0, Math.min(1, mouse.x / width))

@@ -96,7 +96,7 @@ Item {
                                 id: apiKeyInput
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                text: SettingsConfig.googleAiApiKey
+                                text: SettingsConfig.ai.googleApiKey
                                 echoMode: showKey.checked ? TextInput.Normal : TextInput.Password
                                 color: Colors.surfaceVariantText
                                 selectionColor: Colors.primary
@@ -106,7 +106,7 @@ Item {
                                 clip: true
 
                                 onEditingFinished: {
-                                    SettingsConfig.googleAiApiKey = text
+                                    SettingsConfig.ai = Object.assign({}, SettingsConfig.ai, {googleApiKey: text})
                                 }
                             }
 
@@ -162,7 +162,7 @@ Item {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                SettingsConfig.googleAiApiKey = apiKeyInput.text
+                                SettingsConfig.ai = Object.assign({}, SettingsConfig.ai, {googleApiKey: apiKeyInput.text})
                                 savedNotice.visible = true
                                 savedTimer.restart()
                             }

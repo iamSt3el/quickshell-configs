@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Widgets
 import Quickshell.Hyprland
 import QtQuick
 
@@ -9,13 +10,25 @@ Scope {
     id: root
 
     property bool screenLocked: false
+    property bool startAnimation: false
 
     // LockContext is lightweight, keep it loaded
     LockContext {
         id: lockContext
 
         onUnlocked: {
+            //root.screenLocked = false
+            timer.start()
+            root.startAnimation = true
+        }
+    }
+
+    Timer{
+        id: timer
+        interval: 900
+        onTriggered:{
             root.screenLocked = false
+            root.startAnimation = false
         }
     }
 
@@ -27,14 +40,53 @@ Scope {
             id: lockSurface
             color: "transparent"
 
+            ScreencopyView {
+                anchors.fill: parent
+                captureSource: lockSurface.screen
+            }
+
             // Loader unloads the UI when not locked to save memory
             Loader {
+                id: contentLoader
                 active: root.screenLocked
                 anchors.fill: parent
 
-                sourceComponent: LockSurface {
+                sourceComponent: Item {
                     anchors.fill: parent
-                    context: lockContext
+
+                    LockSurface {
+                        width: parent.width
+                        height: parent.height
+                        context: lockContext
+                        //visible: root.screenLocked
+                        // NumberAnimation on opacity{
+                        //     from: 0
+                        //     to: 1
+                        //     running: true
+                        //     duration: 600
+                        // }
+                        // NumberAnimation on opacity{
+                        //     from: 1
+                        //     to: 0
+                        //     running: root.startAnimation
+                        //     duration: 600
+                        // }
+                        NumberAnimation on y {
+                            from: -1200
+                            to: 0
+                            running: true
+                            duration: 600
+                            easing.type: Easing.OutCubic
+                        }
+
+                        NumberAnimation on y {
+                            from: 0
+                            to: -1200
+                            running: root.startAnimation
+                            duration: 600
+                            easing.type: Easing.InCubic
+                        }
+                    }
                 }
             }
         }
@@ -47,6 +99,7 @@ Scope {
 
         onPressed: {
             root.screenLocked = true
+            root.startAnimation = false
         }
     }
 }

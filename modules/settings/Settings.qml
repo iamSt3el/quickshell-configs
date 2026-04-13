@@ -90,12 +90,12 @@ Singleton{
             icon: "monitor"
         },
         {
-            name: "Keybindings",
-            icon: "keyboard"
+            name: "Networking",
+            icon: "android_wifi_4_bar"
         },
         {
-            name: "AI",
-            icon: "smart_toy"
+            name: "Bluetooth",
+            icon: "bluetooth"
         },
         {
             name: "Manga",

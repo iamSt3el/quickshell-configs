@@ -1227,9 +1227,9 @@ Item {
                     visible: root.viewState === "reader"
                     anchors.fill: parent
                     clip: true
-                    spacing: SettingsConfig.mangaPageSpacing
+                    spacing: SettingsConfig.manga.pageSpacing
                     maximumFlickVelocity: 4000
-                    cacheBuffer: SettingsConfig.mangaPreloadPages
+                    cacheBuffer: SettingsConfig.manga.preloadPages
 
                     model: ScriptModel { values: ServiceManga.chapterPages }
 
@@ -1239,7 +1239,7 @@ Item {
                         grabPermissions: WheelHandler.CanTakeOverFromAnything
                         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
                         onWheel: event => {
-                            const velocity = event.angleDelta.y * SettingsConfig.mangaScrollSpeed
+                            const velocity = event.angleDelta.y * SettingsConfig.manga.scrollSpeed
                             if (readerList.verticalOvershoot !== 0.0 ||
                                 (velocity > 0 && readerList.verticalVelocity <= 0) ||
                                 (velocity < 0 && readerList.verticalVelocity >= 0)) {

@@ -30,14 +30,12 @@ Singleton {
 
     // Connect to a network
     function connect(ssid) {
-        console.log("Connecting to:", ssid)
         connectProc.exec(["nmcli", "dev", "wifi", "connect", ssid])
     }
 
     // Disconnect from current network
     function disconnect() {
         if (currentSSID) {
-            console.log("Disconnecting from:", currentSSID)
             disconnectProc.exec(["nmcli", "connection", "down", currentSSID])
         }
     }
@@ -45,7 +43,6 @@ Singleton {
     // Turn WiFi on or off
     function setWifi(enabled) {
         const cmd = enabled ? "on" : "off"
-        console.log("Setting WiFi:", cmd)
         wifiToggleProc.exec(["nmcli", "radio", "wifi", cmd])
     }
 
@@ -56,10 +53,7 @@ Singleton {
 
     // Scan for WiFi networks
     function scanNetworks() {
-        console.log("Scanning for networks...")
-        
         wifiScanning = true
-        console.log("WifiScanner: " + wifiScanning)
         scanProc.running = true
     }
 
@@ -74,13 +68,7 @@ Singleton {
         id: connectProc
         stdout: SplitParser {
             onRead: line => {
-                console.log("Connect output:", line)
                 root.refresh()
-            }
-        }
-        stderr: SplitParser {
-            onRead: line => {
-                console.error("Connect error:", line)
             }
         }
     }
@@ -90,7 +78,6 @@ Singleton {
         id: disconnectProc
         stdout: SplitParser {
             onRead: line => {
-                console.log("Disconnect output:", line)
                 root.refresh()
             }
         }
@@ -101,7 +88,6 @@ Singleton {
         id: wifiToggleProc
         stdout: SplitParser {
             onRead: line => {
-                console.log("WiFi toggle output:", line)
                 root.refresh()
             }
         }
@@ -182,8 +168,6 @@ Singleton {
 
             root.availableNetworks = networks
             root.wifiScanning = false
-
-            console.log("Found", networks.length, "networks")
         }
     }
 
@@ -260,8 +244,7 @@ Singleton {
     }
     
     Component.onCompleted: {
-        console.log("Network service initialized")
         refresh()
-        scanNetworks()  // Get initial network list
+        scanNetworks()
     }
 }

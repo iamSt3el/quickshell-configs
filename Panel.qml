@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell.Wayland
 import qs.modules.utils
 
+
 PanelWindow {
     id: mainWindow
     

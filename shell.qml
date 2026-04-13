@@ -11,6 +11,7 @@ import qs.modules.components.Osd
 import qs.modules.components.WallpaperSelector
 import qs.modules.components.MusicVis
 import qs.modules.components.Dock
+import qs.modules.components.Widgets
 import qs.modules.customComponents
 import qs.modules.settings
 
@@ -31,11 +32,10 @@ ShellRoot{
     //Osd{} 
     //Wallpaper{}
     DockPanel{}
-    //TestMorph{}
-    //NewLayout{}
+    //WidgetScreen{}
 
     Loader{
-        active: SettingsConfig.musicVisOn
+        active: SettingsConfig.general.musicVisOn
         sourceComponent:Vis{
             anchors {
                 left: true
@@ -46,12 +46,13 @@ ShellRoot{
     }
 
 
-
+    //NewLockScreen{}
 
     //CubeTest{}
     //Panel{}
     //ColorPicker{}
     
+
 
 
     // Lock screen - responds to `loginctl lock-session`

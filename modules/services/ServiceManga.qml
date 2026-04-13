@@ -9,7 +9,7 @@ Singleton {
 
     // ── Site selection ───────────────────────────────────────────────────────
     // "weebcentral" → port 5150  |  "comix" → port 5151
-    property string currentSite: SettingsConfig.mangaDefaultSite
+    property string currentSite: SettingsConfig.manga.defaultSite
 
     readonly property var _sites: ({
         "weebcentral": { label: "WEEBCentral", port: 5150, script: "manga_server.py"  },
@@ -223,7 +223,7 @@ Singleton {
             isFetchingManga = true
             mangaError = ""
             let url = root.apiUrl + "/hot"
-            if (SettingsConfig.mangaFilterAdult) url += "?filter_adult=1"
+            if (SettingsConfig.manga.filterAdult) url += "?filter_adult=1"
             console.log("[ServiceManga] GET", url)
             _get(url, function(err, body) {
                 if (err) { mangaError = "Request failed: " + err; isFetchingManga = false; return }
@@ -234,7 +234,7 @@ Singleton {
             isFetchingManga = true
             mangaError = ""
             let url = root.apiUrl + "/latest?page=" + latestPage
-            if (SettingsConfig.mangaFilterAdult) url += "&filter_adult=1"
+            if (SettingsConfig.manga.filterAdult) url += "&filter_adult=1"
             console.log("[ServiceManga] GET", url)
             _get(url, function(err, body) {
                 if (err) { mangaError = "Request failed: " + err; isFetchingManga = false; return }
@@ -271,7 +271,7 @@ Singleton {
                 + "&offset=" + offset
                 + "&sort=" + encodeURIComponent(sort)
         if (type) url += "&type=" + encodeURIComponent(type)
-        if (SettingsConfig.mangaFilterAdult) url += "&filter_adult=1"
+        if (SettingsConfig.manga.filterAdult) url += "&filter_adult=1"
         console.log("[ServiceManga] GET", url)
         _get(url, function(err, body) {
             if (err) { mangaError = "Request failed: " + err; isFetchingManga = false; return }
@@ -298,7 +298,7 @@ Singleton {
             const isLatest = !isHot && data.nextPage !== undefined
             const items    = isHot ? data : (data.results || [])
 
-            const filtered = SettingsConfig.mangaFilterAdult
+            const filtered = SettingsConfig.manga.filterAdult
                 ? items.filter(item => !root._isAdult(item))
                 : items
 

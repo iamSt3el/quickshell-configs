@@ -9,14 +9,14 @@ import qs.modules.utils
 ProgressBar {
     id: root
     property real valueBarWidth: 120
-    property real valueBarHeight: 4
+    property real valueBarHeight: 3
     property real valueBarGap: 4
     property color highlightColor: Colors.primary
     property color trackColor: Colors.secondaryContainer
     property bool sperm: false 
     property bool animateSperm: true
     property real spermAmplitudeMultiplier: sperm ? 0.5 : 0
-    property real spermFrequency: 6
+    property real spermFrequency: 8
     property real spermFps: 60
 
     Behavior on spermAmplitudeMultiplier {

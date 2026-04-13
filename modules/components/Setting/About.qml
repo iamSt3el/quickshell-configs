@@ -7,17 +7,17 @@ import qs.modules.utils
 import qs.modules.settings
 import qs.modules.customComponents
 
-Item{
+Item {
     anchors.fill: parent
     anchors.margins: 5
 
-    Flickable{
+    Flickable {
         anchors.fill: parent
         contentHeight: column.implicitHeight
         contentWidth: width
         clip: true
 
-        ColumnLayout{
+        ColumnLayout {
             id: column
             width: parent.width
             anchors.top: parent.top
@@ -28,14 +28,14 @@ Item{
             anchors.topMargin: 5
             spacing: 0
 
-            RowLayout{
+            RowLayout {
                 spacing: 10
-                MaterialIconSymbol{
+                MaterialIconSymbol {
                     content: "info"
                     iconSize: 20
                 }
 
-                CustomText{
+                CustomText {
                     content: "About"
                     size: 20
                     color: Colors.primary
@@ -43,31 +43,31 @@ Item{
             }
 
             // ── App Info ──────────────────────────────────
-            Rectangle{
+            Rectangle {
                 Layout.topMargin: 20
                 Layout.fillWidth: true
                 Layout.preferredHeight: appCol.implicitHeight + 30
                 radius: 15
                 color: Colors.surfaceContainerHigh
 
-                ColumnLayout{
+                ColumnLayout {
                     id: appCol
                     anchors.fill: parent
                     anchors.margins: 15
                     spacing: 5
 
-                    CustomText{
+                    CustomText {
                         content: "Nebula"
                         size: 24
                         weight: 700
                         color: Colors.primary
                     }
-                    CustomText{
+                    CustomText {
                         content: "v0.1.0-beta"
                         size: 14
                         color: Colors.outline
                     }
-                    CustomText{
+                    CustomText {
                         Layout.topMargin: 5
                         content: "A modern desktop shell for Wayland built with QuickShell"
                         size: 13
@@ -77,38 +77,38 @@ Item{
             }
 
             // ── Developer ─────────────────────────────────
-            CustomText{
+            CustomText {
                 Layout.topMargin: 20
                 content: "Developer"
                 size: 18
                 color: Colors.primary
             }
-            CustomText{
+            CustomText {
                 content: "Who made this"
                 size: 14
                 color: Colors.outline
             }
 
-            Rectangle{
+            Rectangle {
                 Layout.topMargin: 10
                 Layout.fillWidth: true
                 Layout.preferredHeight: devRow.implicitHeight + 20
                 radius: 15
                 color: Colors.surfaceContainerHigh
 
-                RowLayout{
+                RowLayout {
                     id: devRow
                     anchors.fill: parent
                     anchors.margins: 10
                     spacing: 10
 
-                    Rectangle{
+                    Rectangle {
                         Layout.preferredWidth: 50
                         Layout.preferredHeight: 50
                         radius: 25
                         color: Colors.primary
 
-                        CustomText{
+                        CustomText {
                             anchors.centerIn: parent
                             content: "S"
                             size: 22
@@ -117,94 +117,112 @@ Item{
                         }
                     }
 
-                    ColumnLayout{
+                    ColumnLayout {
                         spacing: 2
-                        CustomText{
+                        CustomText {
                             content: "St3el"
                             size: 16
                             weight: 600
                         }
-                        CustomText{
+                        CustomText {
                             content: "Developer & Designer"
                             size: 12
                             color: Colors.outline
                         }
                     }
 
-                    Item{ Layout.fillWidth: true }
+                    Item {
+                        Layout.fillWidth: true
+                    }
                 }
             }
 
             // ── Links ─────────────────────────────────────
-            CustomText{
+            CustomText {
                 Layout.topMargin: 20
                 content: "Links"
                 size: 18
                 color: Colors.primary
             }
-            CustomText{
+            CustomText {
                 content: "Find the project online"
                 size: 14
                 color: Colors.outline
             }
 
-            ColumnLayout{
+            ColumnLayout {
                 Layout.topMargin: 10
                 Layout.fillWidth: true
                 spacing: 5
 
-                Repeater{
+                Repeater {
                     model: [
-                        { icon: "code", label: "GitHub", desc: "github.com/St3el" },
-                        { icon: "bug_report", label: "Report Issue", desc: "Open a bug report on GitHub" },
-                        { icon: "star", label: "Star the Project", desc: "Show your support" }
+                        {
+                            icon: "code",
+                            label: "GitHub",
+                            desc: "github.com/St3el"
+                        },
+                        {
+                            icon: "bug_report",
+                            label: "Report Issue",
+                            desc: "Open a bug report on GitHub"
+                        },
+                        {
+                            icon: "star",
+                            label: "Star the Project",
+                            desc: "Show your support"
+                        }
                     ]
 
-                    delegate: Rectangle{
+                    delegate: Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 45
                         radius: 10
                         color: linkArea.containsMouse ? Colors.surfaceContainerHighest : Colors.surfaceContainerHigh
 
-                        Behavior on color{
-                            ColorAnimation{ duration: 150 }
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: 150
+                            }
                         }
 
-                        RowLayout{
+                        RowLayout {
                             anchors.fill: parent
                             anchors.leftMargin: 12
                             anchors.rightMargin: 12
                             spacing: 10
 
-                            MaterialIconSymbol{
+                            MaterialIconSymbol {
                                 content: modelData.icon
                                 iconSize: 18
                                 color: Colors.primary
                             }
 
-                            ColumnLayout{
+                            ColumnLayout {
                                 spacing: 0
-                                CustomText{
+                                CustomText {
                                     content: modelData.label
                                     size: 14
                                 }
-                                CustomText{
+                                CustomText {
                                     content: modelData.desc
                                     size: 11
                                     color: Colors.outline
                                 }
                             }
 
-                            Item{ Layout.fillWidth: true }
+                            Item {
+                                Layout.fillWidth: true
+                            }
 
-                            MaterialIconSymbol{
+                            MaterialIconSymbol {
                                 content: "arrow_forward"
                                 iconSize: 16
                                 color: Colors.outline
                             }
                         }
 
-                        MouseArea{
+                        MouseArea {
                             id: linkArea
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
@@ -213,7 +231,6 @@ Item{
                     }
                 }
             }
-
         }
     }
 }

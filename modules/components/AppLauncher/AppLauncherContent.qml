@@ -20,7 +20,7 @@ Item{
     }
     signal closed
 
-    property bool isGrid: SettingsConfig.appGrid
+    property bool isGrid: SettingsConfig.general.appGrid
     property var appList: isGrid ? gridLoader.item : listLoader.item
 
 
@@ -209,7 +209,7 @@ Item{
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     if(appLauncher.isGrid){
-                                        SettingsConfig.appGrid = false
+                                        SettingsConfig.general = Object.assign({}, SettingsConfig.general, {appGrid: false})
                                     }
                                 }
                             }
@@ -238,7 +238,7 @@ Item{
                                 hoverEnabled: true
                                 onClicked: {
                                     if(!appLauncher.isGrid){
-                                        SettingsConfig.appGrid = true
+                                        SettingsConfig.general = Object.assign({}, SettingsConfig.general, {appGrid: true})
                                     }
                                 }
                             }

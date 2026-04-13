@@ -155,6 +155,7 @@ Item {
                             }
 
                             Rectangle {
+                                id: innerIcon
                                 implicitWidth: 40
                                 implicitHeight: 40
                                 radius: width
@@ -182,8 +183,9 @@ Item {
                                     anchors.centerIn: parent
                                     content: modelData.icon
                                 }
-
-                                CustomMouseArea {
+                               
+                                MouseArea {
+                                    anchors.fill: parent
                                     enabled: icon.showOptions
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
@@ -204,7 +206,8 @@ Item {
                     }
                 }
 
-                CustomMouseArea {
+                MouseArea {
+                    anchors.fill: parent
                     enabled: toolWidgets.open
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor

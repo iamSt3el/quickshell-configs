@@ -214,9 +214,9 @@ Item{
                 }
 
                 CustomToogle{
-                    isToggleOn: SettingsConfig.dock
+                    isToggleOn: SettingsConfig.general.dock
                     onToggled: function(state) {
-                        SettingsConfig.dock = state 
+                        SettingsConfig.general = Object.assign({}, SettingsConfig.general, {dock: state})
                     }
                 }
             }
@@ -242,9 +242,9 @@ Item{
                 }
 
                 CustomToogle{
-                    isToggleOn: SettingsConfig.dockAutoHide
+                    isToggleOn: SettingsConfig.general.dockAutoHide
                     onToggled: function(state) {
-                        SettingsConfig.dockAutoHide = state 
+                        SettingsConfig.general = Object.assign({}, SettingsConfig.general, {dockAutoHide: state})
                     }
                 }
             }
@@ -270,9 +270,9 @@ Item{
                 }
 
                 CustomToogle{
-                    isToggleOn: SettingsConfig.dockMusicPlayer
+                    isToggleOn: SettingsConfig.general.dockMusicPlayer
                     onToggled: function(state) {
-                        SettingsConfig.dockMusicPlayer = state 
+                        SettingsConfig.general = Object.assign({}, SettingsConfig.general, {dockMusicPlayer: state})
                     }
                 }
             }
@@ -317,9 +317,9 @@ Item{
                 }
 
                 CustomToogle{
-                    isToggleOn: SettingsConfig.musicVisOn
+                    isToggleOn: SettingsConfig.general.musicVisOn
                     onToggled: function(state) {
-                        SettingsConfig.musicVisOn = state 
+                        SettingsConfig.general = Object.assign({}, SettingsConfig.general, {musicVisOn: state})
                     }
                 }
             }
@@ -422,9 +422,11 @@ Item{
                 colorPicker.active = false
             }
             onColorsChanged: (first, second, third) => {
-                SettingsConfig.firstColor = first.toString()
-                SettingsConfig.secondColor = second.toString()
-                SettingsConfig.thirdColor = third.toString()
+                SettingsConfig.theme = Object.assign({}, SettingsConfig.theme, {
+                    firstColor: first.toString(),
+                    secondColor: second.toString(),
+                    thirdColor: third.toString()
+                })
             }
         }
 

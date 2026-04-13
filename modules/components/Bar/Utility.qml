@@ -305,27 +305,27 @@ Item{
                 }
             }
 
-            Rectangle{
-                Layout.preferredHeight: todoIcon.height + 4
-                Layout.preferredWidth: todoIcon.width + 10
-                color: Colors.surfaceContainerHighest
-                radius: Appearance.radius.medium
-
-                MaterialIconSymbol{
-                    id: todoIcon
-                    iconSize: Appearance.size.iconSizeNormal - 3
-                    content: "checklist"
-                    anchors.centerIn: parent
-                }
-
-                CustomMouseArea{
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onClicked:{
-                        utility.isTodoClicked = true
-                    }
-                }
-            }
+            // Rectangle{
+            //     Layout.preferredHeight: todoIcon.height + 4
+            //     Layout.preferredWidth: todoIcon.width + 10
+            //     color: Colors.surfaceContainerHighest
+            //     radius: Appearance.radius.medium
+            //
+            //     MaterialIconSymbol{
+            //         id: todoIcon
+            //         iconSize: Appearance.size.iconSizeNormal - 3
+            //         content: "checklist"
+            //         anchors.centerIn: parent
+            //     }
+            //
+            //     CustomMouseArea{
+            //         cursorShape: Qt.PointingHandCursor
+            //         hoverEnabled: true
+            //         onClicked:{
+            //             utility.isTodoClicked = true
+            //         }
+            //     }
+            // }
 
             Rectangle{
                 Layout.preferredHeight: dashboardIcon.height + 4

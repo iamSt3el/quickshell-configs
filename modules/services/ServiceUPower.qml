@@ -27,8 +27,32 @@ Singleton{
     property var powerProfile: PowerProfiles.profile
     property string powerProfileIcon: powerProfile === 0 ? "leaf" : "balance" 
     property real powerLevel: UPower.displayDevice.percentage
-    property bool isCharging: UPowerDeviceState.Charging === UPower.displayDevice.state 
-    property real health: UPower.displayDevice.energyCapacity / 52.976
+    property bool isCharging: UPowerDeviceState.Charging === UPower.displayDevice.state
+    property real health: 0
+    property bool _lowNotified: false
+    property bool _ready: false
+
+
+    //
+    // onIsChargingChanged: {
+    //     if (isCharging) {
+    //         _lowNotified = false
+    //         Quickshell.execDetached(["notify-send", "-i", "battery_charging_full", "Battery", "Charging — " + Math.round(powerLevel) + "%"])
+    //     } else {
+    //         Quickshell.execDetached(["notify-send", "-i", "battery_full", "Battery", "Unplugged — " + Math.round(powerLevel) + "%"])
+    //     }
+    // }
+
+
+
+    Process {
+        id: healthProcess
+        command: ["bash", "-c", "awk 'NR==1{full=$1} NR==2{design=$1} END{printf \"%.1f\", full/design*100}' /sys/class/power_supply/BAT1/charge_full /sys/class/power_supply/BAT1/charge_full_design"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => root.health = parseFloat(data) / 100
+        }
+    }
     property string timeToFull: formatTime(UPower.displayDevice.timeToFull)
     property real changeRate: UPower.displayDevice.changeRate
     function setPowerProfile(value){

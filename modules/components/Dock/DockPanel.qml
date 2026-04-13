@@ -153,7 +153,7 @@ Scope {
             implicitHeight: Math.max(20, child.implicitHeight)
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            property bool active: SettingsConfig.dockAutoHide ? hover.hovered || root.clipboardActive || root.wallpaperActive || root.typingGameActive || GlobalStates.osdOpen || (dockLoder.item && dockLoder.item.showPreview) : true
+            property bool active: SettingsConfig.general.dockAutoHide ? hover.hovered || root.clipboardActive || root.wallpaperActive || root.typingGameActive || GlobalStates.osdOpen || (dockLoder.item && dockLoder.item.showPreview) : true
             property bool collapsed: false
 
             onActiveChanged: {
@@ -168,7 +168,7 @@ Scope {
             Timer {
                 id: collapseTimer
                 interval: 1000
-                running: SettingsConfig.dockAutoHide && !container.active
+                running: SettingsConfig.general.dockAutoHide && !container.active
                 onTriggered: container.collapsed = true
             }
 
@@ -182,7 +182,7 @@ Scope {
                     : root.wallpaperActive ? Appearance.size.wallpaperPanelHeight
                     : root.typingGameActive ? Appearance.size.typingGameHeight
                     : GlobalStates.osdOpen ? 60
-                    : SettingsConfig.dock ? 60 : 0
+                    : SettingsConfig.general.dock ? 60 : 0
 
                 implicitWidth: root.clipboardActive ? 400
                     : root.wallpaperActive ? Appearance.size.wallpaperPanelWidth
@@ -224,7 +224,7 @@ Scope {
 
                 Loader {
                     id: dockLoder
-                    active: SettingsConfig.dock && !root.clipboardActive && !root.wallpaperActive && !root.typingGameActive && !container.collapsed && !GlobalStates.osdOpen
+                    active: SettingsConfig.general.dock && !root.clipboardActive && !root.wallpaperActive && !root.typingGameActive && !container.collapsed && !GlobalStates.osdOpen
                     anchors.fill: parent
                     sourceComponent: Dock {}
                 }

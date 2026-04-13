@@ -2,9 +2,11 @@ pragma Singleton
 pragma ComponentBehavior: Bound
 
 import Quickshell
+import Quickshell.Io
 import QtQuick
 import Quickshell.Services.Mpris
 import QtQml.Models
+import qs.modules.settings
 
 Singleton{
     id: root
@@ -15,6 +17,29 @@ Singleton{
 
     property bool __reverse: false
     property var activeTrack
+    property string _lastArtUrl: ""
+
+    readonly property string _musicColorsScript: "/home/steel/.config/quickshell/scripts/music_colors.sh"
+
+    Process {
+        id: musicColorGen
+        onExited: (exitCode) => {
+            if (exitCode !== 0)
+                console.warn("[ServiceMusic] music_colors.sh exited with code:", exitCode)
+        }
+    }
+
+    function generateMusicColors(artUrl) {
+        if (!artUrl || artUrl === _lastArtUrl) return
+        _lastArtUrl = artUrl
+        musicColorGen.command = [
+            _musicColorsScript,
+            artUrl,
+            SettingsConfig.theme.matugenScheme,
+            SettingsConfig.theme.matugenTheme.toLowerCase()
+        ]
+        musicColorGen.running = true
+    }
 
     Timer {
         running: ServiceMusic.activePlayer?.isPlaying ?? false
@@ -99,6 +124,9 @@ Singleton{
 
         this.trackChanged(__reverse)
         this.__reverse = false
+
+        // if (this.activeTrack.artUrl)
+        //     this.generateMusicColors(this.activeTrack.artUrl)
     }
 
     property bool isPlaying: this.activePlayer && this.activePlayer.isPlaying

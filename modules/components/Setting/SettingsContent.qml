@@ -189,14 +189,26 @@ Item{
                     Loader{
                         anchors.fill: parent
                         active: root.currentPage === 3
-                        sourceComponent: Keybindings{}
+                        sourceComponent: Networking{}
                     }
 
-                    Loader{
+                     Loader{
                         anchors.fill: parent
                         active: root.currentPage === 4
-                        sourceComponent: Ai{}
+                        sourceComponent: Bluetooth{}
                     }
+
+                    // Loader{
+                    //     anchors.fill: parent
+                    //     active: root.currentPage === 3
+                    //     sourceComponent: Keybindings{}
+                    // }
+
+                    // Loader{
+                    //     anchors.fill: parent
+                    //     active: root.currentPage === 4
+                    //     sourceComponent: Ai{}
+                    // }
                     Loader{
                         anchors.fill: parent
                         active: root.currentPage === 5

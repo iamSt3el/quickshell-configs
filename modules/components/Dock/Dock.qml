@@ -163,7 +163,7 @@ Item {
             radius: 4
         }
         Loader{ 
-            active: SettingsConfig.dockMusicPlayer
+            active: SettingsConfig.general.dockMusicPlayer
             visible: active
             Layout.fillHeight: true
             Layout.preferredWidth: 160

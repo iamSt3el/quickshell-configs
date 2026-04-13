@@ -7,39 +7,11 @@ import QtQuick
 Singleton {
     id: root
 
-    property alias matugenScheme: settingsAdapter.matugenScheme
-    property alias matugenTheme: settingsAdapter.matugenTheme
-    property alias musicVisOn: settingsAdapter.musicVisOn
-    property alias firstColor: settingsAdapter.firstColor
-    property alias secondColor: settingsAdapter.secondColor
-    property alias thirdColor: settingsAdapter.thirdColor
-    property alias pinnedApps: settingsAdapter.pinnedApps
-    property alias dock: settingsAdapter.dock
-    property alias dockAutoHide: settingsAdapter.dockAutoHide
-    property alias dockMusicPlayer: settingsAdapter.dockMusicPlayer
-
-    // Wallhaven online wallpaper settings
-    property alias wallhavenApiKey: settingsAdapter.wallhavenApiKey
-    property alias wallhavenCategories: settingsAdapter.wallhavenCategories
-    property alias wallhavenPurity: settingsAdapter.wallhavenPurity
-    property alias wallhavenSorting: settingsAdapter.wallhavenSorting
-    property alias wallhavenOrder: settingsAdapter.wallhavenOrder
-    property alias wallhavenTopRange: settingsAdapter.wallhavenTopRange
-    property alias wallhavenAtleast: settingsAdapter.wallhavenAtleast
-    property alias wallhavenRatios: settingsAdapter.wallhavenRatios
-
-    property alias appGrid: settingsAdapter.appGrid
-
-    // Google AI (Gemini) settings
-    property alias googleAiApiKey: settingsAdapter.googleAiApiKey
-
-    // Manga Reader
-    property alias mangaScrollSpeed: settingsAdapter.mangaScrollSpeed
-    property alias mangaPageSpacing: settingsAdapter.mangaPageSpacing
-    property alias mangaDefaultSite: settingsAdapter.mangaDefaultSite
-    property alias mangaPreloadPages: settingsAdapter.mangaPreloadPages
-    property alias mangaFilterAdult: settingsAdapter.mangaFilterAdult
-
+    property alias general: settingsAdapter.general
+    property alias theme: settingsAdapter.theme
+    property alias wallhaven: settingsAdapter.wallhaven
+    property alias ai: settingsAdapter.ai
+    property alias manga: settingsAdapter.manga
 
     Timer {
         id: writeTimer
@@ -56,7 +28,6 @@ Singleton {
     }
 
     FileView {
-
         id: settingsFile
         path: Quickshell.env("HOME") + "/.cache/quickshell/settings.json"
         watchChanges: true
@@ -70,38 +41,46 @@ Singleton {
 
         adapter: JsonAdapter {
             id: settingsAdapter
-            property string matugenScheme: "scheme-content"
-            property string matugenTheme: "Light"
-            property bool musicVisOn: true
-            property string firstColor: "#ffffff"
-            property string secondColor: "#ffffff"
-            property string thirdColor: "#fffff"
-            property list<string> pinnedApps: []
-            property bool dock: true
-            property bool dockAutoHide: true
-            property bool dockMusicPlayer: true
 
-            // Wallhaven params
-            property string wallhavenApiKey: ""
-            property string wallhavenCategories: "111"
-            property string wallhavenPurity: "100"
-            property string wallhavenSorting: "toplist"
-            property string wallhavenOrder: "desc"
-            property string wallhavenTopRange: "1M"
-            property string wallhavenAtleast: ""
-            property string wallhavenRatios: ""
+            property var general: ({
+                dock: true,
+                dockAutoHide: true,
+                dockMusicPlayer: true,
+                appGrid: false,
+                pinnedApps: [],
+                musicVisOn: true
+            })
 
-            property bool appGrid: false
+            property var theme: ({
+                matugenScheme: "scheme-content",
+                matugenTheme: "Light",
+                firstColor: "#ffffff",
+                secondColor: "#ffffff",
+                thirdColor: "#ffffff"
+            })
 
-            // Google AI
-            property string googleAiApiKey: ""
+            property var wallhaven: ({
+                apiKey: "",
+                categories: "111",
+                purity: "100",
+                sorting: "toplist",
+                order: "desc",
+                topRange: "1M",
+                atleast: "",
+                ratios: ""
+            })
 
-            // Manga Reader
-            property int mangaScrollSpeed: 5
-            property int mangaPageSpacing: 4
-            property string mangaDefaultSite: "comix"
-            property int mangaPreloadPages: 1500
-            property bool mangaFilterAdult: true
+            property var ai: ({
+                googleApiKey: ""
+            })
+
+            property var manga: ({
+                scrollSpeed: 5,
+                pageSpacing: 4,
+                defaultSite: "comix",
+                preloadPages: 1500,
+                filterAdult: true
+            })
         }
     }
 }

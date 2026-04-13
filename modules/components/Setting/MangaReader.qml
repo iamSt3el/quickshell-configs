@@ -74,8 +74,8 @@ Item {
                 }
                 Item { Layout.fillWidth: true }
                 CustomToogle {
-                    isToggleOn: SettingsConfig.mangaFilterAdult
-                    onToggled: (state) => SettingsConfig.mangaFilterAdult = state
+                    isToggleOn: SettingsConfig.manga.filterAdult
+                    onToggled: (state) => SettingsConfig.manga = Object.assign({}, SettingsConfig.manga, {filterAdult: state})
                 }
             }
 
@@ -119,10 +119,10 @@ Item {
                 CustomSpinBox {
                     Layout.preferredWidth: 140
                     Layout.preferredHeight: 30
-                    val: SettingsConfig.mangaScrollSpeed
+                    val: SettingsConfig.manga.scrollSpeed
                     inc: 1
                     limit: 30
-                    onValChanged: SettingsConfig.mangaScrollSpeed = val
+                    onValChanged: SettingsConfig.manga = Object.assign({}, SettingsConfig.manga, {scrollSpeed: val})
                 }
             }
 
@@ -146,10 +146,10 @@ Item {
                 CustomSpinBox {
                     Layout.preferredWidth: 140
                     Layout.preferredHeight: 30
-                    val: SettingsConfig.mangaPageSpacing
+                    val: SettingsConfig.manga.pageSpacing
                     inc: 2
                     limit: 60
-                    onValChanged: SettingsConfig.mangaPageSpacing = val
+                    onValChanged: SettingsConfig.manga = Object.assign({}, SettingsConfig.manga, {pageSpacing: val})
                 }
             }
 
@@ -173,10 +173,10 @@ Item {
                 CustomSpinBox {
                     Layout.preferredWidth: 140
                     Layout.preferredHeight: 30
-                    val: SettingsConfig.mangaPreloadPages
+                    val: SettingsConfig.manga.preloadPages
                     inc: 500
                     limit: 8000
-                    onValChanged: SettingsConfig.mangaPreloadPages = val
+                    onValChanged: SettingsConfig.manga = Object.assign({}, SettingsConfig.manga, {preloadPages: val})
                 }
             }
 
@@ -210,7 +210,7 @@ Item {
                     Layout.preferredHeight: 36
                     Layout.preferredWidth: siteComixRow.implicitWidth + 24
                     radius: 10
-                    color: SettingsConfig.mangaDefaultSite === "comix"
+                    color: SettingsConfig.manga.defaultSite === "comix"
                            ? Colors.primary
                            : Colors.surfaceContainerHigh
 
@@ -223,13 +223,13 @@ Item {
                         MaterialIconSymbol {
                             content: "public"
                             iconSize: 16
-                            color: SettingsConfig.mangaDefaultSite === "comix"
+                            color: SettingsConfig.manga.defaultSite === "comix"
                                    ? Colors.primaryText : Colors.surfaceVariantText
                         }
                         CustomText {
                             content: "Comix.to"
                             size: 13
-                            color: SettingsConfig.mangaDefaultSite === "comix"
+                            color: SettingsConfig.manga.defaultSite === "comix"
                                    ? Colors.primaryText : Colors.surfaceVariantText
                         }
                     }
@@ -237,7 +237,7 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: SettingsConfig.mangaDefaultSite = "comix"
+                        onClicked: SettingsConfig.manga = Object.assign({}, SettingsConfig.manga, {defaultSite: "comix"})
                     }
                 }
 
@@ -246,7 +246,7 @@ Item {
                     Layout.preferredHeight: 36
                     Layout.preferredWidth: siteWeebRow.implicitWidth + 24
                     radius: 10
-                    color: SettingsConfig.mangaDefaultSite === "weebcentral"
+                    color: SettingsConfig.manga.defaultSite === "weebcentral"
                            ? Colors.primary
                            : Colors.surfaceContainerHigh
 
@@ -259,13 +259,13 @@ Item {
                         MaterialIconSymbol {
                             content: "language"
                             iconSize: 16
-                            color: SettingsConfig.mangaDefaultSite === "weebcentral"
+                            color: SettingsConfig.manga.defaultSite === "weebcentral"
                                    ? Colors.primaryText : Colors.surfaceVariantText
                         }
                         CustomText {
                             content: "WEEBCentral"
                             size: 13
-                            color: SettingsConfig.mangaDefaultSite === "weebcentral"
+                            color: SettingsConfig.manga.defaultSite === "weebcentral"
                                    ? Colors.primaryText : Colors.surfaceVariantText
                         }
                     }
@@ -273,7 +273,7 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: SettingsConfig.mangaDefaultSite = "weebcentral"
+                        onClicked: SettingsConfig.manga = Object.assign({}, SettingsConfig.manga, {defaultSite: "weebcentral"})
                     }
                 }
 

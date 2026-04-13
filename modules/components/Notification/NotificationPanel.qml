@@ -10,11 +10,10 @@ import qs.modules.customComponents
 
 Item{
     id: root
-    implicitHeight: notifications.length > 0 ? innerItem.height + 10 : 0
+    implicitHeight: notifications.length > 0 ? innerItem.height + 30 : 0
     implicitWidth: 400
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    clip: true
 
     Behavior on implicitHeight{
         NumberAnimation{
@@ -36,8 +35,8 @@ Item{
             strokeWidth: 2
             strokeColor: "transparent"
             fillColor: Colors.surface
-            startX: 0
-            startY: root.height
+            startX: innerItem.x
+            startY: innerItem.y + innerItem.height 
 
             PathArc{
                 relativeX: root.disX
@@ -49,7 +48,7 @@ Item{
 
             PathLine{
                 relativeX: 0
-                relativeY: - (root.height - 3 * root.disY)
+                relativeY: - (innerItem.height - 3 * root.disY)
             }
 
             PathArc{
@@ -60,7 +59,7 @@ Item{
             }
 
             PathLine{
-                relativeX: root.width - 3 * root.disX
+                relativeX: innerItem.width - 3 * root.disX
                 relativeY: 0
             }
 
@@ -74,7 +73,7 @@ Item{
 
             PathLine{
                 relativeX: 0
-                relativeY: root.height
+                relativeY: innerItem.height
             }
 
         }
@@ -82,16 +81,15 @@ Item{
 
     Item{
         id: innerItem
-        width: 380
-        height: list.contentHeight + 20
+        width: 400
+        height: list.contentHeight + 40
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        anchors.bottomMargin: 10
 
         ListView{
             id: list
             anchors.fill: parent
-            anchors.margins: 10
+            anchors.margins: 30
             orientation: Qt.Vertical
             model: ScriptModel{
                 values: [...root.notifications].reverse()
@@ -99,12 +97,76 @@ Item{
             spacing: 10
             interactive: false
 
+            add: Transition {
+                NumberAnimation{
+                    property: "x"
+                    from: list.width
+                    to: 0
+                    duration: 300
+                    easing.type: Easing.OutQuad
+                }
+            }
+
+            addDisplaced: Transition{
+                NumberAnimation{
+                    property: "y"
+                    duration: 200
+                    easing.type: Easing.OutQuad
+                }
+            }
+
+            move: Transition {
+                NumberAnimation {
+                    property: "y"
+                    duration: 250
+                    easing.type: Easing.OutQuad
+                }
+            }
+
+            displaced: Transition {
+                NumberAnimation {
+                    property: "y"
+                    duration: 250
+                    easing.type: Easing.OutQuad
+                }
+            }
+
             delegate: Rectangle{
                 id: popup
-                width: list.width
+                implicitWidth: list.width
                 implicitHeight: 80
                 radius: 20
                 color: Colors.surfaceContainerHigh
+           
+
+                RowLayout{
+                    anchors.fill: parent
+                    anchors.margins: 5
+                    Image{
+                        source: IconUtil.getIconPath(modelData.appIcon)
+                        width: 65
+                        height: 65
+                        sourceSize: Qt.size(width, height)
+                        fillMode: Image.PreserveAspectCrop
+                    }
+
+                    ColumnLayout{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                         
+                        CustomText{
+                            Layout.fillWidth: true
+                            content: modelData.summary
+                            size: 17
+                        }
+                        CustomText{
+                            Layout.fillWidth: true
+                            content: modelData.body
+                            size: 14
+                            color: Colors.outline
+                        }
+                    }
+                }
             }
 
         }

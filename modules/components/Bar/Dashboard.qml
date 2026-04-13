@@ -170,16 +170,16 @@ Item{
 
 
     signal toggleDashboard
-    property bool active: hoverHandler.hovered
+    property bool active: false//hoverHandler.hovered
 
     onActiveChanged:{
         if(!active) root.toggleDashboard()
     }
 
 
-    HoverHandler{
-        id: hoverHandler
-    }
+    // HoverHandler{
+    //     id: hoverHandler
+    // }
 
     ColumnLayout{
         id: col

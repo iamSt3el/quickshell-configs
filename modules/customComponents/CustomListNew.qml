@@ -9,7 +9,8 @@ import qs.modules.settings
 Rectangle{
     id: root
     property bool isListClicked: false
-    property var currentVal
+    property var currentVal: null
+    property var objectVal: null
     property var list: []
     color: Colors.surfaceContainerHighest
     radius: 10
@@ -36,7 +37,7 @@ Rectangle{
         CustomText{
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
-            content: root.currentVal
+            content: root.currentVal ?? root.objectVal?.name ?? ""
             size: 12
             weight: 600
         }
@@ -105,7 +106,7 @@ Rectangle{
                         implicitWidth: ListView.view.width
                         implicitHeight: 20
                         radius: 5
-                        color: root.currentVal === modelData.name ? Colors.primary : area.containsMouse ? Qt.alpha(Colors.primary, 0.5) : "transparent"
+                        color: root.currentVal ? root.currentVal === modelData.name : root.objectVal.name === modelData.name? Colors.primary : area.containsMouse ? Qt.alpha(Colors.primary, 0.5) : "transparent"
                         CustomText{
                             anchors.left: parent.left
                             anchors.verticalCenter: parent.verticalCenter
@@ -114,7 +115,7 @@ Rectangle{
                             width: parent.width
                             size: 12
                             weight: 600
-                            color: root.currentVal === modelData.name ? Colors.primaryText : Colors.surfaceVariantText
+                            color: root.currentVal ? root.currentVal === modelData.name : root.objectVal.name === modelData.name ? Colors.primaryText : Colors.surfaceVariantText
                         }
 
                         MouseArea{

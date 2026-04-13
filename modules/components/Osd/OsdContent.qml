@@ -12,24 +12,34 @@ import qs.modules.customComponents
 
 Rectangle{
     id: child
-    anchors.fill: parent 
+    implicitHeight: parent.height
+    implicitWidth: 300
     scale: 0.8
     opacity: 0
     color: Settings.layoutColor
     radius: 20
+    visible: false
+
+    Timer{
+        interval: 400
+        running: true
+        onTriggered:{
+            child.visible = true
+        }
+    }
 
 
     NumberAnimation on opacity{
         from: 0
         to: 1
-        duration: 200
+        duration: 600
         running: true
     }
 
     NumberAnimation on scale{
         from: 0.8
         to: 1
-        duration: 200
+        duration: 600
         running: true
     }
 

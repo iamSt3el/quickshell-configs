@@ -135,7 +135,7 @@ Item{
                         width: 1
                         color: Colors.outline
                     }
-                    property bool active: SettingsConfig.matugenTheme === "dark" ? false : true
+                    property bool active: SettingsConfig.theme.matugenTheme === "dark" ? false : true
 
               
                     Rectangle{
@@ -169,7 +169,7 @@ Item{
                                 onClicked:{
                                     outer.active = false
                                     if(!outer.active){
-                                        SettingsConfig.matugenTheme = "dark"
+                                        SettingsConfig.theme = Object.assign({}, SettingsConfig.theme, {matugenTheme: "dark"})
                                         Quickshell.execDetached([ServiceWallpaper.wallpaperScript, Colors.wallpaper, ServiceWallpaper.scheme, ServiceWallpaper.theme])
                                     }
                                 }
@@ -190,7 +190,7 @@ Item{
                                 onClicked:{
                                     outer.active = true 
                                     if(outer.active){
-                                        SettingsConfig.matugenTheme = "light"
+                                        SettingsConfig.theme = Object.assign({}, SettingsConfig.theme, {matugenTheme: "light"})
                                         Quickshell.execDetached([ServiceWallpaper.wallpaperScript, Colors.wallpaper, ServiceWallpaper.scheme, ServiceWallpaper.theme])
                                     }
                                 }
@@ -243,7 +243,7 @@ Item{
                 CustomListNew{
                     Layout.preferredWidth: 200
                     Layout.preferredHeight: 30
-                    currentVal: SettingsConfig.matugenScheme
+                    currentVal: SettingsConfig.theme.matugenScheme
                     list: Settings.matugen
                     onIsListClickedChanged:{
                         if(isListClicked)
@@ -253,7 +253,7 @@ Item{
                     }
 
                     onCurrentValChanged:{
-                        SettingsConfig.matugenScheme = currentVal
+                        SettingsConfig.theme = Object.assign({}, SettingsConfig.theme, {matugenScheme: currentVal})
                         Quickshell.execDetached([ServiceWallpaper.wallpaperScript, Colors.wallpaper, ServiceWallpaper.scheme, ServiceWallpaper.theme])
                     }
                 }

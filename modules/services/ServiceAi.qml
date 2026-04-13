@@ -14,7 +14,7 @@ Singleton {
     property string streamingText: ""
     property var chatHistory: []
 
-    readonly property string apiKey: SettingsConfig.googleAiApiKey
+    readonly property string apiKey: SettingsConfig.ai.googleApiKey
     readonly property string model: "gemini-3-flash-preview"
     readonly property string apiUrl: "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent"
 

@@ -14,17 +14,17 @@ Rectangle{
     radius: 20
 
     signal notificationCenterClosed
-    property bool active: hoverHandler.hovered
+    property bool active: false//hoverHandler.hovered
 
     onActiveChanged:{
         if(!active) root.notificationCenterClosed()
     }
 
 
-    HoverHandler{
-        id: hoverHandler
-    }
-
+    // HoverHandler{
+    //     id: hoverHandler
+    // }
+    //
 
 
 

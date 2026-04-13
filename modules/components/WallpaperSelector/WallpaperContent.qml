@@ -55,7 +55,16 @@ Rectangle{
             anchors.margins: 10
             spacing: 10
 
+            property string activeTab: "all"
+
             Component.onCompleted: searchInput.forceActiveFocus()
+
+            Connections {
+                target: ServiceWallpaper
+                function onOnlineModeChanged() {
+                    if (ServiceWallpaper.onlineMode) col.activeTab = "all"
+                }
+            }
 
             NumberAnimation on opacity {
                 from: 0; to: 1; duration: 100; running: col.visible
@@ -109,6 +118,37 @@ Rectangle{
                             }
                         }
                     }
+                    // All / Favorites tab pills
+                    Repeater {
+                        model: [["grid_view", "All", "all"], ["favorite", "Favorites", "favorites"]]
+                        delegate: Rectangle {
+                            required property var modelData
+                            readonly property bool active: col.activeTab === modelData[2]
+                            Layout.preferredHeight: 30
+                            Layout.preferredWidth: _tabRow.implicitWidth + 20
+                            radius: 20
+                            color: active ? Colors.primary : Colors.surfaceContainerHighest
+                            Behavior on color { ColorAnimation { duration: 150 } }
+                            RowLayout {
+                                id: _tabRow
+                                anchors.centerIn: parent
+                                spacing: 5
+                                MaterialIconSymbol {
+                                    content: modelData[0]; iconSize: 15
+                                    customColor: parent.parent.active ? Colors.primaryText : Colors.surfaceText
+                                }
+                                CustomText {
+                                    content: modelData[1]; size: 12
+                                    customColor: parent.parent.active ? Colors.primaryText : Colors.surfaceText
+                                }
+                            }
+                            CustomMouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: col.activeTab = modelData[2]
+                            }
+                        }
+                    }
+
                     Item { Layout.fillWidth: true }
                     Rectangle {
                         Layout.preferredHeight: 30
@@ -173,16 +213,16 @@ Rectangle{
                     property var rangeOpts: ["1d", "3d", "1w", "1M", "3M", "6M", "1y"]
 
                     function toggleCat(pos) {
-                        let c = SettingsConfig.wallhavenCategories.split("")
+                        let c = SettingsConfig.wallhaven.categories.split("")
                         c[pos] = c[pos] === "1" ? "0" : "1"
                         if (!c.includes("1")) return
-                        SettingsConfig.wallhavenCategories = c.join("")
+                        SettingsConfig.wallhaven = Object.assign({}, SettingsConfig.wallhaven, {categories: c.join("")})
                     }
                     function togglePur(pos) {
-                        let p = SettingsConfig.wallhavenPurity.split("")
+                        let p = SettingsConfig.wallhaven.purity.split("")
                         p[pos] = p[pos] === "1" ? "0" : "1"
                         if (!p.includes("1")) return
-                        SettingsConfig.wallhavenPurity = p.join("")
+                        SettingsConfig.wallhaven = Object.assign({}, SettingsConfig.wallhaven, {purity: p.join("")})
                     }
 
                     // Back button
@@ -220,7 +260,7 @@ Rectangle{
                                     required property int index
                                     readonly property string val: onlineConfigCol.sortOpts[index][1]
                                     readonly property string lbl: onlineConfigCol.sortOpts[index][0]
-                                    property bool active: SettingsConfig.wallhavenSorting === val
+                                    property bool active: SettingsConfig.wallhaven.sorting === val
                                     height: 24; radius: 12
                                     implicitWidth: _sLbl.implicitWidth + 14
                                     color: active ? Colors.primary : "transparent"
@@ -233,7 +273,7 @@ Rectangle{
                                     }
                                     CustomMouseArea {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                        onClicked: SettingsConfig.wallhavenSorting = parent.val
+                                        onClicked: SettingsConfig.wallhaven = Object.assign({}, SettingsConfig.wallhaven, {sorting: parent.val})
                                     }
                                 }
                             }
@@ -245,7 +285,7 @@ Rectangle{
                         height: 28; radius: 14
                         color: Colors.surfaceContainerHighest
                         implicitWidth: _rangeRow.implicitWidth + 6
-                        visible: SettingsConfig.wallhavenSorting === "toplist"
+                        visible: SettingsConfig.wallhaven.sorting === "toplist"
                         RowLayout {
                             id: _rangeRow
                             anchors.centerIn: parent
@@ -255,7 +295,7 @@ Rectangle{
                                 delegate: Rectangle {
                                     required property int index
                                     readonly property string val: onlineConfigCol.rangeOpts[index]
-                                    property bool active: SettingsConfig.wallhavenTopRange === val
+                                    property bool active: SettingsConfig.wallhaven.topRange === val
                                     height: 24; radius: 12
                                     implicitWidth: _rLbl.implicitWidth + 14
                                     color: active ? Colors.primary : "transparent"
@@ -268,7 +308,7 @@ Rectangle{
                                     }
                                     CustomMouseArea {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                        onClicked: SettingsConfig.wallhavenTopRange = parent.val
+                                        onClicked: SettingsConfig.wallhaven = Object.assign({}, SettingsConfig.wallhaven, {topRange: parent.val})
                                     }
                                 }
                             }
@@ -288,7 +328,7 @@ Rectangle{
                                 model: [["arrow_downward", "desc"], ["arrow_upward", "asc"]]
                                 delegate: Rectangle {
                                     required property var modelData
-                                    property bool active: SettingsConfig.wallhavenOrder === modelData[1]
+                                    property bool active: SettingsConfig.wallhaven.order === modelData[1]
                                     height: 24; width: 28; radius: 12
                                     color: active ? Colors.primary : "transparent"
                                     Behavior on color { ColorAnimation { duration: 150 } }
@@ -299,7 +339,7 @@ Rectangle{
                                     }
                                     CustomMouseArea {
                                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                        onClicked: SettingsConfig.wallhavenOrder = parent.modelData[1]
+                                        onClicked: SettingsConfig.wallhaven = Object.assign({}, SettingsConfig.wallhaven, {order: parent.modelData[1]})
                                     }
                                 }
                             }
@@ -316,7 +356,7 @@ Rectangle{
                             anchors.centerIn: parent
                             spacing: 2
                             Rectangle {
-                                property bool active: SettingsConfig.wallhavenCategories[0] === "1"
+                                property bool active: SettingsConfig.wallhaven.categories[0] === "1"
                                 height: 24; radius: 12; implicitWidth: _cg.implicitWidth + 14
                                 color: active ? Colors.primary : "transparent"
                                 Behavior on color { ColorAnimation { duration: 150 } }
@@ -324,7 +364,7 @@ Rectangle{
                                 CustomMouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: onlineConfigCol.toggleCat(0) }
                             }
                             Rectangle {
-                                property bool active: SettingsConfig.wallhavenCategories[1] === "1"
+                                property bool active: SettingsConfig.wallhaven.categories[1] === "1"
                                 height: 24; radius: 12; implicitWidth: _ca.implicitWidth + 14
                                 color: active ? Colors.primary : "transparent"
                                 Behavior on color { ColorAnimation { duration: 150 } }
@@ -332,7 +372,7 @@ Rectangle{
                                 CustomMouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: onlineConfigCol.toggleCat(1) }
                             }
                             Rectangle {
-                                property bool active: SettingsConfig.wallhavenCategories[2] === "1"
+                                property bool active: SettingsConfig.wallhaven.categories[2] === "1"
                                 height: 24; radius: 12; implicitWidth: _cp.implicitWidth + 14
                                 color: active ? Colors.primary : "transparent"
                                 Behavior on color { ColorAnimation { duration: 150 } }
@@ -352,7 +392,7 @@ Rectangle{
                             anchors.centerIn: parent
                             spacing: 2
                             Rectangle {
-                                property bool active: SettingsConfig.wallhavenPurity[0] === "1"
+                                property bool active: SettingsConfig.wallhaven.purity[0] === "1"
                                 height: 24; radius: 12; implicitWidth: _ps.implicitWidth + 14
                                 color: active ? Colors.primary : "transparent"
                                 Behavior on color { ColorAnimation { duration: 150 } }
@@ -360,7 +400,7 @@ Rectangle{
                                 CustomMouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: onlineConfigCol.togglePur(0) }
                             }
                             Rectangle {
-                                property bool active: SettingsConfig.wallhavenPurity[1] === "1"
+                                property bool active: SettingsConfig.wallhaven.purity[1] === "1"
                                 height: 24; radius: 12; implicitWidth: _pk.implicitWidth + 14
                                 color: active ? Colors.primary : "transparent"
                                 Behavior on color { ColorAnimation { duration: 150 } }
@@ -368,8 +408,8 @@ Rectangle{
                                 CustomMouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: onlineConfigCol.togglePur(1) }
                             }
                             Rectangle {
-                                visible: SettingsConfig.wallhavenApiKey.length > 0
-                                property bool active: SettingsConfig.wallhavenPurity[2] === "1"
+                                visible: SettingsConfig.wallhaven.apiKey.length > 0
+                                property bool active: SettingsConfig.wallhaven.purity[2] === "1"
                                 height: 24; radius: 12; implicitWidth: _pn.implicitWidth + 14
                                 color: active ? Colors.error : "transparent"
                                 Behavior on color { ColorAnimation { duration: 150 } }
@@ -441,7 +481,9 @@ Rectangle{
                 model: ScriptModel {
                     values: ServiceWallpaper.onlineMode
                         ? ServiceWallpaper.onlineWallpapers
-                        : ServiceWallpaper.filteredWallpapers
+                        : (col.activeTab === "favorites"
+                           ? ServiceWallpaper.favoritedWallpapers
+                           : ServiceWallpaper.filteredWallpapers)
                 }
                 clip: true
 
@@ -507,6 +549,8 @@ Rectangle{
                         }
                     }
 
+                    HoverHandler { id: tileHover }
+
                     MouseArea{
                         id: area
                         anchors.fill: parent
@@ -517,6 +561,42 @@ Rectangle{
                                 ServiceWallpaper.downloadAndSetWallpaper(wallpaperItemImageContainer.modelData)
                             else
                                 ServiceWallpaper.setWallpaper(wallpaperItemImageContainer.modelData)
+                        }
+                    }
+
+                    // Heart / favourite button (local mode only)
+                    Rectangle {
+                        id: heartBtn
+                        visible: !ServiceWallpaper.onlineMode
+                        anchors.top: parent.top
+                        anchors.right: parent.right
+                        anchors.margins: 8
+                        width: 28; height: 28; radius: 14
+                        z: 2
+
+                        readonly property bool faved:
+                            ServiceWallpaper.favoritedWallpapers.indexOf(
+                                wallpaperItemImageContainer.modelData) >= 0
+
+                        color: faved ? Colors.error : Colors.surfaceContainer
+                        opacity: faved || tileHover.hovered ? 0.92 : 0
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
+                        Behavior on color   { ColorAnimation  { duration: 150 } }
+
+                        MaterialIconSymbol {
+                            anchors.centerIn: parent
+                            content: heartBtn.faved ? "favorite" : "favorite_border"
+                            iconSize: 16
+                            customColor: heartBtn.faved ? Colors.errorText : Colors.surfaceText
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: (mouse) => {
+                                ServiceWallpaper.toggleFavorite(wallpaperItemImageContainer.modelData)
+                                mouse.accepted = true
+                            }
                         }
                     }
                 }

@@ -16,12 +16,12 @@ Singleton{
     property real totalApps: allApplications.values.length
     readonly property list<DesktopEntry> list: Array.from(DesktopEntries.applications.values)
     .sort((a, b) => a.name.localeCompare(b.name))   
-    readonly property list<DesktopEntry> pinnedApps: list.filter(app => SettingsConfig.pinnedApps.includes(app.id))
+    readonly property list<DesktopEntry> pinnedApps: list.filter(app => SettingsConfig.general.pinnedApps.includes(app.id))
 
     readonly property var dockModel: {
         const map = new Map()
 
-        for (const id of SettingsConfig.pinnedApps) {
+        for (const id of SettingsConfig.general.pinnedApps) {
             map.set(id.toLowerCase(), { appId: id, pinned: true, toplevels: [] })
         }
 
@@ -80,16 +80,16 @@ Singleton{
 
 
     function isPinned(app): bool {
-        return SettingsConfig.pinnedApps.includes(app.id)
+        return SettingsConfig.general.pinnedApps.includes(app.id)
     }
 
     function pin(app): void {
-        if (!SettingsConfig.pinnedApps.includes(app.id))
-            SettingsConfig.pinnedApps = [...SettingsConfig.pinnedApps, app.id]
+        if (!SettingsConfig.general.pinnedApps.includes(app.id))
+            SettingsConfig.general = Object.assign({}, SettingsConfig.general, {pinnedApps: [...SettingsConfig.general.pinnedApps, app.id]})
     }
 
     function unpin(app): void {
-        SettingsConfig.pinnedApps = SettingsConfig.pinnedApps.filter(id => id !== app.id)
+        SettingsConfig.general = Object.assign({}, SettingsConfig.general, {pinnedApps: SettingsConfig.general.pinnedApps.filter(id => id !== app.id)})
     }
 
     function togglePin(app): void {
@@ -98,14 +98,14 @@ Singleton{
     }
 
     function isPinnedById(appId: string): bool {
-        return SettingsConfig.pinnedApps.some(id => id.toLowerCase() === appId.toLowerCase())
+        return SettingsConfig.general.pinnedApps.some(id => id.toLowerCase() === appId.toLowerCase())
     }
 
     function togglePinById(appId: string): void {
         if (isPinnedById(appId))
-            SettingsConfig.pinnedApps = SettingsConfig.pinnedApps.filter(id => id.toLowerCase() !== appId.toLowerCase())
+            SettingsConfig.general = Object.assign({}, SettingsConfig.general, {pinnedApps: SettingsConfig.general.pinnedApps.filter(id => id.toLowerCase() !== appId.toLowerCase())})
         else
-            SettingsConfig.pinnedApps = [...SettingsConfig.pinnedApps, appId]
+            SettingsConfig.general = Object.assign({}, SettingsConfig.general, {pinnedApps: [...SettingsConfig.general.pinnedApps, appId]})
     }
 
     function updateSearch(searchText){
