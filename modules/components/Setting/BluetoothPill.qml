@@ -13,14 +13,16 @@ Rectangle {
     implicitWidth: parent?.width
     implicitHeight: 60
     radius: 15
-    color: bluetooth.state === 1 ? Colors.surfaceContainerHighest : "transparent"
+    color: bluetooth.state === 1 || pillArea.containsMouse? Colors.surfaceContainerHighest : "transparent"
     property var bluetooth: null
     visible: bluetooth !== null
     signal click(var bluetooth)
 
 
     MouseArea{
+        id: pillArea
         anchors.fill: parent
+        hoverEnabled: true    
         cursorShape: Qt.PointingHandCursor
         onClicked: root.click(root.bluetooth)
     }

@@ -8,6 +8,7 @@ import QtQuick.Effects
 import qs.modules.utils
 import qs.modules.customComponents
 import qs.modules.services
+import qs.modules.settings
 
 Item{
     id: root
@@ -15,6 +16,23 @@ Item{
     implicitHeight: col.implicitHeight
 
     property bool editMode: false
+
+    Component.onCompleted: {
+        root.x = SettingsConfig.widgets.clockX
+        root.y = SettingsConfig.widgets.clockY
+    }
+
+    onXChanged: if (editMode) clockSaveTimer.restart()
+    onYChanged: if (editMode) clockSaveTimer.restart()
+
+    Timer {
+        id: clockSaveTimer
+        interval: 500
+        repeat: false
+        onTriggered: {
+            SettingsConfig.widgets = Object.assign({}, SettingsConfig.widgets, { clockX: root.x, clockY: root.y })
+        }
+    }
 
     Rectangle {
         anchors.fill: parent

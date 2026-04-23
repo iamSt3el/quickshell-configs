@@ -13,4 +13,6 @@ Singleton{
     property bool osdOpen: false
     property bool wallpaperOpen: false
     property bool typingGameOpen: false
+    property bool toolsWidgetOpen: false
+    property bool shutdownWindow: false
 }

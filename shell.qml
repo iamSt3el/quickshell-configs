@@ -12,10 +12,14 @@ import qs.modules.components.WallpaperSelector
 import qs.modules.components.MusicVis
 import qs.modules.components.Dock
 import qs.modules.components.Widgets
+import qs.modules.components.ToolsWidget
+import qs.modules.components.ShutdownWindow
 import qs.modules.customComponents
 import qs.modules.settings
 
 ShellRoot{
+    DockPanel{}
+
     Variants{
         model: Quickshell.screens
         delegate: Item{
@@ -27,13 +31,9 @@ ShellRoot{
     }
 
     AppLauncher{}
-    //Clipboardsd{}
     SettingsPanel{}
-    //Osd{} 
-    //Wallpaper{}
-    DockPanel{}
-    //WidgetScreen{}
-
+    ToolsWidget{}
+    Shutdown{}
     Loader{
         active: SettingsConfig.general.musicVisOn
         sourceComponent:Vis{
@@ -45,13 +45,15 @@ ShellRoot{
         }
     }
 
+    //WidgetScreen{}
+    
 
-    //NewLockScreen{}
+
 
     //CubeTest{}
     //Panel{}
     //ColorPicker{}
-    
+
 
 
 

@@ -23,11 +23,12 @@ Scope {
 
     PanelWindow {
         id: panelWindow
-        implicitHeight: 600
+        //implicitHeight: 600
+        anchors.top: true
         anchors.left: true
         anchors.right: true
         anchors.bottom: true
-        WlrLayershell.layer: WlrLayer.Top
+        WlrLayershell.layer: WlrLayer.Overlay
         exclusionMode: ExclusionMode.Normal
         WlrLayershell.keyboardFocus: (root.clipboardActive || root.wallpaperActive || root.typingGameActive) ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
         color: "transparent"
@@ -80,7 +81,7 @@ Scope {
             readonly property real bodyBottom: container.y + container.height
             readonly property real bodyTop: bodyBottom - h
 
-            readonly property real rounding: root.typingGameActive ? 16 : Math.min(h / 3, w / 3)
+            readonly property real rounding: GlobalStates.shutdownWindow ? 10 : Math.min(h / 3, w / 3)
 
             readonly property real flareX: w / 18
             readonly property bool flattenFlare: h < flareX * 2
@@ -158,7 +159,7 @@ Scope {
 
             onActiveChanged: {
                 if (active)
-                    collapsed = false
+                collapsed = false
             }
 
             HoverHandler {
@@ -178,17 +179,17 @@ Scope {
                 property real dockWidth: dockLoder.item ? dockLoder.item.implicitWidth + 20 : dockWidth
 
                 implicitHeight: container.collapsed ? 0
-                    : root.clipboardActive ? 600
-                    : root.wallpaperActive ? Appearance.size.wallpaperPanelHeight
-                    : root.typingGameActive ? Appearance.size.typingGameHeight
-                    : GlobalStates.osdOpen ? 60
-                    : SettingsConfig.general.dock ? 60 : 0
+                : root.clipboardActive ? 600
+                : root.wallpaperActive ? Appearance.size.wallpaperPanelHeight
+                : root.typingGameActive ? Appearance.size.typingGameHeight
+                : GlobalStates.osdOpen ? 60
+                : SettingsConfig.general.dock ? 60: 0
 
                 implicitWidth: root.clipboardActive ? 400
-                    : root.wallpaperActive ? Appearance.size.wallpaperPanelWidth
-                    : root.typingGameActive ? Appearance.size.typingGameWidth
-                    : GlobalStates.osdOpen ? 300
-                    : dockWidth
+                : root.wallpaperActive ? Appearance.size.wallpaperPanelWidth
+                : root.typingGameActive ? Appearance.size.typingGameWidth
+                : GlobalStates.osdOpen ? 300
+                : dockWidth
 
                 anchors.bottom: parent.bottom
                 clip: true
@@ -222,9 +223,11 @@ Scope {
                     sourceComponent:OsdContent{}
                 }
 
+
+
                 Loader {
                     id: dockLoder
-                    active: SettingsConfig.general.dock && !root.clipboardActive && !root.wallpaperActive && !root.typingGameActive && !container.collapsed && !GlobalStates.osdOpen
+                    active: SettingsConfig.general.dock && !root.clipboardActive && !root.wallpaperActive && !root.typingGameActive && !container.collapsed && !GlobalStates.osdOpen && !GlobalStates.shutdownWindow
                     anchors.fill: parent
                     sourceComponent: Dock {}
                 }
@@ -246,6 +249,7 @@ Scope {
                 }
             }
         }
+
     }
 
     Timer{
@@ -278,6 +282,8 @@ Scope {
             }
         }
     }
+
+
 
     GlobalShortcut {
         name: "wallpaperLauncher"

@@ -4,6 +4,8 @@ import QtQuick.Layouts
 import qs.modules.utils
 import qs.modules.customComponents
 import qs.modules.services
+import "../../MatrialShapes/" as MaterialShapes
+import "../../MatrialShapes/material-shapes.js" as MatrialSHapeFn
 
 ColumnLayout{
     id: root
@@ -173,16 +175,28 @@ ColumnLayout{
                         Repeater{
                             model: ServiceClock.generateCalendarGrid(root.currentYear, root.currentMonth)
 
-                            Rectangle{
+                            Item{
                                 Layout.preferredHeight: 40
                                 Layout.fillWidth: true
-                                color:{
-                                    if(modelData.isToday) return Colors.primary
-                                    if(dateArea.containsMouse) return Colors.tertiary
-                                    if(!modelData.isCurrentMonth) return "transparent"
-                                    return "transparent"
+                               
+                                
+                                Loader{
+                                    height: 40
+                                    width: 40
+                                    anchors.centerIn: parent
+                                    active: true
+                                    sourceComponent:
+                                    MaterialShapes.ShapeCanvas{
+                                        anchors.fill: parent
+                                        roundedPolygon: MatrialSHapeFn.getGem()
+                                        color:{
+                                            if(modelData.isToday) return Colors.primary
+                                            if(dateArea.containsMouse) return Colors.tertiary
+                                            if(!modelData.isCurrentMonth) return "transparent"
+                                            return "transparent"
+                                        }
+                                    }
                                 }
-                                radius: width
 
                                 Rectangle{
                                     anchors.top: parent.top
@@ -194,12 +208,12 @@ ColumnLayout{
                                     color: Colors.outline
                                     radius: width
                                 }
-
-                                Behavior on color{
-                                    ColorAnimation{
-                                        duration: 200
-                                    }
-                                }
+                                //
+                                // Behavior on color{
+                                //     ColorAnimation{
+                                //         duration: 200
+                                //     }
+                                // }
 
                                 CustomText{
                                     anchors.centerIn: parent

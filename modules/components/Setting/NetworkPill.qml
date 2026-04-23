@@ -14,19 +14,19 @@ Rectangle {
     implicitWidth: parent?.width
     implicitHeight: 60
     radius: 15
-    color: network?.connected ? Colors.surfaceContainerHighest : "transparent"
+    color: network?.connected || pillArea.containsMouse ? Colors.surfaceContainerHighest : "transparent"
     property var network: null
     visible: network !== null
     signal click(var network)
     signal needsPassword(var network)
 
     MouseArea{
+        id: pillArea
         anchors.fill: parent
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked:root.click(root.network)
     }
-
-
 
     Connections {
         target: root.network

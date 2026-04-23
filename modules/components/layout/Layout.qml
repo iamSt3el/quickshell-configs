@@ -43,13 +43,6 @@ PanelWindow{
             height: workspaces.height;
             intersection: Intersection.Subtract
         } 
-        Region{
-            x: isToolsWidgetClicked ? loader.x : 0;
-            y: isToolsWidgetClicked ? loader.y : 0;
-            width: isToolsWidgetClicked ? loader.width : 0;
-            height: isToolsWidgetClicked ? loader.height : 0;
-            intersection: Intersection.Subtract
-        }
 
 
         Region{
@@ -60,14 +53,6 @@ PanelWindow{
             intersection: Intersection.Subtract
         }
 
-
-        // Region{
-        //     x: notificationLoader.x
-        //     y: notificationLoader.y
-        //     width: notificationLoader.width
-        //     height: notificationLoader.height
-        //     intersection: Intersection.Subtract
-        // }
 
         Region{
             x: clock.x
@@ -268,20 +253,7 @@ PanelWindow{
             }
         }
     }
-    Loader{
-        id: loader
-        active: layout.isToolsWidgetClicked
-        anchors.centerIn: parent
-        width: 300
-        height: 300
-        sourceComponent: Item{
-            ToolsWidget{
-                id: toolsWidget
-                onToogled: layout.isToolsWidgetClicked = false
 
-            }
-        }
-    }
 
     NotificationPanel{
    

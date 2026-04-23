@@ -12,6 +12,8 @@ Singleton {
     property alias wallhaven: settingsAdapter.wallhaven
     property alias ai: settingsAdapter.ai
     property alias manga: settingsAdapter.manga
+    property alias recording: settingsAdapter.recording
+    property alias widgets: settingsAdapter.widgets
 
     Timer {
         id: writeTimer
@@ -80,6 +82,25 @@ Singleton {
                 defaultSite: "comix",
                 preloadPages: 1500,
                 filterAdult: true
+            })
+
+            property var recording: ({
+                outputPath: "~/Videos",
+                codec: "libx264",
+                muxer: "mp4",
+                framerate: "30",
+                pixelFormat: "yuv420p",
+                audioEnabled: true,
+                audioCodec: "aac",
+                audioBitrate: "128k",
+                audioSampleRate: "48000"
+            })
+
+            property var widgets: ({
+                clockX: 100,
+                clockY: 100,
+                temperatureX: 600,
+                temperatureY: 100
             })
         }
     }

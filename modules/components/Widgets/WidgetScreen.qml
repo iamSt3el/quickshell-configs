@@ -20,13 +20,7 @@ PanelWindow{
     WlrLayershell.layer: WlrLayer.Bottom
     color: "transparent"
 
-    NewClock{
-        x: 400
-        y: 400
-    }
-    //
-    // MusicPlayer{
-    //     x: 1500
-    //     y: 900
-    // }
+    Temperature{
+    } 
+
 }

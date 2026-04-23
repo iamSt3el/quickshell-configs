@@ -61,6 +61,11 @@ Item{
         //anchors.centerIn: parent
     }
 
+    Temperature{
+        x: 600
+        y: 100
+    }
+
 
     Item{
         anchors.bottom: parent.bottom

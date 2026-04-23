@@ -3,61 +3,32 @@ pragma ComponentBehavior: Bound
 
 import Quickshell
 import Quickshell.Io
+import Quickshell.Hyprland
 import QtQuick
+import qs.modules.settings
+import WfRecorder
 
 
 Singleton{
     id: root
 
-    // Recording state properties
-    property bool isRecording: false
-    property string recordingMode: ""
-    property date recordingStartTime: new Date()
-    property int recordingSeconds: 0
-    property bool wasRecording: false
+    // Recording state — sourced directly from the C++ plugin
+    readonly property bool   isRecording:   WfRecorder.recording
+    readonly property string recordingMode: WfRecorder.mode
+    readonly property int    recordingSeconds: WfRecorder.elapsed
+    readonly property string lastFilename:  WfRecorder.filename
 
-    // Timer for tracking recording duration
-    Timer {
-        id: durationTimer
-        interval: 1000
-        repeat: true
-        running: root.isRecording
-        onTriggered: {
-            recordingSeconds++
+    // Send stop notification when recording finishes
+    Connections {
+        target: WfRecorder
+        function onRecordingStopped(duration) {
+            Quickshell.execDetached(["notify-send", "Recording Stopped",
+                "Duration: " + Math.floor(duration / 60) + ":" +
+                String(duration % 60).padStart(2, "0")])
         }
-    }
-
-    // Process to check if wf-recorder is running
-    Process {
-        id: recordingCheckProcess
-        running: false
-        command: ["pgrep", "-x", "wf-recorder"]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                wasRecording = isRecording
-                isRecording = recordingCheckProcess.exitCode === 0
-
-                // Recording just stopped
-                if (wasRecording && !isRecording) {
-                    var duration = recordingSeconds
-                    recordingSeconds = 0
-                    recordingMode = ""
-                    Quickshell.execDetached(["notify-send", "Recording Stopped",
-                        "Duration: " + Math.floor(duration / 60) + ":" + String(duration % 60).padStart(2, "0")])
-                }
-            }
-        }
-    }
-
-    // Timer to trigger recording state checks
-    Timer {
-        id: recordingChecker
-        interval: 1000
-        repeat: true
-        running: true
-        onTriggered: {
-            recordingCheckProcess.running = true
+        function onRecordingError(message) {
+            Quickshell.execDetached(["notify-send", "-u", "critical",
+                "Recording Error", message])
         }
     }
 
@@ -140,26 +111,26 @@ Singleton{
         }
     ]
 
-    // Get XDG Videos directory (or fallback to ~/Videos)
-    readonly property string videosDir: {
-        var result = Quickshell.exec(["xdg-user-dir", "VIDEOS"])
-        var dir = result.stdout.trim()
-        return (dir && dir !== "/home/steel") ? dir : "/home/steel/Videos"
+    // Delay timer for Area/Window modes: fires after the panel has closed so
+    // slurp / compositor input grabs don't compete with HyprlandFocusGrab.
+    Timer {
+        id: delayTimer
+        interval: 400
+        repeat: false
+        property string pendingMode: ""
+        property string pendingGeometry: ""
+        onTriggered: root.toggleRecording(pendingMode, pendingGeometry)
     }
 
-    // Get audio output source for recording with audio
-    function getAudioOutput() {
-        var result = Quickshell.exec(["sh", "-c", "pactl list sources | grep 'Name' | grep 'monitor' | cut -d ' ' -f2"])
-        return result.stdout.trim()
+    // Call this from ToolsWidgetContent for Area/Window so the timer
+    // survives the Loader teardown.
+    function startDelayed(mode, geometry) {
+        delayTimer.pendingMode = mode
+        delayTimer.pendingGeometry = geometry
+        delayTimer.restart()
     }
 
-    // Get active monitor name
-    function getActiveMonitor() {
-        var result = Quickshell.exec(["sh", "-c", "hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .name'"])
-        return result.stdout.trim()
-    }
-
-    // Generate filename with timestamp
+    // Generate filename using SettingsConfig output path + muxer extension
     function generateFilename() {
         var now = new Date()
         var timestamp = now.getFullYear() + "-" +
@@ -168,56 +139,45 @@ Singleton{
             String(now.getHours()).padStart(2, "0") + "." +
             String(now.getMinutes()).padStart(2, "0") + "." +
             String(now.getSeconds()).padStart(2, "0")
-        return videosDir + "/recording_" + timestamp + ".mp4"
+        var dir = SettingsConfig.recording.outputPath.replace("~", Quickshell.env("HOME"))
+        var ext = SettingsConfig.recording.muxer
+        return dir + "/recording_" + timestamp + "." + ext
     }
 
-    // Toggle recording with improved bash-based approach
-    function toggleRecording(mode, withAudio) {
-        // If already recording, stop it
-        if (isRecording) {
-            Quickshell.execDetached(["pkill", "-x", "wf-recorder"])
+    // geometry is pre-captured for Window mode (empty string for Screen/Area)
+    function toggleRecording(mode, geometry) {
+        if (WfRecorder.recording) {
+            WfRecorder.stop()
             return
         }
 
-        // Start new recording
-        recordingMode = mode
-        recordingStartTime = new Date()
-        recordingSeconds = 0
-
+        var rec = SettingsConfig.recording
         var filename = generateFilename()
+        var base = `wf-recorder --codec ${rec.codec} --pixel-format ${rec.pixelFormat} -r ${rec.framerate}`
         var cmd = ""
 
-        // Build command based on mode
         if (mode === "Screen") {
-            var monitor = getActiveMonitor()
-            cmd = `wf-recorder -o ${monitor} --pixel-format yuv420p -f '${filename}' -t`
+            cmd = `${base} -o ${Hyprland.focusedMonitor.name} -f '${filename}'`
         } else if (mode === "Window") {
-            cmd = `wf-recorder -g "$(hyprctl activewindow -j | jq -r '"\\(.at[0]),\\(.at[1]) \\(.size[0])x\\(.size[1])"')" --pixel-format yuv420p -f '${filename}' -t`
+            cmd = `${base} -g "${geometry}" -f '${filename}'`
         } else if (mode === "Area") {
-            cmd = `wf-recorder -g "$(slurp)" --pixel-format yuv420p -f '${filename}' -t`
+            cmd = `${base} -g "$(slurp)" -f '${filename}'`
         }
 
-        // Add audio if requested
-        if (withAudio) {
-            var audio = getAudioOutput()
-            if (audio) {
-                cmd += ` --audio="${audio}"`
-            }
+        if (rec.audioEnabled) {
+            // --audio without a device uses the default monitor source automatically
+            cmd += ` --audio --audio-codec ${rec.audioCodec} --audio-bitrate ${rec.audioBitrate} --sample-rate ${rec.audioSampleRate}`
         }
 
-        // Execute recording command
-        Quickshell.execDetached(["sh", "-c", cmd])
+        WfRecorder.start(cmd, mode, filename)
         Quickshell.execDetached(["notify-send", "Recording Started", "Recording " + mode])
     }
 
     function stopRecording() {
-        if (isRecording) {
-            Quickshell.execDetached(["pkill", "-x", "wf-recorder"])
-        }
+        WfRecorder.stop()
     }
 
     function getFormattedRecordingTime() {
-        return Math.floor(recordingSeconds / 60).toString().padStart(2, "0") + ":" +
-               (recordingSeconds % 60).toString().padStart(2, "0")
+        return WfRecorder.formattedTime()
     }
 }

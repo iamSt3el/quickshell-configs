@@ -106,7 +106,7 @@ Rectangle{
                         implicitWidth: ListView.view.width
                         implicitHeight: 20
                         radius: 5
-                        color: root.currentVal ? root.currentVal === modelData.name : root.objectVal.name === modelData.name? Colors.primary : area.containsMouse ? Qt.alpha(Colors.primary, 0.5) : "transparent"
+                        color: (root.currentVal ? root.currentVal === modelData.name : root.objectVal?.name === modelData.name) ? Colors.primary : area.containsMouse ? Qt.alpha(Colors.primary, 0.5) : "transparent"
                         CustomText{
                             anchors.left: parent.left
                             anchors.verticalCenter: parent.verticalCenter
@@ -115,7 +115,7 @@ Rectangle{
                             width: parent.width
                             size: 12
                             weight: 600
-                            color: root.currentVal ? root.currentVal === modelData.name : root.objectVal.name === modelData.name ? Colors.primaryText : Colors.surfaceVariantText
+                            color: (root.currentVal ? root.currentVal === modelData.name : root.objectVal?.name === modelData.name) ? Colors.primaryText : Colors.surfaceVariantText
                         }
 
                         MouseArea{
