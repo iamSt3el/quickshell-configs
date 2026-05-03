@@ -12,7 +12,7 @@ ProgressBar {
     property real valueBarHeight: 3
     property real valueBarGap: 4
     property color highlightColor: Colors.primary
-    property color trackColor: Colors.secondaryContainer
+    property color trackColor: Colors.primaryText
     property bool sperm: false 
     property bool animateSperm: true
     property real spermAmplitudeMultiplier: sperm ? 0.5 : 0

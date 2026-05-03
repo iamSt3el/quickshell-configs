@@ -23,6 +23,7 @@ Item{
     property bool isSoundPanelClicked: false
     property bool isBatteryInfoClicked: false
     property bool isTodoClicked: false
+    property bool isDashboard: height > 900
 
     onIsClickedChanged:{
         if(utility.isClicked){
@@ -44,33 +45,15 @@ Item{
         }
     }
 
-    onIsBatteryInfoClickedChanged:{
-        if(utility.isBatteryInfoClicked){
-            utility.implicitWidth = Appearance.size.batteryPanelWidth
-            utility.implicitHeight = Appearance.size.batteryPanelHeight
-        }else{
-            utility.implicitWidth = row.width + 20
-            utility.implicitHeight = Appearance.size.barHeight
-        }
-    }
-
-    onIsTodoClickedChanged:{
-        if(utility.isTodoClicked){
-            utility.implicitWidth = Appearance.size.todoPanelWidth
-        }else{
-            utility.implicitWidth = row.width + 20
-            utility.implicitHeight = Appearance.size.barHeight
-        }
-    }
-
-    // Bind height to todo widget's content-driven implicitHeight
-    Binding {
-        target: utility
-        property: "implicitHeight"
-        when: utility.isTodoClicked
-        value: todoLoader.item ? todoLoader.item.implicitHeight : Appearance.size.todoPanelHeight
-        restoreMode: Binding.RestoreNone
-    }
+    // onIsBatteryInfoClickedChanged:{
+    //     if(utility.isBatteryInfoClicked){
+    //         utility.implicitWidth = Appearance.size.batteryPanelWidth
+    //         utility.implicitHeight = Appearance.size.batteryPanelHeight
+    //     }else{
+    //         utility.implicitWidth = row.width + 20
+    //         utility.implicitHeight = Appearance.size.barHeight
+    //     }
+    // }
 
     Behavior on implicitWidth{
         NumberAnimation{
@@ -103,7 +86,7 @@ Item{
             id: notificationLoader
             active: utility.isNotificationClicked
             anchors.fill: parent
-            anchors.margins: Appearance.margin.medium
+            //anchors.margins: Appearance.margin.medium
             visible: false
             Timer{
                 interval: Appearance.duration.normal 
@@ -120,30 +103,31 @@ Item{
                 }
             }
         }
-
-        Loader{
-            id: batteryInfo
-            active: utility.isBatteryInfoClicked
-            visible: false
-            anchors.fill: parent
-            Timer{
-                interval: Appearance.duration.normal
-                running: utility.isBatteryInfoClicked
-                onTriggered:{
-                    batteryInfo.visible = true
-                }
-            }
-            sourceComponent:BatteryInfo{
-                onClose: {
-                    utility.isBatteryInfoClicked = false
-                    batteryInfo.visible = false
-                }
-            }
-        }
-
+        //
+        // Loader{
+        //     id: batteryInfo
+        //     active: utility.isBatteryInfoClicked
+        //     visible: false
+        //     anchors.fill: parent
+        //     Timer{
+        //         interval: Appearance.duration.normal
+        //         running: utility.isBatteryInfoClicked
+        //         onTriggered:{
+        //             batteryInfo.visible = true
+        //         }
+        //     }
+        //     sourceComponent:BatteryInfo{
+        //         onClose: {
+        //             utility.isBatteryInfoClicked = false
+        //             batteryInfo.visible = false
+        //         }
+        //     }
+        // }
+        //
         Loader{
             id: dashboardLoader
             active: utility.isClicked
+            anchors.centerIn: parent
             anchors.fill: parent
             visible: false
             Timer{
@@ -164,25 +148,7 @@ Item{
             }
         }
 
-        Loader{
-            id: todoLoader
-            active: utility.isTodoClicked
-            anchors.fill: parent
-            visible: false
-            Timer{
-                interval: Appearance.duration.normal
-                running: utility.isTodoClicked
-                onTriggered:{
-                    todoLoader.visible = true
-                }
-            }
-            sourceComponent: TodoWidget{
-                onToggleTodo: {
-                    utility.isTodoClicked = false
-                    todoLoader.visible = false
-                }
-            }
-        }
+
 
         RowLayout{
             id: row
@@ -305,27 +271,6 @@ Item{
                 }
             }
 
-            // Rectangle{
-            //     Layout.preferredHeight: todoIcon.height + 4
-            //     Layout.preferredWidth: todoIcon.width + 10
-            //     color: Colors.surfaceContainerHighest
-            //     radius: Appearance.radius.medium
-            //
-            //     MaterialIconSymbol{
-            //         id: todoIcon
-            //         iconSize: Appearance.size.iconSizeNormal - 3
-            //         content: "checklist"
-            //         anchors.centerIn: parent
-            //     }
-            //
-            //     CustomMouseArea{
-            //         cursorShape: Qt.PointingHandCursor
-            //         hoverEnabled: true
-            //         onClicked:{
-            //             utility.isTodoClicked = true
-            //         }
-            //     }
-            // }
 
             Rectangle{
                 Layout.preferredHeight: dashboardIcon.height + 4

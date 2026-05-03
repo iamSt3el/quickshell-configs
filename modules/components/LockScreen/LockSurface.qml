@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls.Fusion
 import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
@@ -276,35 +275,21 @@ Item{
                             }
                         }
 
-                        TextField{
+                        CustomShapeInput {
                             id: input
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             placeholderText: root.context.showFailure ? "Seriously Dude" : "Enter password"
-                            placeholderTextColor: root.context.showFailure ? Colors.error : Colors.outline
-                            inputMethodHints: Qt.ImhSensitiveData
-                            background: null
-                            clip: true
-                            text: ""
-                            font.pixelSize: 20
-                            font.weight: 600
-                            color: Colors.surfaceText
-                            echoMode: TextInput.Password
-                            verticalAlignment: TextInput.AlignVCenter
+                            placeholderColor: root.context.showFailure ? Colors.error : Colors.outline
                             enabled: !root.context.unlockInProgress
 
-
-                            onTextChanged: {
-                                root.context.currentText = this.text;
-                            }
-                            onAccepted: root.context.tryUnlock();
-
+                            onTextChanged: root.context.currentText = text
+                            onAccepted: root.context.tryUnlock()
 
                             Connections {
                                 target: root.context
-
                                 function onCurrentTextChanged() {
-                                    input.text = root.context.currentText;
+                                    input.text = root.context.currentText
                                 }
                             }
                         } 

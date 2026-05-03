@@ -91,12 +91,19 @@ Item{
                     Layout.fillWidth: true
                     ColumnLayout{
                         Layout.fillWidth: true
-                        CustomCircularProgressBar{
+                        // CustomCircularProgressBar{
+                        //     Layout.preferredWidth: 100
+                        //     Layout.preferredHeight: 100
+                        //     progress: ServiceUPower.powerLevel
+                        //     thickness: 10
+                        // } 
+                        CustomMatrialCircularProgress{
                             Layout.preferredWidth: 100
                             Layout.preferredHeight: 100
-                            progress: ServiceUPower.powerLevel
-                            thickness: 10
-                        } 
+                            progress: 0.4
+                            thickness: 8
+                            gap: 0.4
+                        }
 
                         CustomText{
                             Layout.alignment: Qt.AlignCenter
@@ -110,12 +117,15 @@ Item{
                     }
                     ColumnLayout{
                         Layout.fillWidth: true
-                        CustomCircularProgressBar{
+                      
+
+                        CustomMatrialCircularProgress{
                             Layout.preferredWidth: 100
                             Layout.preferredHeight: 100
                             lineColor: Colors.error
                             progress: ServiceUPower.health
-                            thickness: 10
+                            thickness: 8
+                            gap: 0.4
                         }
                         CustomText{
                             Layout.alignment: Qt.AlignCenter

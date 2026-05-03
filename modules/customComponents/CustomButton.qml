@@ -15,31 +15,29 @@ Rectangle{
     id: root
     property string icon
     property int iconSize
+    property string iconColor: Colors.surfaceText
+    property string iconHoverColor: Colors.primaryText
     radius: 20
     color: sArea.containsMouse ? Colors.primary : Colors.surfaceContainerHighest
+    signal clicked
     Behavior on color{
         ColorAnimation{
             duration: 200
         }
     }
-    Behavior on scale{
-        NumberAnimation{
-            duration: 100
-        }
-    }
+ 
     MaterialIconSymbol{
         anchors.centerIn: parent
         content: root.icon
         iconSize: root.iconSize
-        color: sArea.containsMouse ? Colors.primaryText : Colors.surfaceText
+        color: sArea.containsMouse ? root.iconHoverColor : root.iconColor
     }
 
-    CustomMouseArea{
+    MouseArea{
         id: sArea
+        anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
-        onClicked:{
-            ServiceMusic.togglePlaying()
-        }
+        onClicked: root.clicked()
     }
 }

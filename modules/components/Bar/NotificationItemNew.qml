@@ -12,10 +12,16 @@ Rectangle {
     property bool isExtended: false
     property int padding: 10
 
+    property real topRadius: 20
+    property real bottomRadius: 20
+
     implicitWidth: parent ? parent.width : 0
     implicitHeight: isExtended ? notifRow.implicitHeight + 20 : 60
-    radius: 10
-    color: Colors.surfaceContainerHighest
+    topLeftRadius: topRadius
+    topRightRadius: topRadius
+    bottomLeftRadius: bottomRadius
+    bottomRightRadius: bottomRadius
+    color: Colors.surfaceContainerHigh
     clip: true
 
     x: 0
@@ -190,9 +196,9 @@ Rectangle {
             }
             
 
-            CustomIconImage{
-                icon: "down"
-                size: 16
+            MaterialIconSymbol{
+                content: "keyboard_arrow_down"
+                iconSize: 16
                 rotation: notif.isExtended ? 180 : 0
                 anchors.centerIn: parent
 

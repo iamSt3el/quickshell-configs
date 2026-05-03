@@ -7,10 +7,13 @@ import qs.modules.utils
 import qs.modules.customComponents
 import qs.modules.services
 import qs.modules.settings
+import "../../MatrialShapes/" as MaterialShapes
+import "../../MatrialShapes/material-shapes.js" as MatrialShapeFn
 
 Item{
     id: root 
     anchors.fill: parent
+    implicitHeight: col.implicitHeight
     property bool isWifiClicked: false
     property bool isBluetoothClicked: false
     property bool isOverlayClicked: false
@@ -41,13 +44,24 @@ Item{
         running: true
     }
 
-    
+
     NumberAnimation on scale{
         from: 0.8
         to: 1
         duration: 400
         running: true
     }
+
+    property var downloadHistory: []
+
+    // Feed it on each poll (e.g. via a Connections on ServiceSystemInfo)
+    Connections {
+        target: ServiceSystemInfo
+        function onNetDownloadBpsChanged() {
+            sparkline.addValue(ServiceSystemInfo.netDownloadBps)
+        }
+    }
+
 
 
 
@@ -81,7 +95,7 @@ Item{
                 y: active ? root.parentPos.y : root.pos.y
 
                 implicitWidth: active ? controleRectangle.width : wifi.width
-                implicitHeight: active ? controleRectangle.height + 200 : 60
+                implicitHeight: active ? controleRectangle.height + 400 : 60
                 color: Colors.surfaceContainerHigh
 
                 radius: 20
@@ -183,7 +197,6 @@ Item{
 
     ColumnLayout{
         id: col
-        //width: parent.width
         anchors.fill: parent
         spacing: 10
         anchors.margins: 10
@@ -197,7 +210,7 @@ Item{
                 anchors.fill: parent
                 anchors.margins: 10
                 anchors.rightMargin: 10
-                spacing: 10
+                spacing: 5
 
                 ClippingWrapperRectangle{
                     Layout.preferredWidth: 30
@@ -237,31 +250,55 @@ Item{
                     }
                 }
 
-                MaterialIconSymbol{
-                    content: "settings"
-                    iconSize: 20 
-                    MouseArea{
-                        cursorShape: Qt.PointingHandCursor
-                        anchors.fill: parent
-                        onClicked: {
-                            GlobalStates.settingsOpen = true
-                            root.toggleDashboard()
-                        }
+                // MaterialIconSymbol{
+                //     content: "settings"
+                //     iconSize: 20 
+                //     MouseArea{
+                //         cursorShape: Qt.PointingHandCursor
+                //         anchors.fill: parent
+                //         onClicked: {
+                //             GlobalStates.settingsOpen = true
+                //             root.toggleDashboard()
+                //         }
+                //     }
+                // }
+                CustomButton{
+                    icon: "settings"
+                    iconSize: 18
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 30
+                    radius: 10
+                   
+                }
+
+                CustomButton{
+                    icon: "power_settings_new"
+                    iconSize: 18
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 40
+                    radius: 10
+                }
+                CustomButton{
+                    icon: "close"
+                    iconSize: 18
+                    Layout.preferredHeight: 30
+                    Layout.preferredWidth: 30
+                    radius: 10
+
+                    onClicked: {
+                        root.toggleDashboard()
                     }
                 }
-                MaterialIconSymbol{
-                    content: "power_settings_new"
-                    iconSize: 20
-                }
-                MaterialIconSymbol{
-                    content: "close"
-                    iconSize: 20
-                    MouseArea{
-                        cursorShape: Qt.PointingHandCursor
-                        anchors.fill: parent
-                        onClicked: root.toggleDashboard()
-                    }
-                }
+               
+                // MaterialIconSymbol{
+                //     content: "close"
+                //     iconSize: 20
+                //     MouseArea{
+                //         cursorShape: Qt.PointingHandCursor
+                //         anchors.fill: parent
+                //         onClicked: root.toggleDashboard()
+                //     }
+                // }
 
 
             }
@@ -310,11 +347,25 @@ Item{
                                 anchors.fill: parent
                                 anchors.margins: 5
 
-                                Rectangle{
-                                    Layout.fillHeight: true
-                                    Layout.preferredWidth: 60
-                                    radius: 15
+                                // Rectangle{
+                                //     Layout.fillHeight: true
+                                //     Layout.preferredWidth: 60
+                                //     radius: 15
+                                //     color: Colors.primary
+                                //
+                                //     MaterialIconSymbol{
+                                //         anchors.centerIn: parent
+                                //         iconSize: 28
+                                //         content: ServiceWifi.icon
+                                //         color: ServiceWifi.wifiEnabled ? Colors.primaryText : Colors.surfaceText
+                                //     }
+                                // }
+                                MaterialShapes.ShapeCanvas{
+                                    Layout.preferredHeight: 50
+                                    Layout.preferredWidth: 50
+                                    roundedPolygon: MatrialShapeFn.getCookie6Sided()
                                     color: Colors.primary
+
 
                                     MaterialIconSymbol{
                                         anchors.centerIn: parent
@@ -331,15 +382,14 @@ Item{
                                     CustomText{
                                         Layout.fillWidth: true
                                         content: ServiceWifi.connectionType
-                                        size: 14
+                                        size: 16
                                         weight: 700
                                     }
 
                                     CustomText{
                                         Layout.fillWidth: true
                                         content: ServiceWifi.currentSSID || "no device"
-                                        size: 12
-                                        weight: 600
+                                        size: 14
                                         color: Colors.outline
                                     }
                                 }
@@ -368,10 +418,25 @@ Item{
                                 anchors.fill: parent
                                 anchors.margins: 5
 
-                                Rectangle{
-                                    Layout.fillHeight: true
-                                    Layout.preferredWidth: 60
-                                    radius: 15
+                                // Rectangle{
+                                //     Layout.fillHeight: true
+                                //     Layout.preferredWidth: 60
+                                //     radius: 15
+                                //     color: Colors.primary
+                                //
+                                //
+                                //     MaterialIconSymbol{
+                                //         anchors.centerIn: parent
+                                //         iconSize: 28
+                                //         content: ServiceBluetooth.connectedDevices > 0 ? "bluetooth" : "bluetooth_disabled"
+                                //         color: Colors.primaryText
+                                //     }
+                                // }
+
+                                MaterialShapes.ShapeCanvas{
+                                    Layout.preferredHeight: 50
+                                    Layout.preferredWidth: 50
+                                    roundedPolygon: MatrialShapeFn.getCookie6Sided()
                                     color: Colors.primary
 
 
@@ -390,15 +455,13 @@ Item{
                                     CustomText{
                                         Layout.fillWidth: true
                                         content: "Bluetooth"
-                                        size: 14
-                                        weight: 700
+                                        size: 16
                                     }
 
                                     CustomText{
                                         Layout.fillWidth: true
                                         content: ServiceBluetooth.connectedDevices + " connected"
-                                        size: 12
-                                        weight: 600
+                                        size: 14
                                         color: Colors.outline
                                     }
                                 }
@@ -476,6 +539,18 @@ Item{
                         }
 
                     }
+                    // CustomSliderOld{
+                    //     Layout.fillHeight: true
+                    //     Layout.preferredWidth: 50
+                    //
+                    // }
+                    //
+                    // CustomSliderOld{
+                    //     Layout.fillHeight: true
+                    //     Layout.preferredWidth: 50
+                    //
+                    //
+                    // }
                     CustomSlider{
                         property var brightnessMonitor: ServiceBrightness.getMonitorForScreen(screen)
                         Layout.fillHeight: true
@@ -576,16 +651,380 @@ Item{
                         }
                     }
                 }
-
-
             }
         }
 
         MusicPlayer{
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            //Layout.preferredHeight: 100
+            Layout.preferredHeight: 150
         }
 
+        // Item{
+        //     Layout.fillWidth: true
+        //     Layout.fillHeight: true
+        // }
+
+
+        Rectangle{
+            Layout.fillWidth: true
+            Layout.preferredHeight: cpu.implicitHeight + 20
+            radius: 20
+            color: Colors.surfaceContainer
+
+            ColumnLayout{
+                id: cpu
+                anchors.fill: parent
+                anchors.margins: 10
+                spacing: 2
+                RowLayout{ 
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+
+                    CustomMatrialCircularProgress{
+                        Layout.preferredWidth: 60
+                        Layout.preferredHeight: 60
+                        progress: ServiceSystemInfo.cpuUsage
+                        thickness: 4
+                        gap: 0.6
+                        icon: "memory"
+                        iconSize: 30
+                        sperm: false
+                    }
+
+                    ColumnLayout{
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        CustomText{
+                            content: "CPU"
+                            size: 16
+                            color: Colors.primary
+                        }
+                        CustomText{
+                            Layout.fillWidth: true
+                            content: ServiceSystemInfo.cpuName
+                            size: 14
+
+                        }
+                    }
+
+                    MaterialShapes.ShapeCanvas{
+                        Layout.preferredWidth: 50
+                        Layout.preferredHeight: 50
+
+                        roundedPolygon: MatrialShapeFn.getCookie4Sided()
+                        color: Colors.primaryText
+
+                        CustomText{
+                            anchors.centerIn: parent
+                            content: Math.round(ServiceSystemInfo.cpuUsage * 100) + "%"
+                            size: 14
+                            color: Colors.primary
+                        }
+                    }
+                }
+
+                // RowLayout{
+                //     Layout.leftMargin: 5
+                //     spacing: 0
+                //     MaterialIconSymbol{
+                //         content: "device_thermostat"
+                //         iconSize: 20
+                //         color: Colors.primary
+                //     }
+                //
+                //     CustomText{
+                //         content: ServiceSystemInfo.cpuTemp.toFixed(1) + "°C"
+                //         size: 14
+                //     }
+                // }
+                //
+                //
+                // CustomProgressBar{
+                //     value: ServiceSystemInfo.cpuTemp / 100
+                //     Layout.leftMargin: 10
+                //     Layout.rightMargin: 10
+                //     Layout.preferredHeight: 3
+                //     Layout.fillWidth: true
+                //     valueBarGap: 6
+                // }
+            }
+        }
+
+        Rectangle{
+            Layout.fillWidth: true
+            Layout.preferredHeight: gpu.implicitHeight + 20
+            radius: 20
+            color: Colors.surfaceContainer
+
+            ColumnLayout{
+                id: gpu
+                anchors.fill: parent
+                anchors.margins: 10
+
+
+                RowLayout{ 
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+
+                    CustomMatrialCircularProgress{
+                        Layout.preferredWidth: 60
+                        Layout.preferredHeight: 60
+                        progress: ServiceSystemInfo.gpuUsage
+                        thickness: 4
+                        gap: 0.6
+                        icon: "desktop_windows"
+                        iconSize: 24
+                        sperm: false
+                    }
+
+                    ColumnLayout{
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        CustomText{
+                            content: "GPU"
+                            size: 16
+                            color: Colors.primary
+                        }
+                        CustomText{
+                            Layout.fillWidth: true
+                            content: ServiceSystemInfo.gpuName
+                            size: 14
+
+                        }
+                    }
+
+                    MaterialShapes.ShapeCanvas{
+                        Layout.preferredWidth: 50
+                        Layout.preferredHeight: 50
+
+                        roundedPolygon: MatrialShapeFn.getPill()
+                        color: Colors.primaryText
+
+                        CustomText{
+                            anchors.centerIn: parent
+                            content: Math.round(ServiceSystemInfo.gpuUsage * 100) + "%"
+                            size: 14
+                            color: Colors.primary
+                        }
+                    }
+                }
+
+                // RowLayout{
+                //     Layout.leftMargin: 5
+                //     MaterialIconSymbol{
+                //         content: "device_thermostat"
+                //         iconSize: 24
+                //         color: Colors.primary
+                //     }
+                //
+                //     CustomText{
+                //         content: ServiceSystemInfo.gpuTemp.toFixed(1) + "°C"
+                //         size: 16
+                //     }
+                // }
+                //
+                // Item{
+                //     Layout.fillHeight: true
+                //     Layout.fillWidth: true
+                //     Layout.leftMargin: 10
+                //     Layout.rightMargin: 10
+                //     CustomProgressBar{
+                //         value: ServiceSystemInfo.gpuTemp / 100
+                //         implicitHeight: 4
+                //         implicitWidth: parent.width
+                //         valueBarGap: 6
+                //     }
+                // }
+            }
+        }
+
+        RowLayout{
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            spacing: 10
+
+            Rectangle{
+                Layout.fillWidth: true
+                Layout.preferredHeight: mem.implicitHeight + 20
+                radius: 20
+                color: Colors.surfaceContainer
+
+                ColumnLayout{
+                    id: mem
+                    anchors.centerIn: parent
+                    spacing: 0
+                    CustomGaugeProgress{
+                        Layout.preferredWidth: 120
+                        Layout.preferredHeight: 120
+                        progress: ServiceSystemInfo.memUsage
+                        thickness: 8
+                        gap: 0.2
+                        icon: "memory_alt"
+                        iconSize: 18
+                        sperm: false
+                    }
+
+                    CustomText{
+                        Layout.alignment: Qt.AlignCenter
+                        content: ServiceSystemInfo.memUsedGb.toFixed(1) + " / " + ServiceSystemInfo.memTotalGb.toFixed(1) + " GB"
+                        size: 14
+                    }
+                }
+            }
+
+            Rectangle{
+                Layout.fillWidth: true
+                Layout.preferredHeight: disk.implicitHeight + 20
+                radius: 20
+                color: Colors.surfaceContainer
+
+                ColumnLayout{
+                    id: disk
+                    anchors.centerIn: parent
+                    spacing: 0
+                    CustomGaugeProgress{
+                        Layout.preferredWidth: 120
+                        Layout.preferredHeight: 120
+                        progress: ServiceSystemInfo.diskUsage
+                        thickness: 8
+                        gap: 0.2
+                        icon: "hard_disk"
+                        iconSize: 18
+                        sperm: false
+                    }
+
+                    CustomText{
+                        Layout.alignment: Qt.AlignCenter
+                        content: ServiceSystemInfo.diskUsedGb.toFixed(1) + " / " + ServiceSystemInfo.diskTotalGb.toFixed(1) + " GB"
+                        size: 14
+                    }
+                }
+            }
+        }
+
+        Rectangle{
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            radius: 20
+            color: Colors.surfaceContainer
+
+            ColumnLayout{
+                anchors.fill: parent
+                anchors.margins: 15
+                RowLayout{
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    spacing: 10
+
+                    MaterialIconSymbol{
+                        content: "network_check"
+                        iconSize: 20
+                        color: Colors.primary
+                    }
+
+                    CustomText{
+                        content: "Network"
+                        size: 16
+                    }
+                }
+
+                // Item{
+                //     Layout.fillWidth: true
+                //     Layout.fillHeight: true
+                // }
+                CustomSparkline {
+                    id: sparkline
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    lineColor: Colors.primary
+                }
+
+
+                RowLayout{
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    spacing: 10
+
+                    MaterialIconSymbol{
+                        content: "download"
+                        iconSize: 20
+                        color: Colors.primary
+                    }
+
+                    CustomText{
+                        content: "Download"
+                        size: 16
+                    }
+
+                    Item{
+                        Layout.fillWidth: true
+                    }
+
+                    CustomText{
+                        content: ServiceSystemInfo.formatBytes(ServiceSystemInfo.netDownloadBps)
+                        size: 16
+                        color: Colors.primary
+                    }
+                }
+
+
+                RowLayout{
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    spacing: 10
+
+                    MaterialIconSymbol{
+                        content: "upload"
+                        iconSize: 20
+                        color: Colors.primary
+                    }
+
+                    CustomText{
+                        content: "Upload"
+                        size: 16
+                    }
+
+                    Item{
+                        Layout.fillWidth: true
+                    }
+
+                    CustomText{
+                        content: ServiceSystemInfo.formatBytes(ServiceSystemInfo.netUploadBps)
+                        size: 16
+                        color: Colors.primary
+                    }
+                }
+
+
+                RowLayout{
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    spacing: 10
+
+                    MaterialIconSymbol{
+                        content: "history"
+                        iconSize: 20
+                        color: Colors.outline
+                    }
+
+                    CustomText{
+                        content: "Total"
+                        size: 16
+                        color: Colors.outline
+                    }
+
+                    Item{
+                        Layout.fillWidth: true
+                    }
+
+                    CustomText{
+                        content: "↓" +ServiceSystemInfo.formatBytes(ServiceSystemInfo.netTotalRxBytes) + " ↑" + ServiceSystemInfo.formatBytes(ServiceSystemInfo.netTotalTxBytes) 
+                        size: 16
+                        color: Colors.outline
+                    }
+                }
+
+            }
+        }
     }
 }

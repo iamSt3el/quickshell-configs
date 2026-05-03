@@ -21,10 +21,10 @@ Rectangle{
     signal backClicked()
 
     property list<var> toolItems: [
-        { icon: "select",              action: ""     },
-        { icon: "screenshot_monitor",  action: ""     },
-        { icon: "arrow_back",          action: "back" },
-        { icon: "settings_photo_camera", action: ""   }
+        { icon: "select",             action: "Area"   },
+        { icon: "screenshot_monitor", action: "Screen" },
+        { icon: "arrow_back",         action: "back"   },
+        { icon: "",                   action: ""       }
     ]
 
     GridLayout{
@@ -41,7 +41,8 @@ Rectangle{
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 radius: 20
-                color: area.containsMouse ? Colors.primary : Colors.surfaceContainer
+                visible: modelData.icon !== ""
+                color: modelData.icon === "" ? "transparent" : area.containsMouse ? Colors.primary : Colors.surfaceContainer
 
                 Behavior on color {
                     ColorAnimation { duration: 150 }
@@ -62,9 +63,15 @@ Rectangle{
                     id: area
                     anchors.fill: parent
                     hoverEnabled: true
+                    enabled: modelData.icon !== ""
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        if (modelData.action === "back") cameraRoot.backClicked()
+                        if (modelData.action === "back") {
+                            cameraRoot.backClicked()
+                        } else if (modelData.action !== "") {
+                            cameraRoot.backClicked()
+                            ServiceTools.takeScreenshot(modelData.action)
+                        }
                     }
                 }
             }
@@ -92,5 +99,4 @@ Rectangle{
             }
         }
     }
-
 }

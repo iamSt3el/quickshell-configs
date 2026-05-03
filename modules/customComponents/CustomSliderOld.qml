@@ -7,19 +7,18 @@ import qs.modules.customComponents
 
 Item{
     id: root
-    anchors.fill: parent
     property alias progress: wrapper.progress
     property string icon
     property bool isDragging: false
     Column{
         width: parent.width
-        height: parent.height - 20
+        height: parent.height 
         anchors.centerIn: parent
         spacing: 10
         Rectangle{
             id: wrapper
-            implicitWidth: 30
-            implicitHeight: parent.height * 0.8
+            implicitWidth: 40
+            implicitHeight: parent.height 
             color: "transparent"
             radius: 8
             anchors.horizontalCenter: parent.horizontalCenter
@@ -50,7 +49,7 @@ Item{
             Rectangle{
                 id: handler
                 implicitHeight: 6
-                implicitWidth: 44
+                implicitWidth: 48
                 color: Colors.primary
                 radius: 2
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -77,32 +76,32 @@ Item{
             }
         }
         
-        Item{
-            height: parent.height * 0.2
-            width: parent.width
-            Rectangle{
-                anchors.centerIn: parent
-                implicitWidth: parent.height 
-                implicitHeight: parent.height
-                radius: 14
-                color: Colors.primary
-
-                IconImage{
-                    visible: !root.isDragging
-                    anchors.centerIn: parent
-                    implicitSize: 24
-                    source: IconUtil.getSystemIcon(root.icon)
-                    layer.enabled: true
-
-                    layer.effect: MultiEffect {
-                        colorization: 1.0
-                        colorizationColor: Colors.primaryText
-                        brightness: 1
-
-                    }
-                }
-            }
-        }
+        // Item{
+        //     height: parent.height * 0.2
+        //     width: parent.width
+        //     Rectangle{
+        //         anchors.centerIn: parent
+        //         implicitWidth: parent.height 
+        //         implicitHeight: parent.height
+        //         radius: 14
+        //         color: Colors.primary
+        //
+        //         IconImage{
+        //             visible: !root.isDragging
+        //             anchors.centerIn: parent
+        //             implicitSize: 24
+        //             source: IconUtil.getSystemIcon(root.icon)
+        //             layer.enabled: true
+        //
+        //             layer.effect: MultiEffect {
+        //                 colorization: 1.0
+        //                 colorizationColor: Colors.primaryText
+        //                 brightness: 1
+        //
+        //             }
+        //         }
+        //     }
+        // }
 
     }
 }

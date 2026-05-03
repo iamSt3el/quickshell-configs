@@ -113,25 +113,25 @@ Item{
         }
 
 
-        MaterialShapes.ShapeCanvas{
-            x: 180
-            y: -40
-            implicitWidth: 150
-            implicitHeight: 150
-            color: Colors.tertiary
-            roundedPolygon: MaterialShapesFn.getCookie12Sided()
-
-            CustomText{
-                anchors.centerIn: parent
-                content: ServiceWeather.description
-                size: 24
-                color: Colors.tertiaryText
-                font.family: "Titan One"
-                weight: 600
-
-            }
-
-        }
+        // MaterialShapes.ShapeCanvas{
+        //     x: 180
+        //     y: -40
+        //     implicitWidth: 150
+        //     implicitHeight: 150
+        //     color: Colors.tertiary
+        //     roundedPolygon: MaterialShapesFn.getCookie12Sided()
+        //
+        //     CustomText{
+        //         anchors.centerIn: parent
+        //         content: ServiceWeather.description
+        //         size: 24
+        //         color: Colors.tertiaryText
+        //         font.family: "Titan One"
+        //         weight: 600
+        //
+        //     }
+        //
+        // }
 
 
         MaterialShapes.ShapeCanvas{

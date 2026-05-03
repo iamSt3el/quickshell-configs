@@ -19,10 +19,10 @@ Singleton{
         property int arcHeight: 10
         property int arcWidth: 20
         property int lineWidth: 4
-        property int notificationPanelWidth: 300
-        property int notificationPanelHeight: 550
-        property int dashboardPanelWidth: 300
-        property int dashboardPanelHeight: 500
+        property int notificationPanelWidth: 340
+        property int notificationPanelHeight: 1080
+        property int dashboardPanelWidth: 320
+        property int dashboardPanelHeight: 1080
         property int batteryPanelWidth: 240
         property int batteryPanelHeight: 260
         property int widgetHeight: 25

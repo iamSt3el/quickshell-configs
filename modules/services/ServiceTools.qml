@@ -177,6 +177,11 @@ Singleton{
         WfRecorder.stop()
     }
 
+    function takeScreenshot(mode) {
+        if      (mode === "Screen") Quickshell.execDetached(["sh", "-c", "sleep 0.5 && grimblast --notify copysave output"])
+        else if (mode === "Area")   Quickshell.execDetached(["sh", "-c", "grimblast --notify copysave area"])
+    }
+
     function getFormattedRecordingTime() {
         return WfRecorder.formattedTime()
     }
